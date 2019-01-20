@@ -1,0 +1,107 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>Grisaia</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Asmodean\Exkifint.cs" />
+    <Compile Remove="Asmodean\Exkifint.MersenneTwister.cs" />
+    <Compile Remove="Asmodean\Exkifint.PInvoke.cs" />
+    <Compile Remove="Asmodean\Exkifint.Structs.cs" />
+    <Compile Remove="Asmodean\Hgx2png.New.cs" />
+    <Compile Remove="Extracting.cs" />
+    <Compile Remove="Unused\Enums\Background.cs" />
+    <Compile Remove="Unused\Exkifint.cs" />
+    <Compile Remove="Unused\Exkifint.MersenneTwister.cs" />
+    <Compile Remove="Unused\Exkifint.PInvoke.cs" />
+    <Compile Remove="Unused\Exkifint.Structs.cs" />
+    <Compile Remove="Unused\Extracting.cs" />
+    <Compile Remove="Unused\Identifying\Character.cs" />
+    <Compile Remove="Unused\Identifying\Old\Backgrounds.cs" />
+    <Compile Remove="Unused\Identifying\Old\Character.cs" />
+    <Compile Remove="Unused\Identifying\Old\Effect.cs" />
+    <Compile Remove="Unused\Identifying\Old\ImageIdentification.cs" />
+    <Compile Remove="Unused\Identifying\Old\ImageIdentifier.cs" />
+    <Compile Remove="Unused\Identifying\Old\Item.cs" />
+    <Compile Remove="Unused\Identifying\Old\Logo.cs" />
+    <Compile Remove="Unused\Identifying\Old\MiscChibi.cs" />
+    <Compile Remove="Unused\Identifying\Old\StoryCGChibi.cs" />
+    <Compile Remove="Unused\Identifying\Old\TmbIcon.cs" />
+    <Compile Remove="Unused\Identifying\Old\Transition.cs" />
+    <Compile Remove="Unused\Identifying\Old\Unidentified.cs" />
+    <Compile Remove="Unused\Identifying\Old\UserInterface.cs" />
+    <Compile Remove="Unused\Identifying\Sprite.cs" />
+    <Compile Remove="Unused\ISpriteCategory.cs" />
+    <Compile Remove="Unused\Json\JsonCodeEnumConverter.cs" />
+    <Compile Remove="Unused\Json\JsonStringEnumConverter.cs" />
+    <Compile Remove="Program.cs" />
+    <Compile Remove="Rules\ISpriteCategory.cs" />
+    <Compile Remove="Unused\Program.cs" />
+    <Compile Remove="Unused\Utils\EnumInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Unused\Enums\Background.cs" />
+    <None Include="Unused\Exkifint.cs" />
+    <None Include="Unused\Exkifint.MersenneTwister.cs" />
+    <None Include="Unused\Exkifint.PInvoke.cs" />
+    <None Include="Unused\Exkifint.Structs.cs" />
+    <None Include="Unused\Extracting.cs" />
+    <None Include="Unused\Identifying\Character.cs" />
+    <None Include="Unused\Identifying\Old\Backgrounds.cs" />
+    <None Include="Unused\Identifying\Old\Character.cs" />
+    <None Include="Unused\Identifying\Old\Effect.cs" />
+    <None Include="Unused\Identifying\Old\ImageIdentification.cs" />
+    <None Include="Unused\Identifying\Old\ImageIdentifier.cs" />
+    <None Include="Unused\Identifying\Old\Item.cs" />
+    <None Include="Unused\Identifying\Old\Logo.cs" />
+    <None Include="Unused\Identifying\Old\MiscChibi.cs" />
+    <None Include="Unused\Identifying\Old\StoryCGChibi.cs" />
+    <None Include="Unused\Identifying\Old\TmbIcon.cs" />
+    <None Include="Unused\Identifying\Old\Transition.cs" />
+    <None Include="Unused\Identifying\Old\Unidentified.cs" />
+    <None Include="Unused\Identifying\Old\UserInterface.cs" />
+    <None Include="Unused\Identifying\Sprite.cs" />
+    <None Include="Unused\Json\JsonCodeEnumConverter.cs" />
+    <None Include="Unused\Json\JsonStringEnumConverter.cs" />
+    <None Include="Unused\Program.cs" />
+    <None Include="Unused\ISpriteCategory.cs" />
+    <None Include="Unused\Utils\EnumInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Gameloop.Vdf" Version="0.5.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
+      <Project>{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}</Project>
+      <Name>asmodean</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Private>True</Private>
+    </ProjectReference>
+    <ContentWithTargetPath Include="..\Asmodean\bin\Release\zlib1.dll">
+      <TargetPath>zlib1.dll</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Characters.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Games.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B468146A-F5A7-4999-8414-19A194B8A678}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Grisaia.SpriteViewer</RootNamespace>
+    <AssemblyName>GrisaiaSpriteViewer</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\App.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <None Include="Unused\ImageClipboard3.cs" />
+    <None Include="Unused\ImageClipboard2 - Copy.cs" />
+    <Compile Include="ImageClipboard.cs" />
+    <None Include="Unused\ImageClipboard.Glitched.cs" />
+    <Compile Include="LoadingWindow.xaml.cs">
+      <DependentUpon>LoadingWindow.xaml</DependentUpon>
+    </Compile>
+    <None Include="Unused\ZoomOnMouseWheel.cs" />
+    <None Include="packages.config" />
+    <Page Include="LoadingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\kajitsu-ama__L0-D5-P1-B1__0P01-2P02-3P02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
+      <Project>{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}</Project>
+      <Name>asmodean</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Private>True</Private>
+    </ProjectReference>
+    <ContentWithTargetPath Include="..\zlib\bin\zlib1.dll">
+      <TargetPath>zlib1.dll</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ContentWithTargetPath>
+    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj">
+      <Project>{767fd43f-e4b7-4346-b4ef-3792178e55aa}</Project>
+      <Name>GrisaiaCategorization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\App.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
