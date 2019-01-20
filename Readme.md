@@ -1,5 +1,11 @@
 # Grisaia Sprite Viewer
 
+[![Latest Release](https://img.shields.io/github/release-pre/trigger-death/GrisaiaSpriteViewer.svg?style=flat&label=version)](https://github.com/trigger-death/GrisaiaSpriteViewer/releases/latest)
+[![Latest Release Date](https://img.shields.io/github/release-date-pre/trigger-death/GrisaiaSpriteViewer.svg?style=flat&label=released)](https://github.com/trigger-death/GrisaiaSpriteViewer/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/trigger-death/GrisaiaSpriteViewer/total.svg?style=flat)](https://github.com/trigger-death/GrisaiaSpriteViewer/releases)
+[![Creation Date](https://img.shields.io/badge/created-january%202019-A642FF.svg?style=flat)](https://github.com/trigger-death/GrisaiaSpriteViewer/commit/d198e42a6b3193d435c0c804407c50d383bd3de8)
+[![Discord](https://img.shields.io/discord/436949335947870238.svg?style=flat&logo=discord&label=chat&colorB=7389DC&link=https://discord.gg/vB7jUbY)](https://discord.gg/vB7jUbY)
+
 A sprite viewer and saver for the original Grisaia Games
 
 Sprite images can be copied or saved in the File Menu. Guidelines can be hidden in the View Menu.
