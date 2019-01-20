@@ -27,11 +27,16 @@ namespace Grisaia {
 		/// </summary>
 		[JsonIgnore]
 		private readonly IReadOnlyList<CharacterInfo> readonlyList;
-
+		/// <summary>
+		///  Gets the default character parts layout when one is not specified.
+		/// </summary>
+		[JsonProperty("default_parts")]
+		public CharacterSpritePartGroup[] DefaultParts { get; private set; }
+		
 		#endregion
 
 		#region Constructors
-		
+
 		/// <summary>
 		///  Constructs the character database and sets up the readonly list.
 		/// </summary>
@@ -44,10 +49,10 @@ namespace Grisaia {
 		#region Properties
 
 		/// <summary>
-		///  Gets the default character parts layout when one is not specified.
+		///  Gets the number of total characters in the database.
 		/// </summary>
-		[JsonProperty("default_parts")]
-		public CharacterSpritePartGroup[] DefaultParts { get; private set; }
+		[JsonIgnore]
+		public int Count => characterList.Count;
 		/// <summary>
 		///  Gets the list of known characters in the games.
 		/// </summary>
@@ -55,29 +60,43 @@ namespace Grisaia {
 		public IReadOnlyList<CharacterInfo> Characters {
 			get => readonlyList;
 			private set {
-				//characterList = value;
 				characterList.Clear();
 				characterMap.Clear();
 				characterList.AddRange(value);
-				foreach (CharacterInfo character in value) {
+				foreach (CharacterInfo character in characterList) {
 					foreach (string id in character.Ids)
 						characterMap.Add(id, character);
 				}
 			}
 		}
-
-		#endregion
-
-		#region Accessors
-
 		/// <summary>
 		///  Gets the character info at the specified index in the list.
 		/// </summary>
 		/// <param name="index">The index of the character info to get.</param>
 		/// <returns>The character info at the specified index.</returns>
-		public CharacterInfo GetCharacterAt(int index) {
+		/// 
+		/// <exception cref="IndexOutOfRangeException">
+		///  <paramref name="index"/> the index was outside the bounds of the list.
+		/// </exception>
+		[JsonIgnore]
+		public CharacterInfo this[int index] => characterList[index];
+
+		#endregion
+
+		#region Accessors
+
+		/*/// <summary>
+		///  Gets the character info at the specified index in the list.
+		/// </summary>
+		/// <param name="index">The index of the character info to get.</param>
+		/// <returns>The character info at the specified index.</returns>
+		/// 
+		/// <exception cref="IndexOutOfRangeException">
+		///  <paramref name="index"/> the index was outside the bounds of the list.
+		/// </exception>
+		public CharacterInfo At(int index) {
 			return characterList[index];
-		}
+		}*/
 		/// <summary>
 		///  Gets the character info with the specified Id.
 		/// </summary>
@@ -87,16 +106,44 @@ namespace Grisaia {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="id"/> is null.
 		/// </exception>
-		public CharacterInfo GetCharacter(string id) {
+		public CharacterInfo Get(string id) {
 			if (id == null)
 				throw new ArgumentNullException(nameof(id));
 			if (!characterMap.TryGetValue(id, out var characterInfo)) {
 				Trace.WriteLine($"WARNING: Character Id \"{id}\" has not been defined!");
 				characterInfo = CharacterInfo.MakeDefault(id, DefaultParts);
 				characterMap.Add(id, characterInfo);
-				//characterList.Add(characterInfo);
+				characterList.Add(characterInfo);
 			}
 			return characterInfo;
+		}
+		/// <summary>
+		///  Searches for the index of the character info in the list.
+		/// </summary>
+		/// <param name="character">The character to look for.</param>
+		/// <returns>The index of the character if it was found, otherwise -1.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="character"/> is null.
+		/// </exception>
+		public int IndexOf(CharacterInfo character) {
+			if (character == null)
+				throw new ArgumentNullException(nameof(character));
+			return characterList.IndexOf(character);
+		}
+		/// <summary>
+		///  Searches for the index of the character info with the specified Id in the list.
+		/// </summary>
+		/// <param name="id">The Id of the character to look for.</param>
+		/// <returns>The index of the character if it was found, otherwise -1.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		public int IndexOf(string id) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
+			return characterList.FindIndex(c => c.ContainsId(id));
 		}
 		/// <summary>
 		///  Gets the part groups for a specified character from a specified game.

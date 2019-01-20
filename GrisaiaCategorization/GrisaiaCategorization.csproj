@@ -17,6 +17,8 @@
     <Compile Remove="Asmodean\Exkifint.Structs.cs" />
     <Compile Remove="Asmodean\Hgx2png.New.cs" />
     <Compile Remove="Extracting.cs" />
+    <Compile Remove="SpriteCharacter.cs" />
+    <Compile Remove="SpriteDatabase.cs" />
     <Compile Remove="Unused\Enums\Background.cs" />
     <Compile Remove="Unused\Exkifint.cs" />
     <Compile Remove="Unused\Exkifint.MersenneTwister.cs" />
@@ -48,6 +50,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Characters.json" />
+    <None Remove="Games.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Characters.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Games.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SpriteCharacter.cs" />
+    <None Include="SpriteDatabase.cs" />
     <None Include="Unused\Enums\Background.cs" />
     <None Include="Unused\Exkifint.cs" />
     <None Include="Unused\Exkifint.MersenneTwister.cs" />
@@ -94,14 +112,6 @@
       <TargetPath>zlib1.dll</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ContentWithTargetPath>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Characters.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Games.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

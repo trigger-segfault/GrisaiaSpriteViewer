@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Grisaia {
-	public class SpriteGame : IKey<string> {
+	/*public class SpriteGame : IKey<string> {
 
 		public string Id { get; set; }
 		public int Index { get; set; }
@@ -15,5 +15,5 @@ namespace Grisaia {
 
 		public Dictionary<string, SpriteCharacter> Characters { get; } = new Dictionary<string, SpriteCharacter>();
 		public List<SpriteCharacter> SortedCharacters { get; } = new List<SpriteCharacter>();
-	}
+	}*/
 }

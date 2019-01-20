@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Grisaia.Asmodean;
+using Grisaia.Categories.Sprites;
+using Newtonsoft.Json;
 
 namespace Grisaia.Testing {
 	class Program {
 		static void Main(string[] args) {
-			Dictionary<string, List<Anm>> allAnims = new Dictionary<string, List<Anm>>();
+			/*Dictionary<string, List<Anm>> allAnims = new Dictionary<string, List<Anm>>();
 			foreach (string dir in Directory.EnumerateDirectories(@"C:\Users\Onii-chan\Pictures\Sprites\Grisaia")) {
 				string gameName = Path.GetFileName(dir);
 				string rawDir = Path.Combine(dir, "Raw");
@@ -24,7 +27,28 @@ namespace Grisaia.Testing {
 
 			foreach (string dir in Directory.EnumerateDirectories(@"C:\Users\Onii-chan\Pictures\Sprites\Grisaia\anm")) {
 				Test(Path.GetFileName(dir));
-			}
+			}*/
+
+			Stopwatch watch = Stopwatch.StartNew();
+			var gameDb = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText("Games.json"));
+			var charDb = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText("Characters.json"));
+			gameDb.LocateGames();
+			gameDb.LoadCache();
+			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
+			var spriteDb = new SpriteDatabase(gameDb, charDb,
+				new SpriteCategoryInfo[] {
+					SpriteCategoryPool.Character,
+					SpriteCategoryPool.Game,
+				},
+				new SpriteCategoryInfo[] {
+					SpriteCategoryPool.Distance,
+					SpriteCategoryPool.Lighting,
+					SpriteCategoryPool.Pose,
+					SpriteCategoryPool.Blush,
+				});
+			spriteDb.Build();
+			Console.WriteLine("Time: " + watch.ElapsedMilliseconds);
+			Console.WriteLine("Sprites: " + spriteDb.SpriteCount);
 			Console.WriteLine("Finished");
 			Console.Read();
 		}

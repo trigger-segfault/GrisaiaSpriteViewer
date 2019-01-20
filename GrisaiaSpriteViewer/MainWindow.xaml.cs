@@ -68,7 +68,7 @@ namespace Grisaia.SpriteViewer {
 			string cacheDir = Path.Combine(AppContext.BaseDirectory, "cache");
 			if (!Directory.Exists(cacheDir))
 				Directory.CreateDirectory(cacheDir);
-			int count = gameDb.LocatedGames.Count();
+			int count = gameDb.LocatedCount;
 			int index = 0;
 			callback("Loading cached sprites...", null, 0);
 			foreach (var game in gameDb.LocatedGames) {
@@ -290,12 +290,12 @@ namespace Grisaia.SpriteViewer {
 
 		private void UpdateGameChanges() {
 			UpdateSelection(comboCharacter, game.Characters, game.SortedCharacters, ref character);
-			currentGame = gameDb.GetGame(game.Id);
+			currentGame = gameDb.Get(game.Id);
 			UpdateCharacterChanges();
 		}
 		private void UpdateCharacterChanges() {
 			UpdateSelection(comboLighting, character.Lightings, character.SortedLightings, ref lighting);
-			currentChar = charDb.GetCharacter(character.Id);
+			currentChar = charDb.Get(character.Id);
 			currentGroups = charDb.GetPartGroup(currentGame, currentChar);
 
 			// Empty parts

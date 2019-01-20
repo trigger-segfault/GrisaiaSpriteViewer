@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Grisaia;
 
-namespace GrisaiaExtractor {
+namespace Grisaia {
 	/// <summary>
 	///  An attribute that specifies what codes an enum value can be represented by.
 	/// </summary>

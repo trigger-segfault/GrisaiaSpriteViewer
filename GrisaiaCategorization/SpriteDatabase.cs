@@ -23,7 +23,7 @@ namespace Grisaia {
 		public SpriteDatabase(GameDatabase gameDb, CharacterDatabase charDb, LoadGameCallback callback) {
 			GameDb = gameDb;
 			CharacterDb = charDb;
-			int count = gameDb.LocatedGames.Count();
+			int count = gameDb.LocatedCount;
 			int index = 0;
 			foreach (GameInfo game in gameDb.LocatedGames) {
 				callback?.Invoke("Categorizing Sprites...", game.JPName, (double) index / count);
@@ -34,9 +34,9 @@ namespace Grisaia {
 
 		public void TraceUncategorizedSprites() {
 			foreach (var g in SortedGames) {
-				GameInfo ga = GameDb.GetGame(g.Id);
+				GameInfo ga = GameDb.Get(g.Id);
 				foreach (var c in g.SortedCharacters) {
-					CharacterInfo ch = CharacterDb.GetCharacter(c.Id);
+					CharacterInfo ch = CharacterDb.Get(c.Id);
 					CharacterSpritePartGroup[] groups = CharacterDb.GetPartGroup(ga, ch);
 					HashSet<int> groupTypeIds = new HashSet<int>();
 					foreach (int typeId in groups.SelectMany(gr => gr.TypeIds)) {

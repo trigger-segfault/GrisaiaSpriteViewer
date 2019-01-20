@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GrisaiaExtractor;
 using Grisaia.Rules;
 using Newtonsoft.Json;
 
@@ -33,10 +32,10 @@ namespace Grisaia {
 
 
 		// Rakuen full-body sprites
-		[Name("Full"), Code("lb", "t")]
-		Full,
-		//[Name("Unknown"), Code("t")]
-		//Full_2,
+		[Name("Full"), Code("lb")]
+		Full_1,
+		[Name("Full"), Code("t")]
+		Full_2,
 	}
 
 	public enum SpriteLighting {

@@ -84,6 +84,25 @@ namespace Grisaia {
 
 		#endregion
 
+		#region Accessors
+
+		/// <summary>
+		///  Returns true if this character info contains has the specified Id.
+		/// </summary>
+		/// <param name="id">The id to check for.</param>
+		/// <returns>True if the character has the specified Id.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		public bool ContainsId(string id) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
+			return Array.IndexOf(Ids, id) != -1;
+		}
+
+		#endregion
+
 		#region ToString Override
 
 		public override string ToString() => Name + (Label != null ? " " + Label : "");
