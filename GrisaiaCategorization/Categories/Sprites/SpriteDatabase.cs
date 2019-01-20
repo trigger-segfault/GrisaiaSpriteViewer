@@ -163,6 +163,7 @@ namespace Grisaia.Categories.Sprites {
 									ignored = true;
 									break;
 								}
+
 								#region Generate Game <-> Character Category
 								if (charIsPrimary) {
 									if (!map.TryGetValue(sprite.CharacterId, out var icharCategory)) {
@@ -203,7 +204,9 @@ namespace Grisaia.Categories.Sprites {
 									}
 								}
 								#endregion
+
 								AddSprite(kif, sprite, currentCategoryInfo, currentCategory);
+								break;
 							}
 						}
 						if (ignored) {
