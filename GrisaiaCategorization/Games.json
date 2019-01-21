@@ -73,8 +73,8 @@
     },
     {
       "id": "idolmahou",
-      "jp_short": "IMSCCM",
-      "en_short": "IMGCCM",
+      "jp_short": "Idol Mahou Shoujo",
+      "en_short": "Idol Magical Girl",
       "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru",
       "en_name": "Idol Magical Girl Chiru Chiru Michiru",
       "steam_id": null,
@@ -84,8 +84,8 @@
     },
     {
       "id": "idolmahou1",
-      "jp_short": "IMSCCM (Part 1)",
-      "en_short": "IMGCCM (Part 1)",
+      "jp_short": "Idol Mahou Shoujo (P1)",
+      "en_short": "Idol Magical Girl (P1)",
       "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru (Part 1)",
       "en_name": "Idol Magical Girl Chiru Chiru Michiru (Part 1)",
       "steam_id": 377710,
@@ -95,8 +95,8 @@
     },
     {
       "id": "idolmahou2",
-      "jp_short": "IMSCCM (Part 2)",
-      "en_short": "IMGCCM (Part 2)",
+      "jp_short": "Idol Mahou Shoujo (P2)",
+      "en_short": "Idol Magical Girl (P2)",
       "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru (Part 2)",
       "en_name": "Idol Magical Girl Chiru Chiru Michiru (Part 2)",
       "steam_id": 377720,

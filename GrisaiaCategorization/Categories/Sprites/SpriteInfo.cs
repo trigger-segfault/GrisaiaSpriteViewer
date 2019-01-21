@@ -44,7 +44,7 @@ namespace Grisaia.Categories.Sprites {
 		Default = 0,
 		[Name("None")]
 		None = 1,
-		// There has to be better terms to use than these. Somebody help.
+		// There HAS to be better terms to use than these. Somebody please help.
 		[Name("Half")]
 		Half = 2,
 		[Name("Full")]
