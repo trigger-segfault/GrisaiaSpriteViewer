@@ -2,15 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
-	/// A Cache for the lookup files of a KIF INT archive.
+	///  A Cache for the lookup files of a KIF INT archive.
 	/// </summary>
-	public class KifintLookup : IEnumerable<KifintEntry> {
+	public sealed class KifintLookup : IEnumerable<KifintEntry> {
 		#region Constants
 
 		public const string Extension = ".intlookup";
@@ -37,13 +34,7 @@ namespace Grisaia.Asmodean {
 		internal KifintLookup() { }
 
 		#endregion
-
-		/*internal void Merge(IntFile intFile) {
-			intFiles.Add(intFile);
-			foreach (KifintEntry entry in intFile) {
-				masterEntries.Add(entry.FileName, entry);
-			}
-		}*/
+		
 		internal void Merge(Kifint intFile) {
 			intFiles.Add(intFile);
 			foreach (KifintEntry entry in intFile) {
@@ -67,16 +58,6 @@ namespace Grisaia.Asmodean {
 			using (var stream = File.OpenWrite(Path.ChangeExtension(filePath, Extension)))
 				Save(stream);
 		}
-		/*public void Save(Stream stream) {
-			BinaryWriter writer = new BinaryWriter(stream);
-			writer.Write(Header.ToCharArray());
-			writer.Write(Version);
-			
-			writer.Write(intFiles.Count);
-			foreach (IntFile intFile in intFiles) {
-				intFile.Write(writer);
-			}
-		}*/
 		public void Save(Stream stream) {
 			BinaryWriter writer = new BinaryWriter(stream);
 			writer.Write(Header.ToCharArray());
@@ -119,26 +100,5 @@ namespace Grisaia.Asmodean {
 			}
 			return lookup;
 		}
-		/*private KifintLookup(Stream stream, string installDir) {
-			BinaryReader reader = new BinaryReader(stream);
-			string header = new string(reader.ReadChars(Header.Length));
-			if (header != Header)
-				throw new Exception("Not a KIFINT Lookup file!");
-			int version = reader.ReadInt32();
-			switch (version) {
-			case Version:
-				int count = reader.ReadInt32();
-				for (int i = 0; i < count; i++) {
-					Kifint intFile = Kifint.Read(reader, version, installDir);
-					intFiles.Add(intFile);
-					foreach (KifintEntry entry in intFile) {
-						masterEntries.Add(entry.FileName, entry);
-					}
-				}
-				break;
-			default:
-				throw new Exception("Unsupported KIFINT Lookup file version!");
-			}
-		}*/
 	}
 }

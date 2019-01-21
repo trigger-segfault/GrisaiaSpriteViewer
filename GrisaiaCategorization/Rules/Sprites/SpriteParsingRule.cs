@@ -1,37 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Grisaia.Categories.Sprites;
 
-namespace Grisaia.Rules {
+namespace Grisaia.Rules.Sprites {
 	/// <summary>
 	/// 
 	/// </summary>
 	/// 
 	/// <remarks>
-	/// Sprite Rules:
-	/// Tmic01f_01
-	/// |\ /||| |+- Part: 1-indexed (1-9,a-z,-,+,=)
-	/// | | ||| +- PartType: number of padded 0's, No padded 0's is valid
-	/// | | ||+- Distance: code (optional, SpriteDistance)
-	/// | | |+- Value: 1-indexed (1-9,a-z,-,+,=) (occasionally 0-indexed)
-	/// | | |+- Pose:  (Value > 3 ? ((Value - 1) % 3) + 1 : value) (+1 because of occasional 0-indexed)
-	/// | | |+- Blush: (Value > 3 ? ((Value - 1) / 3) : value)
-	/// | | +- Lighting: code (SpriteLighting)
-	/// | +- CharacterId (see Characters.json)
-	/// +- Sprite Identifier (always T)
-	/// 
-	/// " == default rule
-	/// 
-	/// TmicflyL_04
-	/// "\ /\ /| ""
-	///   |  | +- Size: code (SpriteDistance)
-	///   |  +- Flying identifier (always fly, used for unique character identifier)
-	///   |  +- No Lighing, Pose, or Distance
-	///   +- CharacterId (always mic, Michiru)
+	///  Sprite Rules:
+	///  Tmic01f_01
+	///  |\ /||| |+- Part: 1-indexed (1-9,a-z,-,+,=)
+	///  | | ||| +- PartType: number of padded 0's, No padded 0's is valid
+	///  | | ||+- Distance: code (optional, SpriteDistance)
+	///  | | |+- Value: 1-indexed (1-9,a-z,-,+,=) (occasionally 0-indexed)
+	///  | | |+- Pose:  (Value > 3 ? ((Value - 1) % 3) + 1 : value) (+1 because of occasional 0-indexed)
+	///  | | |+- Blush: (Value > 3 ? ((Value - 1) / 3) : value)
+	///  | | +- Lighting: code (SpriteLighting)
+	///  | +- CharacterId (see Characters.json)
+	///  +- Sprite Identifier (always T)
 	/// </remarks>
 	public class SpriteParsingRule : ISpriteParsingRule {
 		#region Constants
@@ -68,11 +56,11 @@ namespace Grisaia.Rules {
 		#region Virtual Properties
 
 		/// <summary>
-		/// Gets the default regular expression used to parse the sprite.
+		///  Gets the default regular expression used to parse the sprite.
 		/// </summary>
 		public virtual Regex SpriteRegex { get; } = new Regex(Pattern);
 		/// <summary>
-		/// Gets the sprite should be ignored if matched.
+		///  Gets the sprite should be ignored if matched.
 		/// </summary>
 		public virtual bool IgnoreSprite => false;
 
@@ -81,52 +69,59 @@ namespace Grisaia.Rules {
 		#region Virtual Parsing
 
 		/// <summary>
-		/// Tries to parse the specified sprite based on it's path.
+		///  Tries to parse the specified sprite based on it's file name.
 		/// </summary>
-		/// <param name="path">The file path of the sprite.</param>
+		/// <param name="fileName">The file name of the sprite.</param>
 		/// <param name="sprite">The output sprite info upon success, otherwise null.</param>
 		/// <returns>True if the sprite was successfully parsed.</returns>
-		public virtual bool TryParse(string path, out SpriteInfo sprite) {
-			if (path == null)
-				throw new ArgumentNullException(nameof(path));
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="fileName"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <paramref name="fileName"/> is an empty string.
+		/// </exception>
+		public bool TryParse(string fileName, out SpriteInfo sprite) {
+			if (fileName == null)
+				throw new ArgumentNullException(nameof(fileName));
+			if (fileName.Length == 0)
+				throw new ArgumentException($"{nameof(fileName)} cannot be an empty string!", nameof(fileName));
 			sprite = null;
 			SpriteInfo s = new SpriteInfo {
-				FilePath = path,
+				FileName = fileName,
 			};
 			// Trim because some files contain spaces at the end. Yeah, it's dumb
-			string file = Path.GetFileNameWithoutExtension(path).TrimEnd();
+			string file = Path.GetFileNameWithoutExtension(fileName).TrimEnd();
 			Match m = SpriteRegex.Match(file);
-			if (m.Success) {
-				if (!TryParseCharacter(s, m))
-					return false;
-
-				if (!TryParseLighting(s, m))
-					return false;
-				if (!TryParsePose(s, m))
-					return false;
-				if (!TryParseDistance(s, m))
-					return false;
-				//if (!TryParseSize(s, m))
-				//	return false;
-
-				if (!TryParsePart(s, m))
-					return false;
-				/*s.CharacterId = m.Groups["character"].Value;
-				s.Lighting = AttributeHelper.ParseCode<SpriteLighting>(m.Groups["lighting"].Value, out _);
-				if (!PoseRule.TryParse(m.Groups["pose"].Value, out int pose))
-					return false;
-				s.Pose = pose;
-				s.Distance = AttributeHelper.ParseCode<SpriteDistance>(m.Groups["distance"].Value, out _);
-				s.Size = AttributeHelper.ParseCode<SpriteSize>(m.Groups["size"].Value, out _);
-
-				s.PartId = m.Groups["part_id"].Value.Length;
-				if (!PartRule.TryParse(m.Groups["part"].Value, out int part))
-					return false;
-				s.Part = part;*/
+			if (m.Success && TryParseMatch(s, m)) {
 				sprite = s;
 				return true;
 			}
 			return false;
+		}
+		/// <summary>
+		///  Tries to parse the sprite's Regular Expression match from <see cref="SpriteRegex"/>.<para/>
+		///  This is a virtual method that can be overridden to change how sprite categories are determined.
+		/// </summary>
+		/// <param name="s">The sprite being parsed.</param>
+		/// <param name="m">The successful Regular Expression match from <see cref="SpriteRegex"/>.</param>
+		/// <returns>True if the sprite was successfully parsed.</returns>
+		protected virtual bool TryParseMatch(SpriteInfo s, Match m) {
+			if (!TryParseCharacter(s, m))
+				return false;
+
+			if (!TryParseLighting(s, m))
+				return false;
+			if (!TryParsePose(s, m))
+				return false;
+			if (!TryParseDistance(s, m))
+				return false;
+			//if (!TryParseSize(s, m))
+			//	return false;
+
+			if (!TryParsePart(s, m))
+				return false;
+			return true;
 		}
 
 		#endregion

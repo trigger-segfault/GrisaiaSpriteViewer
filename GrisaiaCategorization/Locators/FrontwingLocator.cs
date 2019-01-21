@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using Microsoft.Win32;
 
-namespace Grisaia {
+namespace Grisaia.Locators {
 	/// <summary>
 	///  A game locator for Frontwing-installed games.
 	/// </summary>
@@ -35,7 +32,7 @@ namespace Grisaia {
 			if (!(Registry.GetValue($@"{FrontwingRegistryPath}\{registryKey}", InstallPathValue, null)
 				is string installDir))
 				return null;
-			if (!PathHelper.IsValidDirectory(installDir) && !Directory.Exists(installDir))
+			if (!PathUtils.IsValidDirectory(installDir) && !Directory.Exists(installDir))
 				return null;
 			return installDir;
 		}

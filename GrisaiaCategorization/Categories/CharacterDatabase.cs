@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Grisaia {
+namespace Grisaia.Categories {
 	/// <summary>
 	///  A database for storing all known character infos along with their information.
 	/// </summary>

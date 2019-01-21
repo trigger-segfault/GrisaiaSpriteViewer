@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Grisaia.Asmodean;
+using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 using Newtonsoft.Json;
 

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia {
 	/// <summary>A helper with extra methods for paths, files, and directories.</summary>
-	public static class PathHelper {
+	public static class PathUtils {
 
 		//-----------------------------------------------------------------------------
 		// Constants

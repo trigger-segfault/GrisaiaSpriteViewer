@@ -2,15 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  A loaded and cached KIFINT file.
 	/// </summary>
-	public partial class Kifint : IEnumerable<KifintEntry> {
+	public sealed partial class Kifint : IEnumerable<KifintEntry> {
 		#region Fields
 
 		/// <summary>
@@ -42,16 +39,6 @@ namespace Grisaia.Asmodean {
 		internal Kifint(string kifintFile) {
 			FilePath = kifintFile;
 		}
-		/*internal Kifint(string intFilePath, Exkifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
-			FilePath = intFilePath;
-			FileKey = (decrypt ? fileKey : (uint?) null);
-			foreach (var kifEntry in kifEntries) {
-				string fileName = kifEntry.FileName;
-				if (fileName != "__key__.dat") {
-					entries.Add(new KifintEntry(fileName, kifEntry, this));
-				}
-			}
-		}*/
 		internal Kifint(string intFilePath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
 			FilePath = intFilePath;
 			FileKey = (decrypt ? fileKey : (uint?) null);

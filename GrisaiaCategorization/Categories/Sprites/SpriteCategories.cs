@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Grisaia;
-using Grisaia.Asmodean;
-
+﻿
 namespace Grisaia.Categories.Sprites {
-	internal class SpriteGame : SpriteCategory<string, SpriteGame> {
+	internal sealed class SpriteGame : SpriteCategory<string, SpriteGame> {
 		#region Fields
 
 		/// <summary>
@@ -43,7 +35,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	internal class SpriteCharacter : SpriteCategory<string, SpriteCharacter> {
+	internal sealed class SpriteCharacter : SpriteCategory<string, SpriteCharacter> {
 		#region Fields
 
 		/// <summary>
@@ -74,7 +66,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	internal class SpriteCharacterLighting : SpriteCategory<SpriteLighting, SpriteCharacterLighting> {
+	internal sealed class SpriteCharacterLighting : SpriteCategory<SpriteLighting, SpriteCharacterLighting> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -90,7 +82,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	internal class SpriteCharacterDistance : SpriteCategory<SpriteDistance, SpriteCharacterDistance> {
+	internal sealed class SpriteCharacterDistance : SpriteCategory<SpriteDistance, SpriteCharacterDistance> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -106,7 +98,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	/*internal class SpriteCharacterSize : SpriteCategory<SpriteSize, SpriteCharacterSize> {
+	/*internal sealed class SpriteCharacterSize : SpriteCategory<SpriteSize, SpriteCharacterSize> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -122,7 +114,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}*/
-	internal class SpriteCharacterPose : SpriteCategory<int, SpriteCharacterPose> {
+	internal sealed class SpriteCharacterPose : SpriteCategory<int, SpriteCharacterPose> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -132,7 +124,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	internal class SpriteCharacterBlush : SpriteCategory<SpriteBlush, SpriteCharacterBlush> {
+	internal sealed class SpriteCharacterBlush : SpriteCategory<SpriteBlush, SpriteCharacterBlush> {
 		#region SpriteCategory Overrides
 
 		/// <summary>

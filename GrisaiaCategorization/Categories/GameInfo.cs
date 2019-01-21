@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Grisaia.Asmodean;
+﻿using Grisaia.Asmodean;
 using Newtonsoft.Json;
 
-namespace Grisaia {
+namespace Grisaia.Categories {
 	/// <summary>
 	///  A class storing static information about a single Grisaia game.
 	/// </summary>
@@ -78,7 +73,7 @@ namespace Grisaia {
 		///  Gets the string representation of the game info.
 		/// </summary>
 		/// <returns>The string representation of the game info.</returns>
-		public override string ToString() => JPName;
+		public override string ToString() => Id;
 
 		#endregion
 	}

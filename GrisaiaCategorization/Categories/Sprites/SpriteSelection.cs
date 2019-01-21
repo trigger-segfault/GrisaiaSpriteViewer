@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Grisaia.Categories.Sprites;
 
-namespace Grisaia {
+namespace Grisaia.Categories.Sprites {
 	/// <summary>
 	///  A group of identifiers used to select a sprite.
 	/// </summary>
-	public class SpriteSelection {
+	public sealed class SpriteSelection {
 
 		// Basics
 		/// <summary>
@@ -50,11 +51,11 @@ namespace Grisaia {
 
 	public class SpritePartSelection {
 		/// <summary>
-		/// The type identifier of the sprite part.
+		///  Gets the type identifier of the sprite part.
 		/// </summary>
 		public int TypeId { get; set; }
 		/// <summary>
-		/// The part identifier of the sprite part. -1 means no sprite is selected.
+		///  Gets the part identifier of the sprite part. -1 means no sprite is selected.
 		/// </summary>
 		public int PartId { get; set; }
 	}

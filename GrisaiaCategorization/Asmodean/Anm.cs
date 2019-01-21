@@ -10,7 +10,7 @@ namespace Grisaia.Asmodean {
 	/// <summary>
 	/// An animation loaded from an .anm file.
 	/// </summary>
-	public partial class Anm : IEnumerable<AnmFrame> {
+	public sealed partial class Anm : IEnumerable<AnmFrame> {
 		#region Fields
 
 		[JsonProperty("file_name")]

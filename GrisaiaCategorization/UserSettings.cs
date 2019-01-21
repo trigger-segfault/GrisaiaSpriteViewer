@@ -38,7 +38,7 @@ namespace Grisaia {
 		///  Gets the path to the settings file.
 		/// </summary>
 		protected override string SettingsPath {
-			get => PathHelper.CombineExecutable($"{PathHelper.ExeName}.ini");
+			get => PathUtils.CombineExecutable($"{PathUtils.ExeName}.ini");
 		}
 		/// <summary>
 		///  Gets the comments to display at the top of the ini file.

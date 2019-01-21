@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Grisaia.Asmodean;
+using Grisaia.Locators;
 using Newtonsoft.Json;
 
-namespace Grisaia {
+namespace Grisaia.Categories {
 	/// <summary>
 	///  A game database storing all Grisaia games  along with their information.
 	/// </summary>
@@ -68,7 +68,7 @@ namespace Grisaia {
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(CachePath));
-				if (string.IsNullOrWhiteSpace(value) || !PathHelper.IsValidPath(value))
+				if (string.IsNullOrWhiteSpace(value) || !PathUtils.IsValidPath(value))
 					throw new ArgumentException($"{nameof(CachePath)} is invalid!");
 				cachePath = value;
 			}

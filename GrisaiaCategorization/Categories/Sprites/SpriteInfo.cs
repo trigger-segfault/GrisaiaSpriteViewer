@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Grisaia.Rules;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Grisaia {
+namespace Grisaia.Categories.Sprites {
 	public enum SpriteDistance {
+		// tas*2 (Keiji Sakashita, Pose 2)
 		[Name("Extra Close"), Code("lll")]
 		ExtraClose = -1,
-		// tas*2 (Keiji Sakashita, Pose 2)
 		[Name("Very Close"), Code("")]
 		VeryClose,
 		[Name("Close"), Code("l")]
@@ -31,7 +23,8 @@ namespace Grisaia {
 		Large,
 
 
-		// Rakuen full-body sprites
+		// Rakuen full-body sprites.
+		// No clue what they could possibly stand for.
 		[Name("Full"), Code("lb")]
 		Full_1,
 		[Name("Full"), Code("t")]
@@ -47,9 +40,14 @@ namespace Grisaia {
 		Night = 2,
 	}
 	public enum SpriteBlush {
+		[Name("Default")]
 		Default = 0,
+		[Name("None")]
 		None = 1,
+		// There has to be better terms to use than these. Somebody help.
+		[Name("Half")]
 		Half = 2,
+		[Name("Full")]
 		Full = 3,
 	}
 
@@ -61,7 +59,7 @@ namespace Grisaia {
 		[Name("Large"), Code("L")]
 		Large,
 	}
-	public class SpriteInfo {
+	public sealed class SpriteInfo {
 
 		[JsonProperty("distance")]
 		public SpriteDistance Distance { get; internal set; }
@@ -89,10 +87,8 @@ namespace Grisaia {
 				return (SpriteBlush) ((PoseInternal - 1) / 3);
 			}
 		}
-		[JsonIgnore]
-		public string FilePath { get; internal set; }
 		[JsonProperty("file_name")]
-		public string FileName => Path.GetFileName(FilePath);
+		public string FileName { get; internal set; }
 		[JsonProperty("lighting")]
 		public SpriteLighting Lighting { get; internal set; }
 		[JsonIgnore]

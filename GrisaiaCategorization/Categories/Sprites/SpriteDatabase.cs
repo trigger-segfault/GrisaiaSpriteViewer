@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Grisaia.Asmodean;
-using Grisaia.Rules;
+using Grisaia.Rules.Sprites;
 
 namespace Grisaia.Categories.Sprites {
 	public delegate void LoadGameCallback(string status, string currentGame, double completion);

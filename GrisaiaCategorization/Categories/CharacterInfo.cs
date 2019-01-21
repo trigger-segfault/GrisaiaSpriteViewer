@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Grisaia {
+namespace Grisaia.Categories {
 	/// <summary>
 	///  Sprite part groups and other information for a specific Grisaia character.
 	/// </summary>
@@ -40,13 +37,11 @@ namespace Grisaia {
 		/// </summary>
 		[JsonProperty("sub")]
 		public string SubGroup { get; private set; }*/
-
 		/// <summary>
 		///  Gets the default part groups associated with this character.
 		/// </summary>
 		[JsonProperty("parts")]
 		public CharacterSpritePartGroup[] Parts { get; private set; }
-
 		/// <summary>
 		///  Gets the list of game-specific part groups associated with this character.
 		/// </summary>
@@ -65,7 +60,6 @@ namespace Grisaia {
 			get => Ids?.FirstOrDefault();
 			set => Ids = new string[] { value };
 		}
-
 		/// <summary>
 		///  Gets the user-friendly character's name, or title if they have no title.
 		/// </summary>
@@ -105,7 +99,11 @@ namespace Grisaia {
 
 		#region ToString Override
 
-		public override string ToString() => Name + (Label != null ? " " + Label : "");
+		/// <summary>
+		///  Gets the string representation of the character info.
+		/// </summary>
+		/// <returns>The string representation of the character info.</returns>
+		public override string ToString() => Id;
 
 		#endregion
 

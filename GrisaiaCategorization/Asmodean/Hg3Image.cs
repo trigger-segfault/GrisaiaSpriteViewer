@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Grisaia.Asmodean;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  Dimensions and other information extracted from an .hg3 file.
 	/// </summary>
-	public class Hg3Image {
+	public sealed class Hg3Image {
 		#region Fields
 
 		/// <summary>

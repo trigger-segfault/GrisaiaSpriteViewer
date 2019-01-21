@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Grisaia.Asmodean;
 
 namespace Grisaia.Categories.Sprites {
-	internal class SpritePartList : SpriteElement<int, SpritePartList>, ISpritePartList {
+	internal sealed class SpritePartList : SpriteElement<int, SpritePartList>, ISpritePartList {
 		#region Fields
 
 		/// <summary>
@@ -38,7 +34,7 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 	}
-	internal class SpritePart : SpriteElement<int, SpritePart>, ISpritePart {
+	internal sealed class SpritePart : SpriteElement<int, SpritePart>, ISpritePart {
 		#region Fields
 
 		/// <summary>

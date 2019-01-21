@@ -7,7 +7,7 @@ using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
 
-namespace Grisaia {
+namespace Grisaia.Locators {
 	/// <summary>
 	///  A class for locating an installed Steam game with the specified app Id.
 	/// </summary>
@@ -83,7 +83,7 @@ namespace Grisaia {
 			List<string> folders = new List<string>();
 			steamPath = PrettifyDir(steamPath);
 			string steamApps = Path.Combine(steamPath, SteamApps);
-			if (!PathHelper.IsValidDirectory(steamPath) || !Directory.Exists(steamApps))
+			if (!PathUtils.IsValidDirectory(steamPath) || !Directory.Exists(steamApps))
 				throw new SteamException($"Steam installation path does not have a \"{SteamApps}\" folder!");
 			folders.Add(steamApps);
 
@@ -97,7 +97,7 @@ namespace Grisaia {
 				int index = 1;
 				while (vlibs.TryGetValue((index++).ToString(), out VToken vlibToken)) {
 					string folder = vlibToken.Value<string>();
-					if (PathHelper.IsValidDirectory(folder) && Directory.Exists(folder)) {
+					if (PathUtils.IsValidDirectory(folder) && Directory.Exists(folder)) {
 						folders.Add(PrettifyDir(folder));
 					}
 				}
@@ -141,7 +141,7 @@ namespace Grisaia {
 					continue;
 				string installDir = vappToken.Value<string>();
 				installDir = Path.Combine(folder, Common, installDir);
-				if (!PathHelper.IsValidDirectory(installDir) || !Directory.Exists(installDir))
+				if (!PathUtils.IsValidDirectory(installDir) || !Directory.Exists(installDir))
 					continue;
 
 				return PrettifyDir(installDir);
@@ -167,7 +167,7 @@ namespace Grisaia {
 		/// <param name="dir">The directory to prettify.</param>
 		/// <returns>The prettified directory with the correct case-sensitive name.</returns>
 		private static string PrettifyDir(string dir) {
-			return PathHelper.GetProperDirectoryCapitalization(dir);
+			return PathUtils.GetProperDirectoryCapitalization(dir);
 		}
 
 		#endregion

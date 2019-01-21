@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GrisaiaExtractor;
 
-namespace Grisaia {
+namespace Grisaia.Categories.Backgrounds {
 
 	[Flags]
 	public enum BackgroundFlags {
@@ -71,5 +66,9 @@ namespace Grisaia {
 
 		[Name("Down"), Code("d")]
 		Down = (1 << 4),
+	}
+
+	public sealed class BackgroundInfo {
+
 	}
 }

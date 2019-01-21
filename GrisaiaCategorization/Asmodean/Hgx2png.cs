@@ -1,15 +1,11 @@
-﻿using Grisaia.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
 	public static partial class Hgx2png {

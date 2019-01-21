@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  An entry for a file in a KIF INT archive.
 	/// </summary>
-	public class KifintEntry {
+	public sealed class KifintEntry {
 		#region Fields
 		
 		/// <summary>
