@@ -233,19 +233,20 @@ namespace Grisaia.Categories {
 				if (File.Exists(lookupFile)) {
 					try {
 						game.ImageLookup = KifintLookup.Load(lookupFile, game.InstallDir);
-						Trace.WriteLine($"Loaded: {Path.GetFileName(lookupFile)}");
+						//Trace.WriteLine($"Loaded: {Path.GetFileName(lookupFile)}");
 					} catch (Exception) {
+						// Most likely version upgrade
 						Trace.WriteLine($"Building Cache: {game.Id}");
 						game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
 						game.ImageLookup.Save(lookupFile);
-						Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
+						//Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
 					}
 				}
 				else {
 					Trace.WriteLine($"Building Cache: {game.Id}");
 					game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
 					game.ImageLookup.Save(lookupFile);
-					Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
+					//Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
 				}
 			}
 		}

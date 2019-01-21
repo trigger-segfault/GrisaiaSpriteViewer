@@ -11,10 +11,6 @@ namespace Grisaia.Categories.Sprites {
 		///  Adds the sprite element to the category.
 		/// </summary>
 		/// <param name="value">The sprite element to add with its Id.</param>
-		/// 
-		/// <exception cref="ArgumentException">
-		///  A sprite element already exists with <paramref name="value"/>.Id.
-		/// </exception>
 		void Add(ISpriteElement value);
 		/// <summary>
 		///  Performs sorting of the list after it has finished being populated.

@@ -106,13 +106,13 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="id">The Id of the element to get.</param>
 		/// <param name="value">The output element if one was found, otherwise null.</param>
 		/// <returns>True if an element with the Id was found, otherwise null.</returns>
-		public bool TryGet(object id, out ISpriteCategory value) => Map.TryGetValue(id, out value);
+		public bool TryGetValue(object id, out ISpriteCategory value) => Map.TryGetValue(id, out value);
 		/// <summary>
 		///  Gets if the category contains an element with the specified Id.
 		/// </summary>
 		/// <param name="id">The Id to check for an element with.</param>
 		/// <returns>True if an element exists with the specified Id, otherwise null.</returns>
-		public bool Contains(object id) => Map.ContainsKey(id);
+		public bool ContainsKey(object id) => Map.ContainsKey(id);
 
 		#endregion
 
@@ -139,7 +139,7 @@ namespace Grisaia.Categories.Sprites {
 			ISpriteCategoryBuilder currentCategory;
 			SpriteCategoryInfo currentCategoryInfo = PrimaryCategories[1];
 			foreach (GameInfo game in GameDatabase.LocatedGames) {
-				Trace.WriteLine(game.Id);
+				Trace.WriteLine($"Categorizing: {game.Id}");
 				if (!charIsPrimary) {
 					gameCategory = new SpriteGame {
 						Id = game.Id,
@@ -175,7 +175,7 @@ namespace Grisaia.Categories.Sprites {
 									else {
 										charCategory = (SpriteCharacter) icharCategory;
 									}
-									if (!charCategory.Map.TryGetValue(game.Id, out var igameCategory)) {
+									if (!charCategory.TryGetValue(game.Id, out var igameCategory)) {
 										gameCategory = new SpriteGame {
 											Id = game.Id,
 											GameIndex = GameDatabase.IndexOf(game),
@@ -189,7 +189,7 @@ namespace Grisaia.Categories.Sprites {
 									}
 								}
 								else {
-									if (!gameCategory.Map.TryGetValue(sprite.CharacterId, out var icharCategory)) {
+									if (!gameCategory.TryGetValue(sprite.CharacterId, out var icharCategory)) {
 										charCategory = new SpriteCharacter {
 											Id = sprite.CharacterId,
 											CharacterInfo = CharacterDatabase.Get(sprite.CharacterId),
@@ -230,7 +230,7 @@ namespace Grisaia.Categories.Sprites {
 			object id;
 			foreach (var nextCategoryInfo in SecondaryCategories) {
 				id = nextCategoryInfo.GetId(sprite);
-				if (!category.TryGet(id, out var nextCategory)) {
+				if (!category.TryGetValue(id, out var nextCategory)) {
 					nextCategory = nextCategoryInfo.Create(sprite, GameDatabase, CharacterDatabase);
 					category.Add(nextCategory);
 				}
@@ -241,18 +241,19 @@ namespace Grisaia.Categories.Sprites {
 			int partType = sprite.PartType;
 			int partId = sprite.Part;
 			SpritePartList partList;
-			if (!category.TryGet(partType, out var partListElement)) {
+			if (!category.TryGetValue(partType, out var partListElement)) {
 				partList = new SpritePartList { Id = partType };
 				category.Add(partList);
 			}
 			else {
 				partList = (SpritePartList) partListElement;
 			}
-
-			if (partList.Map.TryGetValue(partId, out var existingPart))
+			
+			if (partList.TryGetValue(partId, out var existingPart)) {
+				partList.List.Remove(existingPart);
 				Trace.WriteLine($"WARNING: \"{existingPart.FileName}\" has been overwritten by \"{sprite.FileName}\"!");
+			}
 			SpritePart part = new SpritePart { Id = sprite.Part, FileName = kif.FileName };
-			partList.Map[sprite.Part] = part;
 			partList.List.Add(part);
 			SpriteCount++;
 		}
@@ -304,7 +305,7 @@ namespace Grisaia.Categories.Sprites {
 			else {
 				// Sprite part lists
 				foreach (SpritePartList partList in category.List) {
-					foreach (int typeId in partList.Map.Keys) {
+					foreach (int typeId in partList.List.Select(p => p.Id)) {
 						if (groupTypeIds.Add(typeId)) {
 							Trace.WriteLine($"WARNING: Sprite part Id {typeId} has not been defined for {g.Id}-{c.Id}!");
 						}

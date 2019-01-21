@@ -5,12 +5,7 @@ using Grisaia.Asmodean;
 namespace Grisaia.Categories.Sprites {
 	internal sealed class SpritePartList : SpriteElement<int, SpritePartList>, ISpritePartList {
 		#region Fields
-
-		/// <summary>
-		///  Gets the collection of sprite parts mapped to their Id.
-		/// </summary>
-		public Dictionary<int, ISpritePart> Map { get; } = new Dictionary<int, ISpritePart>();
-		IReadOnlyDictionary<int, ISpritePart> ISpritePartList.Map => Map;
+		
 		/// <summary>
 		///  Gets the list of sprite parts.
 		/// </summary>
@@ -25,6 +20,19 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the number of sprite parts in this list for this type.
 		/// </summary>
 		public int Count => List.Count;
+
+		#endregion
+
+		#region Accessors
+
+		public ISpritePart Get(int id) {
+			ISpritePart part = List.Find(p => p.Id == id);
+			return part ?? throw new KeyNotFoundException($"Could not find key \"{id}\"!");
+		}
+		public bool TryGetValue(int id, out ISpritePart part) {
+			part = List.Find(p => p.Id == id);
+			return part != null;
+		}
 
 		#endregion
 

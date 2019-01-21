@@ -42,8 +42,8 @@ namespace Grisaia.Asmodean {
 		#region Constructors
 
 		private KifintEntry() { }
-		internal KifintEntry(string fileName, Kifint.KIFENTRY kifEntry, Kifint kifintFile) {
-			Kifint = kifintFile;
+		internal KifintEntry(string fileName, Kifint.KIFENTRY kifEntry, Kifint kifint) {
+			Kifint = kifint;
 			FileName = fileName;
 			Offset = kifEntry.Offset;
 			Length = kifEntry.Length;
@@ -58,9 +58,9 @@ namespace Grisaia.Asmodean {
 			writer.Write(Offset);
 			writer.Write(Length);
 		}
-		internal static KifintEntry Read(BinaryReader reader, int version, Kifint intFile) {
+		internal static KifintEntry Read(BinaryReader reader, int version, Kifint kifint) {
 			return new KifintEntry {
-				Kifint = intFile,
+				Kifint = kifint,
 				FileName = reader.ReadString(),
 				Offset = reader.ReadUInt32(),
 				Length = reader.ReadInt32(),

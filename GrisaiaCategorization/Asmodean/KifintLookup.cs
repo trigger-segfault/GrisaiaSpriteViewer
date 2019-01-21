@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
@@ -18,14 +19,13 @@ namespace Grisaia.Asmodean {
 
 		#region Fields
 		
-		private readonly List<Kifint> intFiles = new List<Kifint>();
-		internal readonly Dictionary<string, KifintEntry> masterEntries = new Dictionary<string, KifintEntry>();
+		private readonly List<Kifint> kifints = new List<Kifint>();
 
 		#endregion
 
 		#region Properties
-
-		public int Count => masterEntries.Count;
+			
+		public int Count => kifints.Sum(ki => ki.Count);
 
 		#endregion
 
@@ -35,23 +35,40 @@ namespace Grisaia.Asmodean {
 
 		#endregion
 		
-		internal void Merge(Kifint intFile) {
-			intFiles.Add(intFile);
-			foreach (KifintEntry entry in intFile) {
-				masterEntries.Add(entry.FileName, entry);
+		internal void Merge(Kifint kifint) => kifints.Add(kifint);
+
+		public KifintEntry this[string key] {
+			get {
+				foreach (Kifint kifint in kifints) {
+					if (kifint.Entries.TryGetValue(key, out var entry))
+						return entry;
+				}
+				throw new KeyNotFoundException($"Could not find the key \"{key}\"!");
 			}
 		}
 
-		public KifintEntry this[string key] => masterEntries[key];
-
-		public bool Contains(string key) {
-			return masterEntries.ContainsKey(key);
+		public bool ContainsKey(string key) {
+			foreach (Kifint kifint in kifints) {
+				if (kifint.Entries.ContainsKey(key))
+					return true;
+			}
+			return false;
 		}
 		public bool TryGetValue(string key, out KifintEntry entry) {
-			return masterEntries.TryGetValue(key, out entry);
+			foreach (Kifint kifint in kifints) {
+				if (kifint.Entries.TryGetValue(key, out entry))
+					return true;
+			}
+			entry = null;
+			return false;
 		}
-		public IEnumerator<KifintEntry> GetEnumerator() => masterEntries.Values.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => masterEntries.Values.GetEnumerator();
+		public IEnumerator<KifintEntry> GetEnumerator() {
+			foreach (Kifint kifint in kifints) {
+				foreach (KifintEntry entry in kifint.Entries.Values)
+					yield return entry;
+			}
+		}
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 
 		public void Save(string filePath) {
@@ -63,9 +80,9 @@ namespace Grisaia.Asmodean {
 			writer.Write(Header.ToCharArray());
 			writer.Write(Version);
 			
-			writer.Write(intFiles.Count);
-			foreach (Kifint intFile in intFiles) {
-				intFile.Write(writer);
+			writer.Write(kifints.Count);
+			foreach (Kifint kifint in kifints) {
+				kifint.Write(writer);
 			}
 		}
 
@@ -88,11 +105,8 @@ namespace Grisaia.Asmodean {
 			case Version:
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
-					Kifint intFile = Kifint.Read(reader, version, installDir);
-					lookup.intFiles.Add(intFile);
-					foreach (KifintEntry entry in intFile) {
-						lookup.masterEntries.Add(entry.FileName, entry);
-					}
+					Kifint kifint = Kifint.Read(reader, version, installDir);
+					lookup.kifints.Add(kifint);
 				}
 				break;
 			default:

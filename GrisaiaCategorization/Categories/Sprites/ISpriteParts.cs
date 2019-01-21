@@ -11,10 +11,6 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		new int Id { get; }
 		/// <summary>
-		///  Gets the collection of sprite parts mapped to their Id.
-		/// </summary>
-		IReadOnlyDictionary<int, ISpritePart> Map { get; }
-		/// <summary>
 		///  Gets the list of sprite parts.
 		/// </summary>
 		IReadOnlyList<ISpritePart> List { get; }
@@ -22,6 +18,13 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the number of sprite parts in this list for this type.
 		/// </summary>
 		int Count { get; }
+
+		#endregion
+
+		#region Accessors
+
+		ISpritePart Get(int id);
+		bool TryGetValue(int id, out ISpritePart part);
 
 		#endregion
 	}

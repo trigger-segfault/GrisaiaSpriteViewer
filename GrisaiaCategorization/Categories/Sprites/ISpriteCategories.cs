@@ -30,10 +30,6 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		SpriteCategoryInfo Category { get; }
 		/// <summary>
-		///  Gets the collection of elements in the category mapped to their respective Ids.
-		/// </summary>
-		IReadOnlyDictionary<object, ISpriteElement> Map { get; }
-		/// <summary>
 		///  Gets the sorted list of elements in the category.
 		/// </summary>
 		IReadOnlyList<ISpriteElement> List { get; }
@@ -64,13 +60,13 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="id">The Id of the element to get.</param>
 		/// <param name="value">The output element if one was found, otherwise null.</param>
 		/// <returns>True if an element with the Id was found, otherwise null.</returns>
-		bool TryGet(object id, out ISpriteElement value);
+		bool TryGetValue(object id, out ISpriteElement value);
 		/// <summary>
 		///  Gets if the category contains an element with the specified Id.
 		/// </summary>
 		/// <param name="id">The Id to check for an element with.</param>
 		/// <returns>True if an element exists with the specified Id, otherwise null.</returns>
-		bool Contains(object id);
+		bool ContainsKey(object id);
 
 		#endregion
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Grisaia.Asmodean {
@@ -13,15 +14,15 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Gets the file path to the KIFINT file.
 		/// </summary>
-		public string FilePath { get; internal set; }
+		public string FilePath { get; private set; }
 		/// <summary>
 		///  Gets the file key used for decryption. Null if there is no encryption.
 		/// </summary>
-		public uint? FileKey { get; internal set; }
+		public uint? FileKey { get; private set; }
 		/// <summary>
 		///  Gets the list of entries in the KIFINT file.
 		/// </summary>
-		public IReadOnlyList<KifintEntry> Entries { get; internal set; }
+		public IReadOnlyDictionary<string, KifintEntry> Entries { get; private set; }
 
 		#endregion
 
@@ -36,34 +37,18 @@ namespace Grisaia.Asmodean {
 
 		#region Constructors
 
-		internal Kifint(string kifintFile) {
-			FilePath = kifintFile;
-		}
-		internal Kifint(string intFilePath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
-			FilePath = intFilePath;
+		private Kifint() { }
+		internal Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
+			FilePath = kifintPath;
 			FileKey = (decrypt ? fileKey : (uint?) null);
-			List<KifintEntry> entries = new List<KifintEntry>();
+			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>();
 			foreach (var kifEntry in kifEntries) {
 				string fileName = kifEntry.FileName;
 				if (fileName != "__key__.dat") {
-					entries.Add(new KifintEntry(fileName, kifEntry, this));
+					entries.Add(fileName, new KifintEntry(fileName, kifEntry, this));
 				}
 			}
-			Entries = Array.AsReadOnly(entries.ToArray());
-		}
-		private Kifint(BinaryReader reader, int version, string installDir) {
-			FilePath = Path.Combine(installDir, reader.ReadString());
-
-			bool decrypt = reader.ReadBoolean();
-			FileKey = reader.ReadUInt32();
-			if (!decrypt) FileKey = null;
-
-			int count = reader.ReadInt32();
-			KifintEntry[] entries = new KifintEntry[count];
-			for (int i = 0; i < count; i++) {
-				entries[i] = KifintEntry.Read(reader, version, this);
-			}
-			Entries = Array.AsReadOnly(entries);
+			Entries = new ReadOnlyDictionary<string, KifintEntry>(entries);
 		}
 
 		#endregion
@@ -77,20 +62,34 @@ namespace Grisaia.Asmodean {
 			writer.Write(FileKey ?? 0);
 
 			writer.Write(Entries.Count);
-			foreach (KifintEntry entry in Entries) {
+			foreach (KifintEntry entry in Entries.Values) {
 				entry.Write(writer);
 			}
 		}
 		internal static Kifint Read(BinaryReader reader, int version, string installDir) {
-			return new Kifint(reader, version, installDir);
+			Kifint kifint = new Kifint {
+				FilePath = Path.Combine(installDir, reader.ReadString()),
+			};
+			bool decrypt = reader.ReadBoolean();
+			kifint.FileKey = reader.ReadUInt32();
+			if (!decrypt) kifint.FileKey = null;
+
+			int count = reader.ReadInt32();
+			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>();
+			for (int i = 0; i < count; i++) {
+				KifintEntry entry = KifintEntry.Read(reader, version, kifint);
+				entries.Add(entry.FileName, entry);
+			}
+			kifint.Entries = new ReadOnlyDictionary<string, KifintEntry>(entries);
+			return kifint;
 		}
 
 		#endregion
 
 		#region IEnumerable Implementation
 
-		public IEnumerator<KifintEntry> GetEnumerator() => Entries.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => Entries.GetEnumerator();
+		public IEnumerator<KifintEntry> GetEnumerator() => Entries.Values.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		
 		#endregion
 	}
