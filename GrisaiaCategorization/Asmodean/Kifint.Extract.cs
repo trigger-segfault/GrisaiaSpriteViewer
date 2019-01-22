@@ -15,20 +15,12 @@ namespace Grisaia.Asmodean {
 			string wildcard = EnumInfo<KifintType>.GetAttribute<KifintWildcardAttribute>(type).Wildcard;
 			foreach (string kifIntPath in Directory.GetFiles(installDir, wildcard)) {
 				using (Stream stream = File.OpenRead(kifIntPath))
-					lookup.Merge(Decrypt(stream, kifIntPath, Path.Combine(installDir, exeName)));
-			}
-			return lookup;
-		}
-		public static KifintLookup DecryptImages(string installDir, string exeName) {
-			KifintLookup lookup = new KifintLookup();
-			foreach (string kifIntPath in Directory.GetFiles(installDir, "image*.int")) {
-				using (Stream stream = File.OpenRead(kifIntPath))
-					lookup.Merge(Decrypt(stream, kifIntPath, Path.Combine(installDir, exeName)));
+					lookup.Merge(Decrypt(type, stream, kifIntPath, Path.Combine(installDir, exeName)));
 			}
 			return lookup;
 		}
 
-		private static Kifint Decrypt(Stream stream, string kifIntPath, string exeName) {
+		private static Kifint Decrypt(KifintType type, Stream stream, string kifIntPath, string exeName) {
 			string binName = Path.ChangeExtension(exeName, ".bin");
 			if (File.Exists(binName))
 				exeName = binName;
@@ -70,7 +62,7 @@ namespace Grisaia.Asmodean {
 				}
 			}
 			
-			return new Kifint(kifIntPath, entries, decrypt, fileKey);
+			return new Kifint(kifIntPath, entries, decrypt, fileKey, type);
 		}
 
 

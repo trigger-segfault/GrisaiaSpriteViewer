@@ -212,16 +212,13 @@ namespace Grisaia.Categories {
 
 		public void ClearCache() {
 			string cachePath = this.cachePath;
-			if (Directory.Exists(cachePath)) {
+			if (Directory.Exists(cachePath))
 				Directory.Delete(cachePath, true);
-				/*foreach (var game in gameList) {
-					string lookupFile = GetLookupFile(cachePath, game);
-					if (File.Exists(lookupFile)) {
-						File.Delete(lookupFile);
-						Trace.WriteLine($"Deleted: {Path.GetFileName(lookupFile)}");
-					}
-				}*/
-			}
+		}
+
+		public void RebuildCache() {
+			ClearCache();
+			LoadCache();
 		}
 
 		public void LoadCache() {
@@ -234,25 +231,6 @@ namespace Grisaia.Categories {
 				game.ImageLookup = LoadLookup(KifintType.Image, cachePath, game);
 				game.UpdateLookup = LoadLookup(KifintType.Update, cachePath, game);
 				game.ImageLookup.Update(game.UpdateLookup);
-				/*string lookupFile = GetLookupFile(cachePath, game);
-				if (File.Exists(lookupFile)) {
-					try {
-						game.ImageLookup = KifintLookup.Load(lookupFile, game.InstallDir);
-						//Trace.WriteLine($"Loaded: {Path.GetFileName(lookupFile)}");
-					} catch (Exception) {
-						// Most likely version upgrade
-						Trace.WriteLine($"Building Cache: {game.Id}");
-						game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
-						game.ImageLookup.Save(lookupFile);
-						//Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
-					}
-				}
-				else {
-					Trace.WriteLine($"Building Cache: {game.Id}");
-					game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
-					game.ImageLookup.Save(lookupFile);
-					//Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
-				}*/
 			}
 		}
 
@@ -278,9 +256,6 @@ namespace Grisaia.Categories {
 		private string GetLookupFile(KifintType type, string cachePath, GameInfo game) {
 			string name = $"{game.Id}-{type.ToString().ToLower()}";
 			return Path.Combine(cachePath, Path.ChangeExtension(name, KifintLookup.Extension));
-		}
-		private string GetLookupFile(string cachePath, GameInfo game) {
-			return Path.Combine(cachePath, Path.ChangeExtension(game.Id, KifintLookup.Extension));
 		}
 
 		#endregion

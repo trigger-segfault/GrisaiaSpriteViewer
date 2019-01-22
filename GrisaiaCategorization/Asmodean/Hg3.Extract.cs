@@ -10,7 +10,6 @@ using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
 	partial class Hg3 {
-
 		public static Hg3 Extract(string hg3File, string directory, bool saveFrames, bool expand) {
 			using (var stream = File.OpenRead(hg3File))
 				return Extract(stream, directory, hg3File, saveFrames, expand);
@@ -169,93 +168,5 @@ namespace Grisaia.Asmodean {
 				handle.Free();
 			}
 		}
-
-		#region Old Code
-		private static Bitmap ProcessImage(BinaryReader reader, HG3STDINFO std, HG3IMG img, bool expand) {
-			int depthBytes = (std.DepthBits + 7) / 8;
-			int stride = (std.Width * depthBytes + 3) / 4 * 4;
-			int width = std.Width;
-			int height = std.Height;
-
-			byte[] bufferTmp = reader.ReadBytes(img.DataLength);
-			byte[] cmdBufferTmp = reader.ReadBytes(img.CmdLength);
-			byte[] rgbaBuffer;
-
-			ProcessImageNative(
-				bufferTmp,
-				img.DataLength,
-				img.OriginalDataLength,
-				cmdBufferTmp,
-				img.CmdLength,
-				img.OriginalCmdLength,
-				out IntPtr pRgbaBuffer,
-				out int rgbaLength,
-				std.Width,
-				std.Height,
-				depthBytes);
-
-			if (rgbaLength != std.Height * stride) {
-				Console.WriteLine();
-			}
-
-			try {
-				//rgbaBuffer = new byte[rgbaLength];
-				//Marshal.Copy(pRgbaBuffer, rgbaBuffer, 0, rgbaLength);
-				//Marshal.FreeHGlobal(pRgbaBuffer);
-
-				if (expand) {
-					int offsetXBytes = std.OffsetX * depthBytes;
-
-					int expStride = (std.TotalWidth * depthBytes + 3) / 4 * 4;
-					byte[] expBuffer = new byte[std.TotalHeight * expStride];
-
-					for (int y = 0; y < std.Height; y++) {
-						IntPtr src = pRgbaBuffer + y * stride;
-						//int src = y * stride;
-						int dst = (std.Height - (y + 1) + std.OffsetY) * expStride + offsetXBytes;
-						Marshal.Copy(src, expBuffer, dst, stride);
-						//Array.Copy(rgbaBuffer, src, expBuffer, dst, stride);
-					}
-
-					width = std.TotalWidth;
-					height = std.TotalHeight;
-					rgbaBuffer = expBuffer;
-				}
-				else {
-					//byte[] flipBuffer = new byte[rgbaBuffer.Length];
-					byte[] flipBuffer = new byte[rgbaLength];
-					for (int y = 0; y < std.Height; y++) {
-						IntPtr src = pRgbaBuffer + y * stride;
-						//int src = y * stride;
-						int dst = (std.Height - (y + 1)) * stride;
-						Marshal.Copy(src, flipBuffer, dst, stride);
-						//Array.Copy(rgbaBuffer, src, flipBuffer, dst, stride);
-					}
-					rgbaBuffer = flipBuffer;
-				}
-			} finally {
-				Marshal.FreeHGlobal(pRgbaBuffer);
-			}
-
-			return CreateBitmap(rgbaBuffer, width, height, std.DepthBits);
-		}
-		private static Bitmap CreateBitmap(byte[] buffer, int width, int height, int depthBits) {
-			GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-			try {
-				IntPtr scan0 = handle.AddrOfPinnedObject();
-				int depthBytes = (depthBits + 7) / 8;
-				int stride = (width * depthBytes + 3) / 4 * 4;
-				PixelFormat format;
-				switch (depthBits) {
-				case 32: format = PixelFormat.Format32bppArgb; break;
-				case 24: format = PixelFormat.Format24bppRgb; break;
-				default: throw new Exception($"Unsupported depth bits {depthBits}!");
-				}
-				return new Bitmap(width, height, stride, format, scan0);
-			} finally {
-				handle.Free();
-			}
-		}
-		#endregion
 	}
 }

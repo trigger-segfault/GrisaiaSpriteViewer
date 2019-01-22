@@ -18,7 +18,7 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  The current highest known file version for the KIFINT lookup.
 		/// </summary>
-		public const int Version = 3;
+		public const int Version = 4;
 		/// <summary>
 		///  The required file signature to load this file.
 		/// </summary>
@@ -40,6 +40,10 @@ namespace Grisaia.Asmodean {
 		///  The KIFINT lookup for all update##.int archives.
 		/// </summary>
 		private KifintLookup updateLookup;
+		/// <summary>
+		///  Gets the archive type associated with this lookup.
+		/// </summary>
+		public KifintType ArchiveType { get; private set; }
 
 		#endregion
 
@@ -58,6 +62,12 @@ namespace Grisaia.Asmodean {
 		///  Constructs an unassigned KIFINT archive lookup.
 		/// </summary>
 		internal KifintLookup() { }
+		/// <summary>
+		///  Constructs an unassigned KIFINT archive lookup with just the archive type.
+		/// </summary>
+		internal KifintLookup(KifintType type) {
+			ArchiveType = type;
+		}
 
 		#endregion
 
@@ -94,9 +104,6 @@ namespace Grisaia.Asmodean {
 			foreach (Kifint updateKifint in update.kifints) {
 				updateKifints.Insert(0, updateKifint);
 			}
-			/*foreach (Kifint kifint in kifints) {
-				kifint.Update(update);
-			}*/
 		}
 
 		#endregion
@@ -161,7 +168,9 @@ namespace Grisaia.Asmodean {
 			BinaryWriter writer = new BinaryWriter(stream);
 			writer.Write(Signature.ToCharArray());
 			writer.Write(Version);
-			
+
+			writer.Write(ArchiveType.ToString());
+
 			writer.Write(kifints.Count);
 			foreach (Kifint kifint in kifints) {
 				kifint.Write(writer);
@@ -205,7 +214,9 @@ namespace Grisaia.Asmodean {
 			if (installDir == null)
 				throw new ArgumentNullException(nameof(installDir));
 			if (string.IsNullOrWhiteSpace(installDir))
-				throw new ArgumentException($"{nameof(installDir)} cannot be empty or whitespace!", nameof(installDir));
+				throw new ArgumentException($"{nameof(installDir)} cannot be empty or whitespace!",
+					nameof(installDir));
+
 			KifintLookup lookup = new KifintLookup();
 			BinaryReader reader = new BinaryReader(stream);
 			string header = new string(reader.ReadChars(Signature.Length));
@@ -214,9 +225,11 @@ namespace Grisaia.Asmodean {
 			int version = reader.ReadInt32();
 			switch (version) {
 			case Version:
+				KifintType type = (KifintType) Enum.Parse(typeof(KifintType), reader.ReadString()); ;
+				lookup.ArchiveType = type;
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
-					Kifint kifint = Kifint.Read(reader, version, installDir);
+					Kifint kifint = Kifint.Read(reader, version, installDir, type);
 					lookup.kifints.Add(kifint);
 					lookup.updateKifints.Add(kifint);
 				}
@@ -226,9 +239,6 @@ namespace Grisaia.Asmodean {
 			}
 			return lookup;
 		}
-		/*public static bool Exists(string filePath) {
-			return File.Exists(Path.ChangeExtension(filePath, Extension));
-		}*/
 
 		#endregion
 
@@ -246,11 +256,9 @@ namespace Grisaia.Asmodean {
 		/// <returns>The enumerator for all entries.</returns>
 		public IEnumerator<KifintEntry> GetEnumerator() {
 			var enumerable = Enumerable.Empty<KifintEntry>();
-			foreach (Kifint kifint in updateKifints) //{
+			foreach (Kifint kifint in updateKifints) {
 				enumerable = enumerable.Concat(kifint);
-			//	foreach (KifintEntry entry in kifint)
-			//		yield return entry;
-			//}
+			}
 			return enumerable.GetEnumerator();
 		}
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

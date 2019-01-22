@@ -23,11 +23,10 @@ namespace Grisaia.Asmodean {
 		///  Gets the list of entries in the KIFINT archive.
 		/// </summary>
 		public IReadOnlyDictionary<string, KifintEntry> Entries { get; private set; }
-		/*/// <summary>
-		///  Gets the list of entries in the KIFINT archive that have been updated with update##.int.
+		/// <summary>
+		///  Gets the type associated with this archive.
 		/// </summary>
-		public IReadOnlyDictionary<string, KifintEntry> UpdateEntries { get; private set; }
-			= new ReadOnlyDictionary<string, KifintEntry>(new Dictionary<string, KifintEntry>());*/
+		public KifintType ArchiveType { get; private set; }
 
 		#endregion
 
@@ -57,9 +56,10 @@ namespace Grisaia.Asmodean {
 		/// <param name="kifEntries">The array of unobfuscated KIFENTRIES inside the KIFINT.</param>
 		/// <param name="decrypt">True if the file key is required.</param>
 		/// <param name="fileKey">The file key when <paramref name="decrypt"/> is true.</param>
-		internal Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
+		internal Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey, KifintType type) {
 			FilePath = kifintPath;
 			FileKey = (decrypt ? fileKey : (uint?) null);
+			ArchiveType = type;
 			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>(kifEntries.Length);
 			foreach (var kifEntry in kifEntries) {
 				string fileName = kifEntry.FileName;
@@ -111,31 +111,6 @@ namespace Grisaia.Asmodean {
 
 		#endregion
 
-		/*#region Update
-
-		/// <summary>
-		///  Passes through all entries in the update and adds them to <see cref="UpdateEntries"/> if exist in
-		///  <see cref="Entries"/>.
-		/// </summary>
-		/// <param name="update">The KIFINT lookup with all of the loaded update##.int archives.</param>
-		internal void Update(KifintLookup update) {
-			Dictionary<string, KifintEntry> updateEntries = new Dictionary<string, KifintEntry>();
-			foreach (KifintEntry entry in update) {
-				if (Entries.ContainsKey(entry.FileName)) {
-					if (entry.FileName[0] == 'T')
-						continue;
-					//updateEntries[entry.FileName] = entry;
-					//updateEntries.Add(entry.FileName, entry);
-				}
-				else if (entry.FileName.EndsWith(".hg3")) {
-					continue;
-				}
-			}
-			//UpdateEntries = new ReadOnlyDictionary<string, KifintEntry>(updateEntries);
-		}
-
-		#endregion*/
-
 		#region I/O
 
 		/// <summary>
@@ -160,9 +135,10 @@ namespace Grisaia.Asmodean {
 		/// <param name="version"></param>
 		/// <param name="installDir">The installation directory where the archive is located.</param>
 		/// <returns>The loaded cached KIFINT.</returns>
-		internal static Kifint Read(BinaryReader reader, int version, string installDir) {
+		internal static Kifint Read(BinaryReader reader, int version, string installDir, KifintType type) {
 			Kifint kifint = new Kifint {
 				FilePath = Path.Combine(installDir, reader.ReadString()),
+				ArchiveType = type,
 			};
 			bool decrypt = reader.ReadBoolean();
 			kifint.FileKey = reader.ReadUInt32();
@@ -187,24 +163,7 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		/// <returns>The KIFINT archive's entry enumerator.</returns>
 		public IEnumerator<KifintEntry> GetEnumerator() => Entries.Values.GetEnumerator();
-		/*public IEnumerator<KifintEntry> GetEnumerator() {
-			if (UpdateEntries.Count != 0)
-				return GetUpdateEnumerator();
-			return Entries.Values.GetEnumerator();
-		}*/
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		/*/// <summary>
-		///  Gets the enumerator for the cached KIFINT archive's entries that overwrites updated entries.
-		/// </summary>
-		/// <returns>The KIFINT archive's entry enumerator that overwrites updated entries.</returns>
-		private IEnumerator<KifintEntry> GetUpdateEnumerator() {
-			foreach (KifintEntry entry in Entries.Values) {
-				if (UpdateEntries.TryGetValue(entry.FileName, out KifintEntry updateEntry))
-					yield return updateEntry;
-				yield return entry;
-			}
-		}*/
 		
 		#endregion
 	}

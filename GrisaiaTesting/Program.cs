@@ -74,7 +74,7 @@ namespace Grisaia.Testing {
 			Environment.Exit(0);*/
 
 			gameDb.LoadCache();
-			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
+			/*Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
 			var game = gameDb.Get("kajitsu");
 			KifintEntry entry = game.ImageLookup["_conf_txt.hg3"];
 			string dir = Path.Combine(gameDb.CachePath, "_conf_txt");
@@ -85,7 +85,7 @@ namespace Grisaia.Testing {
 			if (!Directory.Exists(dir))
 				Directory.CreateDirectory(dir);
 			entry.ExtractHg3(dir, true, true);
-			hg3.SaveJsonToDirectory(gameDb.CachePath);
+			hg3.SaveJsonToDirectory(gameDb.CachePath);*/
 
 			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
 			var spriteDb = new SpriteDatabase(gameDb, charDb,

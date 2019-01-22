@@ -21,8 +21,8 @@ namespace Grisaia.Asmodean {
 	///  The types of known KIFINT archive files.
 	/// </summary>
 	public enum KifintType {
-		/// <summary>No file type. This is usually invalid.</summary>
-		None = 0,
+		/// <summary>No special file type. Use default methods for handling the archive.</summary>
+		Unknown = 0,
 
 		/// <summary>.ogg background music</summary>
 		[KifintWildcard("bgm*.int")]
