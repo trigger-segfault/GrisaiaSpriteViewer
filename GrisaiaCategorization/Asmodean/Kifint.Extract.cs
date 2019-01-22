@@ -11,7 +11,7 @@ using Grisaia.Utils;
 namespace Grisaia.Asmodean {
 	partial class Kifint {
 		public static KifintLookup Decrypt(KifintType type, string installDir, string exeName) {
-			KifintLookup lookup = new KifintLookup();
+			KifintLookup lookup = new KifintLookup(type);
 			string wildcard = EnumInfo<KifintType>.GetAttribute<KifintWildcardAttribute>(type).Wildcard;
 			foreach (string kifIntPath in Directory.GetFiles(installDir, wildcard)) {
 				using (Stream stream = File.OpenRead(kifIntPath))
