@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +11,8 @@ namespace Grisaia.Categories {
 	/// <summary>
 	///  A game database storing all Grisaia games  along with their information.
 	/// </summary>
-	public sealed class GameDatabase {
+	[JsonObject]
+	public sealed class GameDatabase : IReadOnlyCollection<GameInfo> {
 		#region Fields
 
 		/// <summary>
@@ -88,7 +90,7 @@ namespace Grisaia.Categories {
 		/// </summary>
 		[JsonProperty("games")]
 		public IReadOnlyList<GameInfo> Games {
-			get => gameList;
+			get => readonlyList;
 			private set {
 				gameList.Clear();
 				gameMap.Clear();
@@ -170,7 +172,7 @@ namespace Grisaia.Categories {
 		///  <paramref name="id"/> is null.
 		/// </exception>
 		/// <exception cref="KeyNotFoundException">
-		///  No game with the key '<paramref name="id"/>' was found.
+		///  No game with the key of <paramref name="id"/> was found.
 		/// </exception>
 		public GameInfo Get(string id) {
 			return gameMap[id];
@@ -211,13 +213,14 @@ namespace Grisaia.Categories {
 		public void ClearCache() {
 			string cachePath = this.cachePath;
 			if (Directory.Exists(cachePath)) {
-				foreach (var game in gameList) {
+				Directory.Delete(cachePath, true);
+				/*foreach (var game in gameList) {
 					string lookupFile = GetLookupFile(cachePath, game);
 					if (File.Exists(lookupFile)) {
 						File.Delete(lookupFile);
 						Trace.WriteLine($"Deleted: {Path.GetFileName(lookupFile)}");
 					}
-				}
+				}*/
 			}
 		}
 
@@ -228,8 +231,10 @@ namespace Grisaia.Categories {
 			
 			for (int i = 0; i < LocatedCount; i++) {
 				var game = LocatedGames[i];
-				Trace.WriteLine($"Loading Cache: {game.Id}");
-				string lookupFile = GetLookupFile(cachePath, game);
+				game.ImageLookup = LoadLookup(KifintType.Image, cachePath, game);
+				game.UpdateLookup = LoadLookup(KifintType.Update, cachePath, game);
+				game.ImageLookup.Update(game.UpdateLookup);
+				/*string lookupFile = GetLookupFile(cachePath, game);
 				if (File.Exists(lookupFile)) {
 					try {
 						game.ImageLookup = KifintLookup.Load(lookupFile, game.InstallDir);
@@ -247,13 +252,66 @@ namespace Grisaia.Categories {
 					game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
 					game.ImageLookup.Save(lookupFile);
 					//Trace.WriteLine($"Saved: {Path.GetFileName(lookupFile)}");
-				}
+				}*/
 			}
 		}
 
+		private KifintLookup LoadLookup(KifintType type, string cachePath, GameInfo game) {
+			Trace.WriteLine($"Loading {type} Cache: {game.Id}");
+			string lookupFile = GetLookupFile(type, cachePath, game);
+			KifintLookup lookup = null;
+			if (File.Exists(lookupFile)) {
+				try {
+					lookup = KifintLookup.Load(lookupFile, game.InstallDir);
+					//Trace.WriteLine($"Loaded {type} Cache: {Path.GetFileName(lookupFile)}");
+				} catch { }
+			}
+			if (lookup == null) {
+				Trace.WriteLine($"Building {type} Cache: {game.Id}");
+				lookup = Kifint.Decrypt(type, game.InstallDir, game.Executable);
+				lookup.Save(lookupFile);
+				//Trace.WriteLine($"Saved {type} Cache: {Path.GetFileName(lookupFile)}");
+			}
+			return lookup;
+		}
+
+		private string GetLookupFile(KifintType type, string cachePath, GameInfo game) {
+			string name = $"{game.Id}-{type.ToString().ToLower()}";
+			return Path.Combine(cachePath, Path.ChangeExtension(name, KifintLookup.Extension));
+		}
 		private string GetLookupFile(string cachePath, GameInfo game) {
 			return Path.Combine(cachePath, Path.ChangeExtension(game.Id, KifintLookup.Extension));
 		}
+
+		#endregion
+
+		#region I/O
+
+		/// <summary>
+		///  Deserializes the game database from a json file.
+		/// </summary>
+		/// <param name="jsonFile">The path to the json file to load and deserialize.</param>
+		/// <returns>The deserialized game database.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="jsonFile"/> is null.
+		/// </exception>
+		public static GameDatabase FromJsonFile(string jsonFile) {
+			if (jsonFile == null)
+				throw new ArgumentNullException(nameof(jsonFile));
+			return JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText(jsonFile));
+		}
+
+		#endregion
+
+		#region IEnumerable Implementation
+
+		/// <summary>
+		///  Gets the enumerator for all game infos in the game database.
+		/// </summary>
+		/// <returns>The enumerator for all game infos.</returns>
+		public IEnumerator<GameInfo> GetEnumerator() => gameList.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		#endregion
 	}

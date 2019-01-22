@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -8,7 +10,8 @@ namespace Grisaia.Categories {
 	/// <summary>
 	///  A database for storing all known character infos along with their information.
 	/// </summary>
-	public sealed class CharacterDatabase {
+	[JsonObject]
+	public sealed class CharacterDatabase : IReadOnlyCollection<CharacterInfo> {
 		#region Fields
 
 		/// <summary>
@@ -167,6 +170,36 @@ namespace Grisaia.Categories {
 			}
 			return character.Parts ?? DefaultParts;
 		}
+
+		#endregion
+
+		#region I/O
+
+		/// <summary>
+		///  Deserializes the character database from a json file.
+		/// </summary>
+		/// <param name="jsonFile">The path to the json file to load and deserialize.</param>
+		/// <returns>The deserialized character database.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="jsonFile"/> is null.
+		/// </exception>
+		public static CharacterDatabase FromJsonFile(string jsonFile) {
+			if (jsonFile == null)
+				throw new ArgumentNullException(nameof(jsonFile));
+			return JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText(jsonFile));
+		}
+
+		#endregion
+
+		#region IEnumerable Implementation
+
+		/// <summary>
+		///  Gets the enumerator for all character infos in the character database.
+		/// </summary>
+		/// <returns>The enumerator for all character infos.</returns>
+		public IEnumerator<CharacterInfo> GetEnumerator() => characterList.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		#endregion
 	}

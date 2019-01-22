@@ -2,7 +2,7 @@
 using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
-	public static partial class Hgx2png {
+	partial class Hgx2png {
 		[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 20, CharSet = CharSet.Ansi)]
 		private struct HG3HDR {
 			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 4)]

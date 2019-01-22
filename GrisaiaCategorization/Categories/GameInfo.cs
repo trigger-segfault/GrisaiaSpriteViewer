@@ -59,11 +59,18 @@ namespace Grisaia.Categories {
 		/// <summary>
 		///  Gets the located installation directory of the game.
 		/// </summary>
+		[JsonIgnore]
 		public string InstallDir { get; set; }
 		/// <summary>
-		///  Gets the cached image lookup for the game.
+		///  Gets the cached <see cref="KifintType.Image"/> lookup for the game.
 		/// </summary>
+		[JsonIgnore]
 		public KifintLookup ImageLookup { get; set; }
+		/// <summary>
+		///  Gets the cached <see cref="KifintType.Update"/> lookup for the game.
+		/// </summary>
+		[JsonIgnore]
+		public KifintLookup UpdateLookup { get; set; }
 
 		#endregion
 

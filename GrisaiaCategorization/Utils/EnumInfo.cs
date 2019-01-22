@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Grisaia.Utils {
 	/// <summary>
-	/// A generic class for caching information about an enum of type <typeparamref name="TEnum"/>.
+	///  A generic class for caching information about an enum of type <typeparamref name="TEnum"/>.
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enum.</typeparam>
 	public static class EnumInfo<TEnum> where TEnum : struct, Enum {
@@ -426,11 +426,10 @@ namespace Grisaia.Utils {
 	}
 
 	/// <summary>
-	/// Cached info for an enum field of type <typeparamref name="TEnum"/>.
+	///  Cached info for an enum field of type <typeparamref name="TEnum"/>.
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enum.</typeparam>
 	public class EnumFieldInfo<TEnum> where TEnum : struct, Enum {
-
 		#region Fields
 
 		/// <summary>

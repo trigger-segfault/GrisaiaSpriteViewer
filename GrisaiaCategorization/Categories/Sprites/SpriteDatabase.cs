@@ -212,7 +212,7 @@ namespace Grisaia.Categories.Sprites {
 						}
 						else if (!parsed) {
 							Trace.WriteLine($"Failed to parse {kif.FileName}!");
-							Kifint.ExtractHgx(kif, Path.Combine(AppContext.BaseDirectory, "cache"));
+							Kifint.ExtractHg3(kif, Path.Combine(AppContext.BaseDirectory, "cache"), true, false);
 						}
 					}
 				}
@@ -250,8 +250,9 @@ namespace Grisaia.Categories.Sprites {
 			}
 			
 			if (partList.TryGetValue(partId, out var existingPart)) {
-				partList.List.Remove(existingPart);
-				Trace.WriteLine($"WARNING: \"{existingPart.FileName}\" has been overwritten by \"{sprite.FileName}\"!");
+				//partList.List.Remove(existingPart);
+				Trace.WriteLine($"WARNING: \"{sprite.FileName}\" was found but \"{existingPart.FileName}\" already exists!");
+				return;
 			}
 			SpritePart part = new SpritePart { Id = sprite.Part, FileName = kif.FileName };
 			partList.List.Add(part);

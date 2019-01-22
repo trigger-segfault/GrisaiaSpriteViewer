@@ -31,10 +31,62 @@ namespace Grisaia.Testing {
 			}*/
 
 			Stopwatch watch = Stopwatch.StartNew();
-			var gameDb = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText("Games.json"));
-			var charDb = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText("Characters.json"));
+			//var gameDb = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText("Games.json"));
+			//var charDb = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText("Characters.json"));
+			var gameDb = GameDatabase.FromJsonFile(Path.Combine(AppContext.BaseDirectory, "Games.json"));
+			var charDb = CharacterDatabase.FromJsonFile(Path.Combine(AppContext.BaseDirectory, "Characters.json"));
 			gameDb.LocateGames();
+
+			/*Dictionary<string, HashSet<string>> kifintExtensions = new Dictionary<string, HashSet<string>>();
+
+			foreach (GameInfo game in gameDb.LocatedGames) {
+				Trace.WriteLine($"==== {game.Id} ====");
+				foreach (string kifintPath in Directory.EnumerateFiles(game.InstallDir, "*.int")) {
+					string fileName = Path.GetFileName(kifintPath);
+					if (!kifintExtensions.TryGetValue(fileName, out var extensions)) {
+						extensions = new HashSet<string>();
+						kifintExtensions.Add(fileName, extensions);
+					}
+					
+					Trace.Write($"{fileName}: ");
+					string[] exts = Kifint.IdentifyFileTypes(kifintPath, game.Executable);
+					foreach (string ext in exts)
+						extensions.Add(ext);
+					Trace.WriteLine(string.Join(", ", exts));
+				}
+				Trace.WriteLine("");
+			}
+			int padding = kifintExtensions.Keys.Max(k => k.Length + 1);
+
+			Trace.WriteLine($"==== ALL GAMES ====");
+			var pairs = kifintExtensions.ToList();
+			pairs.Sort((a, b) => string.Compare(a.Key, b.Key));
+			foreach (var pair in pairs) {
+				string fileName = pair.Key;
+				var exts = pair.Value.ToList();
+				exts.Sort();
+				Trace.WriteLine($"{fileName.PadRight(padding)}: {string.Join(", ", exts)}");
+			}
+
+			Console.WriteLine("FINISHED!");
+			//Console.Beep();
+			//Console.ReadLine();
+			Environment.Exit(0);*/
+
 			gameDb.LoadCache();
+			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
+			var game = gameDb.Get("kajitsu");
+			KifintEntry entry = game.ImageLookup["_conf_txt.hg3"];
+			string dir = Path.Combine(gameDb.CachePath, "_conf_txt");
+			if (!Directory.Exists(dir))
+				Directory.CreateDirectory(dir);
+			var hg3 = entry.ExtractHg3(dir, true, false);
+			dir = Path.Combine(gameDb.CachePath, "_conf_txt#expanded");
+			if (!Directory.Exists(dir))
+				Directory.CreateDirectory(dir);
+			entry.ExtractHg3(dir, true, true);
+			hg3.SaveJsonToDirectory(gameDb.CachePath);
+
 			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
 			var spriteDb = new SpriteDatabase(gameDb, charDb,
 				new SpriteCategoryInfo[] {
@@ -74,7 +126,7 @@ namespace Grisaia.Testing {
 			//Console.WriteLine($"         Bytes: {data.Length}");
 			//Console.WriteLine($"Non-zero Bytes: {nonZeroBytes.Count}");
 
-			var anm = Anm.FromFile(anmFile);
+			var anm = Anm.Extract(anmFile);
 
 			Console.WriteLine(anm);
 			Console.WriteLine();

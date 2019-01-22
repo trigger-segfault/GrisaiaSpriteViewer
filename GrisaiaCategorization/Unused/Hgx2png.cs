@@ -113,7 +113,7 @@ namespace Grisaia.Asmodean {
 		}
 
 
-		public static Hg3Image Extract(Stream stream, string outputDir,
+		public static Hg3Frame Extract(Stream stream, string outputDir,
 			string fileName, bool expand)
 		{
 			BinaryReader reader = new BinaryReader(stream);
@@ -161,7 +161,7 @@ namespace Grisaia.Asmodean {
 							stdInfo,
 							imghdr,
 							expand);
-						return new Hg3Image(fileName, stdInfo);
+						return new Hg3Frame(fileName, stdInfo);
 						/*stdInfo.Width,
 						stdInfo.Height,
 						stdInfo.DepthBits / 8,

@@ -1,34 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Grisaia.Extensions;
+using Grisaia.Utils;
 
 namespace Grisaia.Asmodean {
 	partial class Kifint {
+		public static KifintLookup Decrypt(KifintType type, string installDir, string exeName) {
+			KifintLookup lookup = new KifintLookup();
+			string wildcard = EnumInfo<KifintType>.GetAttribute<KifintWildcardAttribute>(type).Wildcard;
+			foreach (string kifIntPath in Directory.GetFiles(installDir, wildcard)) {
+				using (Stream stream = File.OpenRead(kifIntPath))
+					lookup.Merge(Decrypt(stream, kifIntPath, Path.Combine(installDir, exeName)));
+			}
+			return lookup;
+		}
 		public static KifintLookup DecryptImages(string installDir, string exeName) {
 			KifintLookup lookup = new KifintLookup();
-			foreach (string intFile in Directory.GetFiles(installDir, "image*.int")) {
-				using (Stream stream = File.OpenRead(intFile))
-					lookup.Merge(DecryptImages(stream, intFile, Path.Combine(installDir, exeName)));
+			foreach (string kifIntPath in Directory.GetFiles(installDir, "image*.int")) {
+				using (Stream stream = File.OpenRead(kifIntPath))
+					lookup.Merge(Decrypt(stream, kifIntPath, Path.Combine(installDir, exeName)));
 			}
 			return lookup;
 		}
 
-		private static Kifint DecryptImages(Stream stream, string intFile, string exeFile) {
-			Stopwatch watch = Stopwatch.StartNew();
-			DateTime startTime = DateTime.UtcNow;
-			string binFile = Path.ChangeExtension(exeFile, ".bin");
-			if (File.Exists(binFile))
-				exeFile = binFile;
-			string gameVCode2 = FindVCode2(exeFile);
+		private static Kifint Decrypt(Stream stream, string kifIntPath, string exeName) {
+			string binName = Path.ChangeExtension(exeName, ".bin");
+			if (File.Exists(binName))
+				exeName = binName;
+			string gameVCode2 = FindVCode2(exeName);
 
 			BinaryReader reader = new BinaryReader(stream);
 			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
 
 			if (hdr.Signature != "KIF") // It's really a KIF INT file
-				throw new UnexpectedFileTypeException(intFile, "INT");
+				throw new UnexpectedFileTypeException(kifIntPath, "KIF");
 
 			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
 
@@ -60,28 +70,91 @@ namespace Grisaia.Asmodean {
 				}
 			}
 			
-			return new Kifint(intFile, entries, decrypt, fileKey);
+			return new Kifint(kifIntPath, entries, decrypt, fileKey);
 		}
 
-		public static Hg3Image ExtractHgx(KifintEntry entry, string outDir) {
-			var intFile = entry.Kifint;
-			using (Stream stream = File.OpenRead(intFile.FilePath)) {
-				BinaryReader reader = new BinaryReader(stream);
-				stream.Position = entry.Offset;
-				byte[] buffer = reader.ReadBytes(entry.Length);
 
-				if (intFile.FileKey.HasValue) {
-					DecryptData(buffer, entry.Length, intFile.FileKey.Value);
+		public static string[] IdentifyFileTypes(string kifIntPath, string exeName) {
+			using (Stream stream = File.OpenRead(kifIntPath))
+				return IdentifyFileTypes(stream, kifIntPath, Path.Combine(Path.GetDirectoryName(kifIntPath), exeName));
+		}
+		private static string[] IdentifyFileTypes(Stream stream, string kifIntPath, string exeName) {
+			string binName = Path.ChangeExtension(exeName, ".bin");
+			if (File.Exists(binName))
+				exeName = binName;
+			string gameVCode2 = FindVCode2(exeName);
+
+			BinaryReader reader = new BinaryReader(stream);
+			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
+
+			if (hdr.Signature != "KIF") // It's really a KIF INT file
+				throw new UnexpectedFileTypeException(kifIntPath, "KIF");
+
+			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
+
+			uint tocSeed = GenTocSeed(gameVCode2);
+			uint fileKey = 0;
+			bool decrypt = false;
+
+			// Obtain the decryption file key if one exists
+			for (int i = 0; i < hdr.EntryCount; i++) {
+				if (entries[i].FileName == "__key__.dat") {
+					fileKey = MersenneTwister.GenRand(entries[i].Length);
+					decrypt = true;
+					break;
 				}
-				using (MemoryStream ms = new MemoryStream(buffer))
-					return Hgx2png.Extract(ms, outDir, entry.FileName, false);
 			}
+
+			HashSet<string> extensions = new HashSet<string>();
+
+			// Decrypt the KIFINT entries using the file key
+			if (decrypt) {
+				for (uint i = 0; i < hdr.EntryCount; i++) {
+					if (entries[i].FileName == "__key__.dat")
+						continue;
+					// Give the entry the correct name
+					UnobfuscateFileName(entries[i].FileNameRaw, tocSeed + i);
+				}
+			}
+			for (uint i = 0; i < hdr.EntryCount; i++) {
+				string entryFileName = entries[i].FileName;
+				if (entryFileName == "__key__.dat")
+					continue;
+				extensions.Add(Path.GetExtension(entryFileName));
+			}
+
+			return extensions.ToArray();
+		}
+
+		public static Hg3 ExtractHg3(KifintEntry entry, string directory, bool saveFrames, bool expand) {
+			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
+				return ExtractHg3(stream, entry, directory, saveFrames, expand);
+		}
+		public static Hg3 ExtractHg3(Stream stream, KifintEntry entry, string directory, bool saveFrames, bool expand) {
+			byte[] buffer = Extract(stream, entry);
+			using (MemoryStream ms = new MemoryStream(buffer))
+				return Hg3.Extract(ms, directory, entry.FileName, saveFrames, expand);
+		}
+		public static byte[] Extract(KifintEntry entry) {
+			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
+				return Extract(stream, entry);
+		}
+		public static byte[] Extract(Stream stream, KifintEntry entry) {
+			var kifint = entry.Kifint;
+			BinaryReader reader = new BinaryReader(stream);
+			stream.Position = entry.Offset;
+			byte[] buffer = reader.ReadBytes(entry.Length);
+
+			if (kifint.FileKey.HasValue) {
+				DecryptData(buffer, entry.Length, kifint.FileKey.Value);
+			}
+			return buffer;
 		}
 
 		/// <summary>
 		///  Generates the seed used during <see cref="UnobfuscateFileName"/>.
 		/// </summary>
-		/// <param name="vcode2">The decrypted VCode2 extracted from the game resource.</param>
+		/// <param name="vcode2">The decrypted V_CODE2 extracted from the game resource.</param>
 		/// <returns>The generated seed.</returns>
 		private static uint GenTocSeed(string vcode2) {
 			const uint magic = 0x4C11DB7;
@@ -106,35 +179,38 @@ namespace Grisaia.Asmodean {
 			return seed;
 		}
 
-
-		private static void UnobfuscateFileName(byte[] s, uint seed) {
+		/// <summary>
+		///  Unobfuscates the <see cref="KIFENTRY.FileNameRaw"/> field using the specified seed.
+		/// </summary>
+		/// <param name="fileName">The raw file name in bytes.</param>
+		/// <param name="seed">The seed used to generate the unobfuscation key.</param>
+		private static void UnobfuscateFileName(byte[] fileName, uint seed) {
+			const int Length = 52;
 			const string FWD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			const string REV = "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
-
-			//MersenneTwister.Seed(seed);
-			//uint key = MersenneTwister.GenRand();
+			
 			uint key = MersenneTwister.GenRand(seed);
 			int shift = (byte) ((key >> 24) + (key >> 16) + (key >> 8) + key);
 
-			for (int i = 0; i < s.Length; i++, shift++) {
-				byte c = s[i];
+			for (int i = 0; i < fileName.Length; i++, shift++) {
+				byte c = fileName[i];
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
 					int index = 0;
 					int index2 = shift;
 
-					while (REV[index2 % 0x34] != c) {
-						if (REV[(shift + index + 1) % 0x34] == c) {
+					while (REV[index2 % Length] != c) {
+						if (REV[(shift + index + 1) % Length] == c) {
 							index += 1;
 							break;
 						}
 
-						if (REV[(shift + index + 2) % 0x34] == c) {
+						if (REV[(shift + index + 2) % Length] == c) {
 							index += 2;
 							break;
 						}
 
-						if (REV[(shift + index + 3) % 0x34] == c) {
+						if (REV[(shift + index + 3) % Length] == c) {
 							index += 3;
 							break;
 						}
@@ -142,68 +218,14 @@ namespace Grisaia.Asmodean {
 						index += 4;
 						index2 += 4;
 
-						if (index > 0x34) {
+						if (index >= Length) // We're outside the array, no need to continue
 							break;
-						}
 					}
 
-					if (index < 0x34) {
-						s[i] = (byte) FWD[index];
-					}
+					if (index < Length) // Only assign if we're inside the array
+						fileName[i] = (byte) FWD[index];
 				}
-
-				//shift++;
 			}
-
-			return;
-		}
-
-		private static void UnobfuscateFileName(char[] s, uint seed) {
-			const string FWD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-			const string REV = "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
-
-			//MersenneTwister.Seed(seed);
-			//uint key = MersenneTwister.GenRand();
-			uint key = MersenneTwister.GenRand(seed);
-			int shift = (byte) ((key >> 24) + (key >> 16) + (key >> 8) + key);
-
-			for (int i = 0; i < s.Length; i++) {
-				char c = s[i];
-				int index = 0;
-				int index2 = shift;
-
-				while (REV[index2 % 0x34] != c) {
-					if (REV[(shift + index + 1) % 0x34] == c) {
-						index += 1;
-						break;
-					}
-
-					if (REV[(shift + index + 2) % 0x34] == c) {
-						index += 2;
-						break;
-					}
-
-					if (REV[(shift + index + 3) % 0x34] == c) {
-						index += 3;
-						break;
-					}
-
-					index += 4;
-					index2 += 4;
-
-					if (index > 0x34) {
-						break;
-					}
-				}
-
-				if (index < 0x34) {
-					s[i] = FWD[index];
-				}
-
-				shift++;
-			}
-
-			return;
 		}
 
 		/// <summary>
@@ -232,32 +254,38 @@ namespace Grisaia.Asmodean {
 
 			Marshal.Copy(lockPtr, buffer, 0, length);
 		}
-
+		/// <summary>
+		///  Locates the V_CODE2 in the executable file, which is used to decrypt the KIFINT archive.
+		/// </summary>
+		/// <param name="exeFile">The file path to the executable or bin file.</param>
+		/// <returns>The descrypted V_CODE2 string.</returns>
 		private static string FindVCode2(string exeFile) {
 			IntPtr h = LoadLibraryEx(exeFile, IntPtr.Zero, LoadLibraryExFlags.LoadLibraryAsImageResource);
 			if (h == IntPtr.Zero)
 				throw new LoadModuleException(exeFile);
+			try {
 
-			CopyResource(h, "KEY", "KEY_CODE", out byte[] key, out int keyLength);
+				CopyResource(h, "KEY", "KEY_CODE", out byte[] key, out int keyLength);
 
-			for (int i = 0; i < key.Length; i++)
-				key[i] ^= 0xCD;
+				for (int i = 0; i < key.Length; i++)
+					key[i] ^= 0xCD;
 
-			CopyResource(h, "DATA", "V_CODE2", out byte[] vcode2, out int vcode2Length);
+				CopyResource(h, "DATA", "V_CODE2", out byte[] vcode2, out int vcode2Length);
 
-			/*Blowfish bf = new Blowfish();
-			fixed (byte* key_buff_ptr = keyBuffer)
-				bf.Set_Key(key_buff_ptr, keyLength);
-			bf.Decrypt(vcode2Buffer, (vcode2Length + 7) & ~7);
-			string vcode2 = Encoding.ASCII.GetString(vcode2Buffer, 0, vcode2Length).NullTerminate();*/
+				/*Blowfish bf = new Blowfish();
+				fixed (byte* key_buff_ptr = keyBuffer)
+					bf.Set_Key(key_buff_ptr, keyLength);
+				bf.Decrypt(vcode2Buffer, (vcode2Length + 7) & ~7);
+				string result = Encoding.ASCII.GetString(vcode2Buffer, 0, vcode2Length).NullTerminate();*/
 
-			DecryptVCode2(key, keyLength, vcode2, vcode2Length);
+				DecryptVCode2(key, keyLength, vcode2, vcode2Length);
 
-			string result = Encoding.ASCII.GetString(vcode2).NullTerminate();
+				string result = vcode2.ToNullTerminatedString(Encoding.ASCII);
 
-			FreeLibrary(h);
-
-			return result;
+				return result;
+			} finally {
+				FreeLibrary(h);
+			}
 		}
 	}
 }

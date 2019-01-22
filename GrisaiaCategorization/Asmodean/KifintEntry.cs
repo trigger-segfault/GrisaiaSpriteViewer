@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
@@ -41,7 +42,18 @@ namespace Grisaia.Asmodean {
 
 		#region Constructors
 
+		/// <summary>
+		///  Constructs an unassigned KIFINT entry for use with <see cref="Read"/>.
+		/// </summary>
 		private KifintEntry() { }
+		/// <summary>
+		///  Constructs a KIFINT entry with the specified file name, entry data, parent KIFINT archive.
+		/// </summary>
+		/// <param name="fileName">
+		///  The cached name of the file. Calling <see cref="Kifint.KIFENTRY.FileName"/> is wasteful.
+		/// </param>
+		/// <param name="kifEntry">The decrypted data for the entry.</param>
+		/// <param name="kifint">The parent KIFINT arhive.</param>
 		internal KifintEntry(string fileName, Kifint.KIFENTRY kifEntry, Kifint kifint) {
 			Kifint = kifint;
 			FileName = fileName;
@@ -66,6 +78,59 @@ namespace Grisaia.Asmodean {
 				Length = reader.ReadInt32(),
 			};
 		}
+
+		#endregion
+
+		#region Extract
+
+		/// <summary>
+		///  Extracts the KIFINT entry to a <see cref="byte[]"/>.
+		/// </summary>
+		/// <returns>A byte array containing the data of the decrypted entry.</returns>
+		public byte[] Extract() {
+			return Kifint.Extract(this);
+		}
+		/// <summary>
+		///  Extracts the KIFINT entry to a <see cref="MemoryStream"/>.
+		/// </summary>
+		/// <returns>A memory stream containing the data of the decrypted entry.</returns>
+		public MemoryStream ExtractToStream() {
+			return new MemoryStream(Extract());
+		}
+		/// <summary>
+		///  Extracts the KIFINT entry and saves it to <paramref name="filePath"/>.
+		/// </summary>
+		/// <param name="filePath">The file path to save the decrypted entry to.</param>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="filePath"/> is null.
+		/// </exception>
+		public void ExtractToFile(string filePath) {
+			File.WriteAllBytes(filePath, Extract());
+		}
+		/// <summary>
+		///  Extracts the KIFINT entry and saves it to <paramref name="directory"/>/<see cref="FileName"/>.
+		/// </summary>
+		/// <param name="directory">The directory to save the decrypted entry to.</param>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="directory"/> is null.
+		/// </exception>
+		public void ExtractToDirectory(string directory) {
+			if (directory == null)
+				throw new ArgumentNullException(nameof(directory));
+			ExtractToFile(Path.Combine(directory, FileName));
+		}
+
+		public Hg3 ExtractHg3(string directory, bool saveFrames, bool expand) {
+			return Kifint.ExtractHg3(this, directory, saveFrames, expand);
+		}
+
+		#endregion
+
+		#region ToString Override
+
+		public override string ToString() => FileName;
 
 		#endregion
 	}

@@ -15,7 +15,10 @@
     <Compile Remove="Asmodean\Exkifint.MersenneTwister.cs" />
     <Compile Remove="Asmodean\Exkifint.PInvoke.cs" />
     <Compile Remove="Asmodean\Exkifint.Structs.cs" />
+    <Compile Remove="Asmodean\Hgx2png.cs" />
     <Compile Remove="Asmodean\Hgx2png.New.cs" />
+    <Compile Remove="Asmodean\Hgx2png.PInvoke.cs" />
+    <Compile Remove="Asmodean\Hgx2png.Structs.cs" />
     <Compile Remove="Categories\Sprites\SpriteCategoryDatabase.cs" />
     <Compile Remove="Categories\Sprites\SpriteSelection.cs" />
     <Compile Remove="Extracting.cs" />
@@ -27,6 +30,9 @@
     <Compile Remove="Unused\Exkifint.PInvoke.cs" />
     <Compile Remove="Unused\Exkifint.Structs.cs" />
     <Compile Remove="Unused\Extracting.cs" />
+    <Compile Remove="Unused\Hgx2png.cs" />
+    <Compile Remove="Unused\Hgx2png.PInvoke.cs" />
+    <Compile Remove="Unused\Hgx2png.Structs.cs" />
     <Compile Remove="Unused\Identifying\Character.cs" />
     <Compile Remove="Unused\Identifying\Old\Backgrounds.cs" />
     <Compile Remove="Unused\Identifying\Old\Character.cs" />
@@ -53,7 +59,6 @@
     <Compile Remove="Unused\SpriteCharacter.cs" />
     <Compile Remove="Unused\SpriteDatabase.cs" />
     <Compile Remove="Unused\SpriteGame.cs" />
-    <Compile Remove="Unused\Utils\EnumInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +67,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Unused\Hgx2png.cs" />
+    <None Include="Unused\Hgx2png.PInvoke.cs" />
+    <None Include="Unused\Hgx2png.Structs.cs" />
     <None Include="Categories\Sprites\SpriteSelection.cs" />
     <None Include="Unused\SpriteCategoryDatabase.cs" />
     <None Include="Unused\IKey.cs" />
@@ -105,7 +113,7 @@
     <None Include="Unused\Program.cs" />
     <None Include="Unused\ISpriteCategory.cs" />
     <None Include="Unused\SpriteGame.cs" />
-    <None Include="Unused\Utils\EnumInfo.cs" />
+    <None Include="Utils\EnumInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>

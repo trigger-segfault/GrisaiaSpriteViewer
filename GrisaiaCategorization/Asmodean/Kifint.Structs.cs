@@ -4,13 +4,16 @@ using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
 	partial class Kifint {
+		/// <summary>
+		///  The header structure for a KIFINT archive.
+		/// </summary>
 		[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8, CharSet = CharSet.Ansi)]
 		internal struct KIFHDR {
 			/// <summary>
 			///  The raw character array signature of the file.
 			/// </summary>
 			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 4)]
-			public char[] SignatureRaw;
+			public char[] SignatureRaw; // "KIF\0"
 			/// <summary>
 			///  The number of <see cref="KIFENTRY"/>s in the KIFINT archive.
 			/// </summary>
@@ -21,7 +24,9 @@ namespace Grisaia.Asmodean {
 			/// </summary>
 			public string Signature => SignatureRaw.ToNullTerminatedString();
 		}
-
+		/// <summary>
+		///  The entry structure for a KIFINT archive.
+		/// </summary>
 		[StructLayout(LayoutKind.Explicit, Pack = 1, Size = 72, CharSet = CharSet.Ansi)]
 		internal struct KIFENTRY {
 			/// <summary>
