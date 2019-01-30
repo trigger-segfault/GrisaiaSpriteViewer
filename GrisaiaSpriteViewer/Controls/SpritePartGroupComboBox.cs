@@ -12,19 +12,27 @@ using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 
 namespace Grisaia.SpriteViewer.Controls {
+	/// <summary>
+	///  A combo box and label for selecting from a <see cref="ISpritePartGroup"/>.
+	/// </summary>
 	public class SpritePartGroupComboBox : Control {
 		#region Fields
 
 		//private TextBlock PART_TextBlock;
 		//private ComboBox PART_ComboBox;
 		//private Thumb PART_Thumb;
+		/// <summary>
+		///  Supresses property changed events while another event is taking palce.
+		/// </summary>
 		private bool supressEvents;
 
 		#endregion
 
 		#region Dependency Properties
 
-
+		/// <summary>
+		///  The property for the sprite part group that this combo box makes a selection from.
+		/// </summary>
 		public static readonly DependencyProperty ItemsSourceProperty =
 			DependencyProperty.Register(
 				"ItemsSource",
@@ -32,6 +40,9 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpritePartGroupComboBox),
 				new FrameworkPropertyMetadata(
 					OnItemsSourceChanged));
+		/// <summary>
+		///  The property for the selected sprite part group part.
+		/// </summary>
 		public static readonly DependencyProperty SelectedItemProperty =
 			DependencyProperty.Register(
 				"SelectedItem",
@@ -41,6 +52,10 @@ namespace Grisaia.SpriteViewer.Controls {
 					null,
 					FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
 					OnSelectedItemChanged));
+		/// <summary>
+		///  The property for the selected sprite part group part.<para/>
+		///  Used to coerce of the <see cref="SelectedItemProperty"/> and only propagate the new value.
+		/// </summary>
 		public static readonly DependencyProperty SelectedItemInternalProperty =
 			DependencyProperty.Register(
 				"SelectedItemInternal",
@@ -87,54 +102,25 @@ namespace Grisaia.SpriteViewer.Controls {
 			SelectedItemInternal = groupPart;
 			supressEvents = false;
 		}
-		/*public static readonly DependencyProperty ItemsSourceProperty =
-			DependencyProperty.Register(
-				"ItemsSource",
-				typeof(ISpritePartGroup),
-				typeof(SpritePartGroupComboBox),
-				new FrameworkPropertyMetadata(
-					OnItemsSourceChanged));
-		public static readonly DependencyProperty SelectedItemProperty =
-			DependencyProperty.Register(
-				"SelectedItem",
-				typeof(ISpritePartGroupPart),
-				typeof(SpritePartGroupComboBox),
-				new FrameworkPropertyMetadata(
-					null,
-					FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-					null,
-					OnCoerceSelectedItem));
 
-		private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpritePartGroupComboBox control = (SpritePartGroupComboBox) d;
-			if (e.NewValue != null) {
-				control.CoerceValue(SelectedItemProperty);
-			}
-		}
-		private static object OnCoerceSelectedItem(DependencyObject d, object baseValue) {
-			SpritePartGroupComboBox control = (SpritePartGroupComboBox) d;
-			ISpritePartGroupPart groupPart = (ISpritePartGroupPart) baseValue;
-			ISpritePartGroup group = control.ItemsSource;
-			if (group == null) {
-				return null;
-			}
-			else if (groupPart != null && group.TryGetValue(groupPart.Id, out ISpritePartGroupPart newGroupPart)) {
-				return newGroupPart;
-			}
-			else if (group.IsEnabledByDefault && group.GroupParts.Skip(1).Any()) {
-				return group.GroupParts.Skip(1).First();
-			}
-			return group.GroupParts.FirstOrDefault();
-		}*/
-
+		/// <summary>
+		///  Gets or sets the sprite part group that this combo box makes a selection from.
+		/// </summary>
 		public ISpritePartGroup ItemsSource {
 			get => (ISpritePartGroup) GetValue(ItemsSourceProperty);
 			set => SetValue(ItemsSourceProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the selected sprite part group part.
+		/// </summary>
 		public ISpritePartGroupPart SelectedItem {
 			get => (ISpritePartGroupPart) GetValue(SelectedItemProperty);
 			set => SetValue(SelectedItemProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the selected sprite part group part.<para/>
+		///  Used to coerce of the <see cref="SelectedItemProperty"/> and only propagate the new value.
+		/// </summary>
 		public ISpritePartGroupPart SelectedItemInternal {
 			get => (ISpritePartGroupPart) GetValue(SelectedItemInternalProperty);
 			set => SetValue(SelectedItemInternalProperty, value);

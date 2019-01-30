@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
+using Grisaia.SpriteViewer.Utils;
 using Grisaia.SpriteViewer.ViewModel;
 using Microsoft.Win32;
 
@@ -57,7 +58,7 @@ namespace Grisaia.SpriteViewer {
 
 		private bool supressEvents = false;
 
-		public SpriteViewModel ViewModel => (SpriteViewModel) DataContext;
+		public SpriteSelectionViewModel ViewModel => (SpriteSelectionViewModel) DataContext;
 
 		public SpriteSelectionWindow() {
 			InitializeComponent();
@@ -115,11 +116,11 @@ namespace Grisaia.SpriteViewer {
 		private void OnLoaded(object sender, RoutedEventArgs e) {
 			//comboGame.SelectedIndex = 0;
 			ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-			OnViewModelPropertyChanged(null, new PropertyChangedEventArgs(nameof(SpriteViewModel.CurrentParts)));
+			OnViewModelPropertyChanged(null, new PropertyChangedEventArgs(nameof(SpriteSelectionViewModel.CurrentParts)));
 		}
 
 		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == nameof(SpriteViewModel.CurrentParts)) {
+			if (e.PropertyName == nameof(SpriteSelectionViewModel.CurrentParts)) {
 				UpdatePartChanges();
 			}
 		}
@@ -512,7 +513,7 @@ namespace Grisaia.SpriteViewer {
 			labelPartList.Text =
 				string.Join("\n", ViewModel.CurrentParts
 				.Where(p => p != null)
-				.Select(p => p.FileName));
+				.Select(p => Path.GetFileNameWithoutExtension(p.FileName)));
 		}
 
 		private void OnSaveSprite(object sender, RoutedEventArgs e) {

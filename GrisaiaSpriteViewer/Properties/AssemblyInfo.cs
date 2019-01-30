@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Trigger's Tools & Games")]
 [assembly: AssemblyProduct("GrisaiaSpriteViewer")]
-[assembly: AssemblyCopyright("Copyright © Robert Jordan 2018")]
+[assembly: AssemblyCopyright("Copyright © Robert Jordan {YEAR}")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

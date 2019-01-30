@@ -11,18 +11,27 @@ using System.Windows.Controls.Primitives;
 using Grisaia.Categories.Sprites;
 
 namespace Grisaia.SpriteViewer.Controls {
+	/// <summary>
+	///  A combo box and label for selecting from a <see cref="ISpriteCategory"/>.
+	/// </summary>
 	public class SpriteCategoryComboBox : Control {
 		#region Fields
 
 		//private TextBlock PART_TextBlock;
 		//private ComboBox PART_ComboBox;
 		//private Thumb PART_Thumb;
+		/// <summary>
+		///  Supresses property changed events while another event is taking palce.
+		/// </summary>
 		private bool supressEvents;
 
 		#endregion
 
 		#region Dependency Properties
 
+		/// <summary>
+		///  The property for the sprite category that this combo box makes a selection from.
+		/// </summary>
 		public static readonly DependencyProperty ItemsSourceProperty =
 			DependencyProperty.Register(
 				"ItemsSource",
@@ -30,6 +39,9 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteCategoryComboBox),
 				new FrameworkPropertyMetadata(
 					OnItemsSourceChanged));
+		/// <summary>
+		///  The property for the selected sprite category.
+		/// </summary>
 		public static readonly DependencyProperty SelectedItemProperty =
 			DependencyProperty.Register(
 				"SelectedItem",
@@ -39,6 +51,10 @@ namespace Grisaia.SpriteViewer.Controls {
 					null,
 					FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
 					OnSelectedItemChanged));
+		/// <summary>
+		///  The property for the selected sprite category.<para/>
+		///  Used to coerce of the <see cref="SelectedItemProperty"/> and only propagate the new value.
+		/// </summary>
 		public static readonly DependencyProperty SelectedItemInternalProperty =
 			DependencyProperty.Register(
 				"SelectedItemInternal",
@@ -83,14 +99,24 @@ namespace Grisaia.SpriteViewer.Controls {
 			supressEvents = false;
 		}
 
+		/// <summary>
+		///  Gets or sets the sprite category that this combo box makes a selection from.
+		/// </summary>
 		public ISpriteCategory ItemsSource {
 			get => (ISpriteCategory) GetValue(ItemsSourceProperty);
 			set => SetValue(ItemsSourceProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the selected sprite category.
+		/// </summary>
 		public ISpriteCategory SelectedItem {
 			get => (ISpriteCategory) GetValue(SelectedItemProperty);
 			set => SetValue(SelectedItemProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the selected sprite category.<para/>
+		///  Used to coerce of the <see cref="SelectedItemProperty"/> and only propagate the new value.
+		/// </summary>
 		public ISpriteCategory SelectedItemInternal {
 			get => (ISpriteCategory) GetValue(SelectedItemInternalProperty);
 			set => SetValue(SelectedItemInternalProperty, value);

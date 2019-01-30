@@ -30,6 +30,7 @@
     <Compile Remove="Ini\IniSection.cs" />
     <Compile Remove="Ini\ReflectionHelper.cs" />
     <Compile Remove="Ini\TypeHelper.cs" />
+    <Compile Remove="Json\JsonSpriteCategoryInfoConverter.cs" />
     <Compile Remove="SpriteCharacter.cs" />
     <Compile Remove="SpriteDatabase.cs" />
     <Compile Remove="Unused\Exkifint.cs" />
@@ -83,6 +84,7 @@
     <None Include="Ini\IniSection.cs" />
     <None Include="Ini\ReflectionHelper.cs" />
     <None Include="Ini\TypeHelper.cs" />
+    <None Include="Json\JsonSpriteCategoryInfoConverter.cs" />
     <None Include="Unused\Hgx2png.cs" />
     <None Include="Unused\Hgx2png.PInvoke.cs" />
     <None Include="Unused\Hgx2png.Structs.cs" />

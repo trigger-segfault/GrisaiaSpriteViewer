@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -77,25 +79,30 @@
     <Compile Include="Controls\SpriteImage.cs" />
     <Compile Include="Controls\SpritePartGroupComboBox.cs" />
     <Compile Include="Controls\SpriteSelectionControl.cs" />
+    <Compile Include="Converters\PreserveVerticalReverseThicknessConverter.cs" />
     <Compile Include="Model\GrisaiaModel.cs" />
     <Compile Include="Model\SpriteViewerSettings.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\SpriteViewModel.cs" />
+    <Compile Include="ViewModel\SpriteSelectionViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Windows\ErrorMessageBox.xaml.cs">
+      <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FolderBrowserDialog.cs" />
     <None Include="Unused\ImageClipboard3.cs" />
     <None Include="Unused\ImageClipboard2 - Copy.cs" />
-    <Compile Include="ImageClipboard.cs" />
+    <Compile Include="Utils\ImageClipboard.cs" />
     <None Include="Unused\ImageClipboard.Glitched.cs" />
-    <None Include="LoadingWindow.xaml.cs">
+    <Compile Include="LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
-    </None>
+    </Compile>
     <None Include="Unused\ZoomOnMouseWheel.cs" />
     <None Include="packages.config" />
-    <None Include="LoadingWindow.xaml">
+    <Page Include="LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </None>
+    </Page>
     <Page Include="SpriteSelectionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -111,6 +118,10 @@
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ErrorMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -144,4 +155,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\TriggersTools.Build.CopyrightYear.1.0.0\build\TriggersTools.Build.CopyrightYear.targets" Condition="Exists('..\packages\TriggersTools.Build.CopyrightYear.1.0.0\build\TriggersTools.Build.CopyrightYear.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\TriggersTools.Build.CopyrightYear.1.0.0\build\TriggersTools.Build.CopyrightYear.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\TriggersTools.Build.CopyrightYear.1.0.0\build\TriggersTools.Build.CopyrightYear.targets'))" />
+  </Target>
 </Project>

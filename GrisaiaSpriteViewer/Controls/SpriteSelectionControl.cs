@@ -14,33 +14,66 @@ using Grisaia.Categories.Sprites;
 using Grisaia.Utils;
 
 namespace Grisaia.SpriteViewer.Controls {
+	/// <summary>
+	///  The control for managing the combo boxes used for sprite selection.
+	/// </summary>
 	public class SpriteSelectionControl : Control {
 		#region Fields
 
+		/// <summary>
+		///  True if the <see cref="OnApplyTemplate"/> has been called.
+		/// </summary>
 		private bool templateApplied = false;
-		private bool suppressEvents = false;
-		
+		/*/// <summary>
+		///  Supresses property changed events while another event is taking palce.
+		/// </summary>
+		private bool suppressEvents = false;*/
+
+		/// <summary>
+		///  The stack panel for the primary sprite category combo boxes.
+		/// </summary>
 		private StackPanel PART_Section1;
+		/// <summary>
+		///  The stack panel for the secondary sprite category combo boxes.
+		/// </summary>
 		private StackPanel PART_Section2;
+		/// <summary>
+		///  The stack panel for the sprite part group combo boxes.
+		/// </summary>
 		private StackPanel PART_Section3;
 
+		/// <summary>
+		///  The separator between <see cref="PART_Section1"/> and <see cref="PART_Section2"/>.
+		/// </summary>
 		private Rectangle PART_Separator1;
+		/// <summary>
+		///  The separator between <see cref="PART_Section2"/> and <see cref="PART_Section3"/>.
+		/// </summary>
 		private Rectangle PART_Separator2;
 
+		/// <summary>
+		///  The combo box controls for the sprite categories.
+		/// </summary>
 		private readonly SpriteCategoryComboBox[] categoryComboBoxes
 			= new SpriteCategoryComboBox[SpriteCategoryPool.Count];
+		/// <summary>
+		///  The combo box controls for the sprite part groups.
+		/// </summary>
 		private readonly SpritePartGroupComboBox[] groupComboBoxes
 			= new SpritePartGroupComboBox[SpriteSelection.PartCount];
+		/// <summary>
+		///  The current sprite part groups being used for the sprite group part combo boxes.
+		/// </summary>
 		private readonly ISpritePartGroup[] currentGroups
 			= new ISpritePartGroup[SpriteSelection.PartCount];
-
-		//private readonly List<SpriteCategoryComboBox> categoryComboBoxes = new List<SpriteCategoryComboBox>();
-		//private readonly List<SpritePartGroupComboBox> groupComboBoxes = new List<SpritePartGroupComboBox>();
 
 		#endregion
 
 		#region Dependency Properties
 
+		/// <summary>
+		///  The property for the sprite database which is always the first items source category.
+		/// </summary>
 		public static readonly DependencyProperty SpriteDatabaseProperty =
 			DependencyProperty.Register(
 				"SpriteDatabase",
@@ -48,29 +81,32 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteSelectionControl),
 				new FrameworkPropertyMetadata(
 					OnSpriteDatabaseChanged));
+		/// <summary>
+		///  The property for the categories used for sprite selection.
+		/// </summary>
 		public static readonly DependencyProperty CategoriesProperty =
 			DependencyProperty.Register(
 				"Categories",
 				typeof(ObservableArray<ISpriteCategory>),
-				typeof(SpriteSelectionControl),
-				new FrameworkPropertyMetadata(
-					OnCategoriesChanged));
+				typeof(SpriteSelectionControl));
+		/// <summary>
+		///  The property for the groups used for sprite part group part selection.
+		/// </summary>
 		public static readonly DependencyProperty GroupsProperty =
 			DependencyProperty.Register(
 				"Groups",
 				typeof(IReadOnlyList<ISpritePartGroup>),
 				typeof(SpriteSelectionControl),
 				new FrameworkPropertyMetadata(
-					//null,
-					//FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
 					OnGroupsChanged));
+		/// <summary>
+		///  The property for the selected sprite part group parts.
+		/// </summary>
 		public static readonly DependencyProperty GroupPartsProperty =
 			DependencyProperty.Register(
 				"GroupParts",
 				typeof(ObservableArray<ISpritePartGroupPart>),
-				typeof(SpriteSelectionControl),
-				new FrameworkPropertyMetadata(
-					OnGroupPartsChanged));
+				typeof(SpriteSelectionControl));
 
 		private static void OnSpriteDatabaseChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionControl control = (SpriteSelectionControl) d;
@@ -80,42 +116,35 @@ namespace Grisaia.SpriteViewer.Controls {
 			if (e.NewValue is SpriteDatabase newSpriteDb)
 				newSpriteDb.BuildComplete += control.OnSpriteDatabaseBuildComplete;
 		}
-		private static void OnCategoriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionControl control = (SpriteSelectionControl) d;
-			/*if (e.OldValue is ObservableArray<ISpriteCategory> oldCategories)
-				oldCategories.CollectionChanged -= control.OnCategoriesCollectionChanged;
-			if (e.NewValue is ObservableArray<ISpriteCategory> newCategories)
-				newCategories.CollectionChanged += control.OnCategoriesCollectionChanged;
-			control.OnCategoriesCollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));*/
-		}
 		private static void OnGroupsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionControl control = (SpriteSelectionControl) d;
 			control.UpdateGroups();
 		}
-		private static void OnGroupPartsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionControl control = (SpriteSelectionControl) d;
-			/*if (e.OldValue is ObservableArray<ISpritePartGroupPart> newGroups)
-				newGroups.CollectionChanged -= control.OnGroupPartsCollectionChanged;
-			if (e.NewValue is ObservableArray<ISpritePartGroupPart> oldGroups)
-				oldGroups.CollectionChanged += control.OnGroupPartsCollectionChanged;*/
-		}
-		private static void OnPaddingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionControl control = (SpriteSelectionControl) d;
-			control.UpdatePadding();
-		}
 
+		/// <summary>
+		///  Gets or sets the sprite database which is always the first items source category.
+		/// </summary>
 		public SpriteDatabase SpriteDatabase {
 			get => (SpriteDatabase) GetValue(SpriteDatabaseProperty);
 			set => SetValue(SpriteDatabaseProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the categories used for sprite selection.
+		/// </summary>
 		public ObservableArray<ISpriteCategory> Categories {
 			get => (ObservableArray<ISpriteCategory>) GetValue(CategoriesProperty);
 			set => SetValue(CategoriesProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the groups used for sprite part group part selection.
+		/// </summary>
 		public IReadOnlyList<ISpritePartGroup> Groups {
 			get => (IReadOnlyList<ISpritePartGroup>) GetValue(GroupsProperty);
 			set => SetValue(GroupsProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the selected sprite part group parts.
+		/// </summary>
 		public ObservableArray<ISpritePartGroupPart> GroupParts {
 			get => (ObservableArray<ISpritePartGroupPart>) GetValue(GroupPartsProperty);
 			set => SetValue(GroupPartsProperty, value);
@@ -128,65 +157,12 @@ namespace Grisaia.SpriteViewer.Controls {
 		static SpriteSelectionControl() {
 			DefaultStyleKeyProperty.AddOwner(typeof(SpriteSelectionControl),
 				new FrameworkPropertyMetadata(typeof(SpriteSelectionControl)));
-			PaddingProperty.AddOwner(typeof(SpriteSelectionControl),
-				new FrameworkPropertyMetadata(OnPaddingChanged));
-		}
-
-		#endregion
-
-		#region Constructors
-
-		public SpriteSelectionControl() {
-			//GroupPartsInternal = new ObservableArray<ISpritePartGroupPart>(SpriteSelection.PartCount);
 		}
 
 		#endregion
 
 		#region Event Handlers
-
-		/*private void OnCategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-		}*/
-		/*private void OnGroupsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			Console.WriteLine($"SpriteSelectionControl.OnGroupsCollectionChanged");
-			for (int i = 0; i < SpriteSelection.PartCount; i++) {
-				SpritePartGroupComboBox comboBox = groupComboBoxes[i];
-				ISpritePartGroup group = Groups[i];
-				ISpritePartGroup currentGroup = currentGroups[i];
-
-				Binding itemsSourceBinding, selectedItemBinding;
-				if (group == null && currentGroup != null) {
-					Console.WriteLine($"RemoveGroupBinding[{i}]");
-					comboBox.Visibility = Visibility.Collapsed;
-					itemsSourceBinding = null;
-					selectedItemBinding = null;
-					comboBox.SetBinding(SpritePartGroupComboBox.ItemsSourceProperty, itemsSourceBinding);
-					comboBox.SetBinding(SpritePartGroupComboBox.SelectedItemProperty, selectedItemBinding);
-				}
-				else if (group != null && currentGroup == null) {
-					Console.WriteLine($"AddGroupBinding[{i}]");
-					comboBox.Visibility = Visibility.Visible;
-					itemsSourceBinding = new Binding() {
-						Source = this,
-						Path = new PropertyPath($"Groups[{i}]"),
-					};
-					selectedItemBinding = new Binding() {
-						Source = this,
-						Path = new PropertyPath($"GroupPartsInternal[{i}]"),
-						Mode = BindingMode.TwoWay,
-					};
-					comboBox.SetBinding(SpritePartGroupComboBox.ItemsSourceProperty, itemsSourceBinding);
-					comboBox.SetBinding(SpritePartGroupComboBox.SelectedItemProperty, selectedItemBinding);
-				}
-				currentGroups[i] = group;
-			}
-		}*/
-		/*private void OnGroupPartsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (suppressEvents) return;
-			suppressEvents = true;
-			Console.WriteLine($"SpriteSelectionControl.OnGroupPartsCollectionChanged");
-			//GroupParts = Array.AsReadOnly(GroupPartsInternal.ToArray());
-			suppressEvents = false;
-		}*/
+		
 		private void OnSpriteDatabaseBuildComplete(object sender, EventArgs e) {
 
 		}
@@ -210,11 +186,11 @@ namespace Grisaia.SpriteViewer.Controls {
 				Binding itemsSourceBinding, selectedItemBinding;
 				itemsSourceBinding = new Binding() {
 					Source = this,
-					Path = new PropertyPath(i == 0 ? "SpriteDatabase" : $"Categories[{(i - 1)}]"),
+					Path = new PropertyPath(i == 0 ? nameof(SpriteDatabase) : $"{nameof(Categories)}[{(i - 1)}]"),
 				};
 				selectedItemBinding = new Binding() {
 					Source = this,
-					Path = new PropertyPath($"Categories[{i}]"),
+					Path = new PropertyPath($"{nameof(Categories)}[{i}]"),
 					Mode = BindingMode.TwoWay,
 				};
 				comboBox.SetBinding(SpriteCategoryComboBox.ItemsSourceProperty, itemsSourceBinding);
@@ -241,12 +217,21 @@ namespace Grisaia.SpriteViewer.Controls {
 					Grid.SetColumn(comboBox, 2);
 				grids[i / 2].Children.Add(comboBox);
 			}
+
 			templateApplied = true;
-			if (Groups != null)
-				UpdateGroups();
-			UpdatePadding();
+			UpdateGroups();
 		}
 
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		///  Adds the grids to a section that split the combo boxes into columns.
+		/// </summary>
+		/// <param name="container">The stack panel section container.</param>
+		/// <param name="count">The number of combo boxes that need room.</param>
+		/// <returns>An array of the created grids.</returns>
 		private Grid[] AddGrids(StackPanel container, int count) {
 			Grid[] grids = new Grid[(count + 1) / 2];
 			for (int i = 0; i < grids.Length; i++) {
@@ -259,15 +244,13 @@ namespace Grisaia.SpriteViewer.Controls {
 			}
 			return grids;
 		}
-
-		#endregion
-
-		#region Private Methods
-
+		/// <summary>
+		///  Updates the combo boxes for the sprite part groups when the groups have changed.
+		/// </summary>
 		private void UpdateGroups() {
-			if (!templateApplied) return;
-			if (suppressEvents) return;
-			suppressEvents = true;
+			if (!templateApplied || Groups == null) return;
+			//if (suppressEvents) return;
+			//suppressEvents = true;
 			Console.WriteLine($"SpriteSelectionControl.UpdateGroups");
 			for (int i = 0; i < SpriteSelection.PartCount; i++) {
 				SpritePartGroupComboBox comboBox = groupComboBoxes[i];
@@ -288,11 +271,11 @@ namespace Grisaia.SpriteViewer.Controls {
 					comboBox.Visibility = Visibility.Visible;
 					itemsSourceBinding = new Binding() {
 						Source = this,
-						Path = new PropertyPath($"Groups[{i}]"),
+						Path = new PropertyPath($"{nameof(Groups)}[{i}]"),
 					};
 					selectedItemBinding = new Binding() {
 						Source = this,
-						Path = new PropertyPath($"GroupParts[{i}]"),
+						Path = new PropertyPath($"{nameof(GroupParts)}[{i}]"),
 						Mode = BindingMode.TwoWay,
 					};
 					comboBox.SetBinding(SpritePartGroupComboBox.ItemsSourceProperty, itemsSourceBinding);
@@ -300,18 +283,7 @@ namespace Grisaia.SpriteViewer.Controls {
 				}
 				currentGroups[i] = group;
 			}
-			suppressEvents = false;
-		}
-
-		private void UpdatePadding() {
-			if (!templateApplied) return;
-			if (PART_Separator1 != null) {
-				Thickness margin = PART_Separator1.Margin;
-				margin.Left = -Padding.Left;
-				margin.Right = -Padding.Right;
-				PART_Separator1.Margin = margin;
-				PART_Separator2.Margin = margin;
-			}
+			//suppressEvents = false;
 		}
 
 		#endregion

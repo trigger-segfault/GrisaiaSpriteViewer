@@ -19,14 +19,16 @@ namespace Grisaia.Asmodean {
 		/// <returns>The <see cref="KifintLookup"/> merged with all loaded archives.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="stream"/>, <paramref name="kifIntPath"/>, or <paramref name="exePath"/> is null.
+		///  <paramref name="stream"/>, <paramref name="kifintPath"/>, or <paramref name="exePath"/> is null.
 		/// </exception>
 		/// <exception cref="ObjectDisposedException">
 		///  The <paramref name="stream"/> is closed.
 		/// </exception>
-		private static Kifint Decrypt(KifintType type, Stream stream, string kifIntPath, string vcode2) {
-			if (kifIntPath == null)
-				throw new ArgumentNullException(nameof(kifIntPath));
+		private static Kifint Decrypt(KifintType type, Stream stream, string kifintPath, string vcode2,
+			KifintProgressArgs progress, KifintProgressCallback callback)
+		{
+			if (kifintPath == null)
+				throw new ArgumentNullException(nameof(kifintPath));
 			if (vcode2 == null)
 				throw new ArgumentNullException(nameof(vcode2));
 			/*string vCode2;
@@ -49,9 +51,12 @@ namespace Grisaia.Asmodean {
 			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
 
 			if (hdr.Signature != "KIF") // It's really a KIF INT file
-				throw new UnexpectedFileTypeException(kifIntPath, "KIF");
+				throw new UnexpectedFileTypeException(kifintPath, "KIF");
 
 			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
+
+			progress.EntryIndex = 0;
+			progress.EntryCount = entries.Length;
 
 			uint tocSeed = GenTocSeed(vcode2);
 			uint fileKey = 0;
@@ -66,11 +71,17 @@ namespace Grisaia.Asmodean {
 				}
 			}
 
+			const int ProgressThreshold = 500;
+
 			// Decrypt the KIFINT entries using the file key
 			if (decrypt) {
 				for (uint i = 0; i < hdr.EntryCount; i++) {
 					if (entries[i].FileName == "__key__.dat")
 						continue;
+
+					progress.EntryIndex++;
+					if (i % ProgressThreshold == 0)
+						callback?.Invoke(progress);
 
 					// Give the entry the correct name
 					UnobfuscateFileName(entries[i].FileNameRaw, tocSeed + i);
@@ -81,7 +92,7 @@ namespace Grisaia.Asmodean {
 				}
 			}
 
-			return new Kifint(kifIntPath, entries, decrypt, fileKey, type);
+			return new Kifint(kifintPath, entries, decrypt, fileKey, type);
 		}
 
 		#endregion

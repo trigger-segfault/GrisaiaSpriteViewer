@@ -15,6 +15,9 @@ using Grisaia.Categories.Sprites;
 using Grisaia.Utils;
 
 namespace Grisaia.SpriteViewer.Controls {
+	/// <summary>
+	///  A control that displays a sprite selection as an image of all selected parts.
+	/// </summary>
 	public class SpriteImage : Control {
 		#region Constants
 
@@ -30,17 +33,31 @@ namespace Grisaia.SpriteViewer.Controls {
 		#endregion
 
 		#region Fields
-
+		
+		/// <summary>
+		///  The container that holds all images.
+		/// </summary>
 		private Grid PART_Container;
+		/// <summary>
+		///  The difference from the total size of all sprites combined. Used for margins.
+		/// </summary>
 		private Thickness expandShrink;
+		/// <summary>
+		///  The current parts being displayed.
+		/// </summary>
 		private readonly ISpritePart[] parts = new ISpritePart[PartCount];
-		//private readonly Hg3[] hg3s = new Hg3[PartCount];
-		private Image[] images;
+		/// <summary>
+		///  The images inside the <see cref="PART_Container"/>.
+		/// </summary>
+		private readonly Image[] images = new Image[PartCount];
 
 		#endregion
 
 		#region Dependency Properties
 
+		/// <summary>
+		///  The property for the sprite database used to get the sprite parts from.
+		/// </summary>
 		public static readonly DependencyProperty SpriteDatabaseProperty =
 			DependencyProperty.Register(
 				"SpriteDatabase",
@@ -48,7 +65,9 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteImage),
 				new FrameworkPropertyMetadata(
 					OnSpriteDatabaseChanged));
-
+		/// <summary>
+		///  The property for the sprite selection that determines what parts to draw.
+		/// </summary>
 		public static readonly DependencyProperty SpriteSelectionProperty =
 			DependencyProperty.Register(
 				"SpriteSelection",
@@ -56,7 +75,9 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteImage),
 				new FrameworkPropertyMetadata(
 					OnSpriteSelectionChanged));
-
+		/// <summary>
+		///  The property to determine if the image should be expanded to the total size of all sprites combined.
+		/// </summary>
 		public static readonly DependencyProperty ExpandProperty =
 			DependencyProperty.Register(
 				"Expand",
@@ -98,14 +119,23 @@ namespace Grisaia.SpriteViewer.Controls {
 			control.UpdateMargins();
 		}
 
+		/// <summary>
+		///  Gets or sets the sprite database used to get the sprite parts from.
+		/// </summary>
 		public SpriteDatabase SpriteDatabase {
 			get => (SpriteDatabase) GetValue(SpriteDatabaseProperty);
 			set => SetValue(SpriteDatabaseProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets the sprite selection that determines what parts to draw.
+		/// </summary>
 		public IReadOnlySpriteSelection SpriteSelection {
 			get => (IReadOnlySpriteSelection) GetValue(SpriteSelectionProperty);
 			set => SetValue(SpriteSelectionProperty, value);
 		}
+		/// <summary>
+		///  Gets or sets if the image should be expanded to the total size of all sprites combined.
+		/// </summary>
 		public bool Expand {
 			get => (bool) GetValue(ExpandProperty);
 			set => SetValue(ExpandProperty, value);
@@ -132,7 +162,6 @@ namespace Grisaia.SpriteViewer.Controls {
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
 			PART_Container = GetTemplateChild("PART_Container") as Grid;
-			images = new Image[PartCount];
 			for (int i = 0; i < PartCount; i++) {
 				images[i] = new Image {
 					HorizontalAlignment = HorizontalAlignment.Left,
@@ -160,6 +189,11 @@ namespace Grisaia.SpriteViewer.Controls {
 
 		#endregion
 
+		#region Private Methods
+
+		/// <summary>
+		///  Updates the currently drawn sprite parts and the margins for the images.
+		/// </summary>
 		private void UpdateSelection() {
 			if (PART_Container == null)
 				return;
@@ -179,7 +213,9 @@ namespace Grisaia.SpriteViewer.Controls {
 			}
 			UpdateMargins();
 		}
-
+		/// <summary>
+		///  Updates the margin boundaries of all the sprite images.
+		/// </summary>
 		private void UpdateMargins() {
 			if (PART_Container == null)
 				return;
@@ -214,13 +250,15 @@ namespace Grisaia.SpriteViewer.Controls {
 				}
 			}
 		}
-
+		/// <summary>
+		///  Updates the image sprite part at the specified index.
+		/// </summary>
+		/// <param name="index">The index of image sprite part to update.</param>
+		/// <param name="game">The current game, used to get the cache directory location.</param>
 		private void UpdateImage(int index, GameInfo game) {
 			ISpritePart part = parts[index];
 			Image image = images[index];
-			//Hg3 hg3;
 			if (part == null) {
-				//hg3s[index] = null;
 				image.Width = 0;
 				image.Height = 0;
 				image.Margin = new Thickness();
@@ -246,8 +284,8 @@ namespace Grisaia.SpriteViewer.Controls {
 			}
 			else {
 				hg3 = part.Hg3;
-			}*/
-			//hg3s[index] = hg3 = part.Hg3;
+			}
+			hg3s[index] = hg3 = part.Hg3;*/
 
 			string cachePath = game.CachePath;
 			if (DesignerProperties.GetIsInDesignMode(this))
@@ -257,13 +295,11 @@ namespace Grisaia.SpriteViewer.Controls {
 			source.BeginInit();
 			source.UriSource = new Uri(part.Hg3.GetFrameFilePath(cachePath, 0, 0));
 			source.EndInit();
-
-			/*var h = part.Hg3.Images[0];
-			image.Width = h.Width;
-			image.Height = h.Height;
-			image.Margin = new Thickness(h.MarginLeft, h.MarginTop, h.MarginRight, h.MarginBottom);*/
+			
 			image.Source = source;
 			image.Visibility = Visibility.Visible;
 		}
+
+		#endregion
 	}
 }

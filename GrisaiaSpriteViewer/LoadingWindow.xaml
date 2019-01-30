@@ -5,12 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer"
         mc:Ignorable="d"
-        Title="Grisaia Sprite Viewer" Height="156" Width="400" ResizeMode="NoResize" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" Icon="Resources/App.ico" WindowStartupLocation="CenterScreen" ContentRendered="OnContentRendered" Loaded="OnLoaded">
-  <Grid>
-    <StackPanel Margin="15,15,15,0">
-      <Label x:Name="labelStatus" Content="Caching Sprites..."/>
-      <Label x:Name="labelGame" Content="Current Game: Grisaia no Kajitsu"/>
+        DataContext="{Binding Loading, Source={StaticResource Locator}}"
+        Title="Grisaia Sprite Viewer" ResizeMode="NoResize" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" Icon="Resources/App.ico" WindowStartupLocation="CenterScreen" Loaded="OnLoaded" SizeToContent="WidthAndHeight">
+  <Grid Width="380" Height="130" Margin="10,10,10,10">
+    <Label x:Name="labelTime" Content="00:00" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+    <Label x:Name="labelStatus" Content="Preparing Grisaia Sprite Viewer..."/>
+    <StackPanel VerticalAlignment="Bottom">
+      <Label x:Name="labelEntries" Content="Entries: -- / --"/>
+      <ProgressBar x:Name="minorProgressBar" Maximum="1" Height="24"/>
+      <Label x:Name="labelGame" Content="Game: --"/>
+      <ProgressBar x:Name="majorProgressBar" Maximum="1" Height="24"/>
     </StackPanel>
-    <ProgressBar x:Name="progressBar" VerticalAlignment="Bottom" Maximum="1" Height="24" Margin="10,0,10,10"/>
   </Grid>
 </Window>

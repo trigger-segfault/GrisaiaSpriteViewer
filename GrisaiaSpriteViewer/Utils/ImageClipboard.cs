@@ -12,7 +12,7 @@ using System.Web;
 using System.Windows.Forms;
 using Grisaia.Extensions;
 
-namespace Grisaia.SpriteViewer {
+namespace Grisaia.SpriteViewer.Utils {
 	/// <summary>
 	/// https://stackoverflow.com/a/46424800/7517185
 	/// </summary>

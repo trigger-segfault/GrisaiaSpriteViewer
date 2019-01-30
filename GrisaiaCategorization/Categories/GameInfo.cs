@@ -234,20 +234,40 @@ namespace Grisaia.Categories {
 		public void ClearLookups() {
 			lookups.Clear();
 		}
-		public KifintLookup LoadLookup(KifintType type) {
+		private KifintLookup LoadLookup(KifintType type, LoadCacheProgressCallback callback = null) {
+			LoadCacheProgressArgs progress = new LoadCacheProgressArgs {
+				CurrentGame = this,
+				GameCount = 1,
+				GameIndex = 0,
+			};
+			return LoadLookup(type, progress, callback);
+		}
+		internal KifintLookup LoadLookup(KifintType type, LoadCacheProgressArgs progress,
+			LoadCacheProgressCallback callback)
+		{
 			Trace.WriteLine($"Loading {type} Cache: {Id}");
 			string lookupName = Path.ChangeExtension($"{Id}-{type.ToString().ToLower()}", ".intlookup");
 			string lookupFile = Path.Combine(Database.GrisaiaDatabase.CachePath, lookupName);
 			KifintLookup lookup = null;
+			KifintProgressCallback kifintCallback = null;
+			if (callback != null) {
+				kifintCallback = (e) => {
+					progress.Kifint = e;
+					callback(progress);
+				};
+			}
 			if (File.Exists(lookupFile)) {
 				try {
+					callback?.Invoke(progress);
 					lookup = KifintLookup.Load(lookupFile, InstallDir);
 				} catch { }
 			}
 			if (lookup == null) {
 				Trace.WriteLine($"Building {type} Cache: {Id}");
-				lookup = Kifint.Decrypt(type, InstallDir, VCode2);
+				progress.IsBuilding = true;
+				lookup = Kifint.Decrypt(type, InstallDir, VCode2, kifintCallback);
 				lookup.Save(lookupFile);
+				progress.IsBuilding = false;
 			}
 			lookups[type] = lookup;
 			return lookup;

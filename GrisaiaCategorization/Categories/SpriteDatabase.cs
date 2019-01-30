@@ -11,9 +11,9 @@ using Grisaia.Rules.Sprites;
 
 namespace Grisaia.Categories {
 	/// <summary>
-	///  The event args used with <see cref="SpriteDatabaseProgressHandler"/>.
+	///  The event args used with <see cref="LoadSpritesProgressCallback"/>.
 	/// </summary>
-	public struct SpriteDatabaseProgressArgs {
+	public struct LoadSpritesProgressArgs {
 		/// <summary>
 		///  The current game whose sprites are being parsed.
 		/// </summary>
@@ -30,13 +30,38 @@ namespace Grisaia.Categories {
 		///  The total number of sprites that have been parsed.
 		/// </summary>
 		public int SpriteCount { get; internal set; }
+
+		/// <summary>
+		///  Gets the index of the current lookup entry being parsed.
+		/// </summary>
+		public int EntryIndex { get; internal set; }
+		/// <summary>
+		///  Gets the total number of lookup entries to parse.
+		/// </summary>
+		public int EntryCount { get; internal set; }
+
+		/// <summary>
+		///  Gets the minor progress being made on a single game.
+		/// </summary>
+		public double MinorProgress {
+			get => (EntryIndex == EntryCount ? 1d : ((double) EntryIndex / EntryCount));
+		}
+		/// <summary>
+		///  Gets the major progress being made on all games.
+		/// </summary>
+		public double MajorProgress {
+			get => (GameIndex == GameCount ? 1d : ((double) GameIndex / GameCount));
+		}
+		/// <summary>
+		///  Gets if the progress is completely finished.
+		/// </summary>
+		public bool IsDone => GameIndex == GameCount;
 	}
 	/// <summary>
-	///  An event handler for use during the building of a sprite database.
+	///  An callback handler for use during the building of a sprite database.
 	/// </summary>
-	/// <param name="sender">The sprite database sending this callback.</param>
 	/// <param name="e">The progress event args.</param>
-	public delegate void SpriteDatabaseProgressHandler(object sender, SpriteDatabaseProgressArgs e);
+	public delegate void LoadSpritesProgressCallback(LoadSpritesProgressArgs e);
 	/// <summary>
 	///  A database for cached and categorized Grisaia character sprites.
 	/// </summary>
@@ -106,11 +131,7 @@ namespace Grisaia.Categories {
 		#endregion
 
 		#region Events
-
-		/// <summary>
-		///  The event raised during building of the sprite database.
-		/// </summary>
-		public event SpriteDatabaseProgressHandler BuildProgress;
+		
 		/// <summary>
 		///  The event raised after the sprite database is completely built.
 		/// </summary>
@@ -251,17 +272,15 @@ namespace Grisaia.Categories {
 		///  Asyncrhonously builds a dummy sprite database.
 		/// </summary>
 		/// <param name="categories">The category order to use for the database.</param>
-		public Task BuildDummyAsync(IEnumerable<SpriteCategoryInfo> categoryOrder) {
-			return Task.Run(() => BuildDummy(categoryOrder));
+		public Task LoadSpritesDummyAsync(IEnumerable<SpriteCategoryInfo> categoryOrder) {
+			return Task.Run(() => LoadSpritesDummy(categoryOrder));
 		}
-
-
 		/// <summary>
 		///  Syncrhonously builds the sprite database by looking at every sprite in each game's KIFINT lookup.
 		/// </summary>
 		/// <param name="categoryOrder">The category order to use for the database.</param>
-		public void BuildDummy(IEnumerable<SpriteCategoryInfo> categoryOrder) {
-			SpriteDatabaseProgressArgs progress = new SpriteDatabaseProgressArgs {
+		public void LoadSpritesDummy(IEnumerable<SpriteCategoryInfo> categoryOrder) {
+			LoadSpritesProgressArgs progress = new LoadSpritesProgressArgs {
 				CurrentGame = null,
 				GameIndex = -1,
 				GameCount = GameDatabase.LocatedGames.Count,
@@ -295,7 +314,6 @@ namespace Grisaia.Categories {
 				Trace.WriteLine($"Categorizing: {game.Id}");
 				progress.GameIndex++;
 				progress.CurrentGame = game;
-				BuildProgress?.Invoke(this, progress);
 				if (!charIsPrimary) {
 					gameCategory = new SpriteGame {
 						Id = game.Id,
@@ -371,7 +389,6 @@ namespace Grisaia.Categories {
 						}
 						else if (progress.SpriteCount % ProgressThreshold == 0) {
 							SpriteCount = progress.SpriteCount;
-							BuildProgress?.Invoke(this, progress);
 						}
 					}
 				}
@@ -386,7 +403,6 @@ namespace Grisaia.Categories {
 			SpriteCount = progress.SpriteCount;
 			progress.CurrentGame = null;
 			progress.GameIndex++;
-			BuildProgress?.Invoke(this, progress);
 			BuildComplete?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -394,18 +410,21 @@ namespace Grisaia.Categories {
 		///  Asyncrhonously builds the sprite database by looking at every sprite in each game's KIFINT lookup.
 		/// </summary>
 		/// <param name="categoryOrder">The category order to use for the database.</param>
-		public Task BuildAsync(IEnumerable<SpriteCategoryInfo> categoryOrder) {
-			return Task.Run(() => Build(categoryOrder));
+		public Task LoadSpritesAsync(IEnumerable<SpriteCategoryInfo> categoryOrder,
+			LoadSpritesProgressCallback callback = null)
+		{
+			return Task.Run(() => LoadSprites(categoryOrder));
 		}
-		
 		/// <summary>
 		///  Syncrhonously builds the sprite database by looking at every sprite in each game's KIFINT lookup.
 		/// </summary>
 		/// <param name="categoryOrder">The category order to use for the database.</param>
-		public void Build(IEnumerable<SpriteCategoryInfo> categoryOrder) {
-			SpriteDatabaseProgressArgs progress = new SpriteDatabaseProgressArgs {
+		public void LoadSprites(IEnumerable<SpriteCategoryInfo> categoryOrder,
+			LoadSpritesProgressCallback callback = null)
+		{
+			LoadSpritesProgressArgs progress = new LoadSpritesProgressArgs {
 				CurrentGame = null,
-				GameIndex = -1,
+				GameIndex = 0,
 				GameCount = GameDatabase.LocatedGames.Count,
 				SpriteCount = 0,
 			};
@@ -435,9 +454,7 @@ namespace Grisaia.Categories {
 			SpriteCategoryInfo currentCategoryInfo = Categories[1];
 			foreach (GameInfo game in GameDatabase.LocatedGames) {
 				Trace.WriteLine($"Categorizing: {game.Id}");
-				progress.GameIndex++;
 				progress.CurrentGame = game;
-				BuildProgress?.Invoke(this, progress);
 				if (!charIsPrimary) {
 					gameCategory = new SpriteGame {
 						Id = game.Id,
@@ -446,7 +463,15 @@ namespace Grisaia.Categories {
 					};
 					list.Add(gameCategory);
 				}
-				foreach (KifintEntry kif in game.Lookups.Image) {
+				IEnumerable<KifintEntry> imageEntries = game.Lookups.Image;
+				progress.EntryIndex = 0;
+				progress.EntryCount = game.Lookups.Image.Count;
+				if (game.Lookups.Update != null) {
+					imageEntries = imageEntries.Concat(game.Lookups.Update);
+					progress.EntryCount += game.Lookups.Update.Count;
+				}
+				callback?.Invoke(progress);
+				foreach (KifintEntry kif in imageEntries) {
 					if (kif.FileName[0] == 'T' && kif.Extension == ".hg3") {
 						// We have a sprite, (most likely)
 						bool parsed = false;
@@ -513,10 +538,12 @@ namespace Grisaia.Categories {
 						}
 						else if (progress.SpriteCount % ProgressThreshold == 0) {
 							SpriteCount = progress.SpriteCount;
-							BuildProgress?.Invoke(this, progress);
+							callback?.Invoke(progress);
 						}
 					}
+					progress.EntryIndex++;
 				}
+				progress.GameIndex++;
 			}
 
 			// Finalize by sorting all sprites
@@ -527,8 +554,7 @@ namespace Grisaia.Categories {
 
 			SpriteCount = progress.SpriteCount;
 			progress.CurrentGame = null;
-			progress.GameIndex++;
-			BuildProgress?.Invoke(this, progress);
+			callback?.Invoke(progress);
 			BuildComplete?.Invoke(this, EventArgs.Empty);
 		}
 

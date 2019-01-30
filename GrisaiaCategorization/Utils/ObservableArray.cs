@@ -61,16 +61,7 @@ namespace Grisaia.Utils {
 		/// </summary>
 		[field: NonSerialized]
 		protected virtual event PropertyChangedEventHandler PropertyChanged;
-		/// <summary>
-		///  Event fired when the property changed reentrancy has ended.
-		/// </summary>
-		[field: NonSerialized]
-		public event EventHandler ReEntrancyEnded;
-
-		public void InvokeCollectionReset() {
-			OnCollectionChanged(NotifyCollectionChangedAction.Reset);
-		}
-
+		
 		#endregion
 		
 		#region Protected Methods

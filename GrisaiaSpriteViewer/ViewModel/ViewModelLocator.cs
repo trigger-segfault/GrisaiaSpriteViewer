@@ -51,8 +51,8 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			//SimpleIoc.Default.Register<SpriteViewerSettings>();
 			//SimpleIoc.Default.Register<SpriteDatabase>(true);
 			//SimpleIoc.Default.Register<MainViewModel>();
-			SimpleIoc.Default.Register<SpriteViewModel>();
-			//SimpleIoc.Default.Register<LoadingViewModel>(true);
+			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
+			SimpleIoc.Default.Register<LoadingViewModel>();
 		}
 
 		public string DataPath {
@@ -65,7 +65,8 @@ namespace Grisaia.SpriteViewer.ViewModel {
 		}
 
 		//public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-		public SpriteViewModel Sprite => ServiceLocator.Current.GetInstance<SpriteViewModel>();
+		public SpriteSelectionViewModel SpriteSelection => ServiceLocator.Current.GetInstance<SpriteSelectionViewModel>();
+		public LoadingViewModel Loading => ServiceLocator.Current.GetInstance<LoadingViewModel>();
 
 		public static void Cleanup() {
 			// TODO Clear the ViewModels

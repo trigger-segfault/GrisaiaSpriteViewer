@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
-        mc:Ignorable="d"
-        DataContext="{Binding Sprite, Source={StaticResource Locator}}"
-        Title="Grisaia Sprite Browser" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown">
-  <!--
+        xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"-->
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        mc:Ignorable="d"
+        DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
+        Title="Grisaia Sprite Viewer" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown">
   <DockPanel>
     <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
       <Menu>

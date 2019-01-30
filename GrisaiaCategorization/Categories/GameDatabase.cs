@@ -9,6 +9,89 @@ using Grisaia.Locators;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
+	/*/// <summary>
+	///  The event args used with <see cref="LocateGamesProgressHandler"/>.
+	/// </summary>
+	public struct LocateGamesProgressArgs {
+		/// <summary>
+		///  The current game whose installation directory is being located.
+		/// </summary>
+		public GameInfo CurrentGame { get; internal set; }
+		/// <summary>
+		///  The index of the current located game being parsed.
+		/// </summary>
+		public int GameIndex { get; internal set; }
+		/// <summary>
+		///  The total number of located games to parse.
+		/// </summary>
+		public int GameCount { get; internal set; }
+		/// <summary>
+		///  The total number of games that have been located.
+		/// </summary>
+		public int LocatedGames { get; internal set; }
+	}
+	/// <summary>
+	///  An event handler for use during the locating of a Grisia games.
+	/// </summary>
+	/// <param name="sender">The game database sending this callback.</param>
+	/// <param name="e">The progress event args.</param>
+	public delegate void LocateGamesProgressHandler(object sender, LocateGamesProgressArgs e);*/
+	/// <summary>
+	///  The event args used with <see cref="LoadCacheProgressCallback"/>.
+	/// </summary>
+	public struct LoadCacheProgressArgs {
+		/// <summary>
+		///  The current game whose KIFINT archives are being loaded.
+		/// </summary>
+		public GameInfo CurrentGame { get; internal set; }
+		/// <summary>
+		///  The index of the current located game being parsed.
+		/// </summary>
+		public int GameIndex { get; internal set; }
+		/// <summary>
+		///  The total number of located games to parse.
+		/// </summary>
+		public int GameCount { get; internal set; }
+		/// <summary>
+		///  Gets if the KIFINT archives are being built instead of loaded.
+		/// </summary>
+		public bool IsBuilding { get; internal set; }
+
+		/// <summary>
+		///  Gets the progress made on KIFINT archive decryption.
+		/// </summary>
+		public KifintProgressArgs Kifint { get; internal set; }
+
+		/// <summary>
+		///  Gets the progress made on the loading of all game caches.
+		/// </summary>
+		public double Progress {
+			get {
+				if (GameIndex == GameCount)
+					return 1d;
+				return (double) GameIndex / GameCount;
+			}
+		}
+		/// <summary>
+		///  Gets the minor progress being made on a single game.
+		/// </summary>
+		public double MinorProgress => Kifint.Progress;
+		/// <summary>
+		///  Gets the major progress being made on all games.
+		/// </summary>
+		public double MajorProgress {
+			get => (GameIndex == GameCount ? 1d : ((double) GameIndex / GameCount));
+		}
+		/// <summary>
+		///  Gets if the progress is completely finished.
+		/// </summary>
+		public bool IsDone => GameIndex == GameCount;
+	}
+	/// <summary>
+	///  An event handler for use during the locating of a Grisia games.
+	/// </summary>
+	/// <param name="e">The progress event args.</param>
+	public delegate void LoadCacheProgressCallback(LoadCacheProgressArgs e);
 	/// <summary>
 	///  A game database storing all Grisaia games  along with their information.
 	/// </summary>
@@ -248,7 +331,7 @@ namespace Grisaia.Categories {
 
 		#region Cache
 
-		public void ClearLookupCache() {
+		public void ClearCache() {
 			string cachePath = GrisaiaDatabase.CachePath;
 			if (Directory.Exists(cachePath))
 				Directory.Delete(cachePath, true);
@@ -258,50 +341,33 @@ namespace Grisaia.Categories {
 			}
 		}
 
-		public void RebuildLookupCache(bool loadUpdateArchives = true) {
-			ClearLookupCache();
-			LoadLookupCache(loadUpdateArchives);
+		public void RebuildCache(bool loadUpdateArchives = true, LoadCacheProgressCallback callback = null) {
+			ClearCache();
+			LoadCache(loadUpdateArchives, callback);
 		}
 
-		public void LoadLookupCache(bool loadUpdateArchives = true) {
+		public void LoadCache(bool loadUpdateArchives = true, LoadCacheProgressCallback callback = null) {
 			string cachePath = GrisaiaDatabase.CachePath;
 			if (!Directory.Exists(cachePath))
 				Directory.CreateDirectory(cachePath);
+
+			LoadCacheProgressArgs progress = new LoadCacheProgressArgs {
+				GameIndex = 0,
+				GameCount = LocatedCount,
+			};
 			
 			foreach (GameInfo game in locatedGameList) {
+				progress.CurrentGame = game;
 				game.ClearLookups();
 				if (loadUpdateArchives)
-					game.LoadLookup(KifintType.Update);
-				game.LoadLookup(KifintType.Image);
-				//game.ImageLookup = LoadLookup(KifintType.Image, cachePath, game);
-				//game.UpdateLookup = LoadLookup(KifintType.Update, cachePath, game);
-				//game.ImageLookup.Update = game.UpdateLookup;
+					game.LoadLookup(KifintType.Update, progress, callback);
+				game.LoadLookup(KifintType.Image, progress, callback);
+				progress.GameIndex++;
 			}
+			progress.CurrentGame = null;
+			progress.Kifint = default;
+			callback?.Invoke(progress);
 		}
-
-		/*private KifintLookup LoadLookup(KifintType type, string cachePath, GameInfo game) {
-			Trace.WriteLine($"Loading {type} Cache: {game.Id}");
-			string lookupFile = GetLookupFile(type, cachePath, game);
-			KifintLookup lookup = null;
-			if (File.Exists(lookupFile)) {
-				try {
-					lookup = KifintLookup.Load(lookupFile, game.InstallDir);
-					//Trace.WriteLine($"Loaded {type} Cache: {Path.GetFileName(lookupFile)}");
-				} catch { }
-			}
-			if (lookup == null) {
-				Trace.WriteLine($"Building {type} Cache: {game.Id}");
-				lookup = Kifint.Decrypt(type, game.InstallDir, game.VCode2);
-				lookup.Save(lookupFile);
-				//Trace.WriteLine($"Saved {type} Cache: {Path.GetFileName(lookupFile)}");
-			}
-			return lookup;
-		}
-
-		private string GetLookupFile(KifintType type, string cachePath, GameInfo game) {
-			string name = $"{game.Id}-{type.ToString().ToLower()}";
-			return Path.Combine(cachePath, Path.ChangeExtension(name, KifintLookup.Extension));
-		}*/
 
 		#endregion
 

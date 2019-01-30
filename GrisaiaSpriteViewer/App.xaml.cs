@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using Grisaia.SpriteViewer.Windows;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
@@ -18,6 +19,14 @@ namespace Grisaia.SpriteViewer {
 		/// </summary>
 		public App() {
 			AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssemblies;
+			Initialize();
+		}
+
+		/// <summary>
+		///  Called to avoid referencing assemblies before the assembly resolver can be added.
+		/// </summary>
+		private void Initialize() {
+			ErrorMessageBox.GlobalHook(this);
 		}
 		
 		/// <summary>
@@ -29,10 +38,10 @@ namespace Grisaia.SpriteViewer {
 
 			if (TryResolveAssembly(assemblyName, out Assembly assembly))
 				return assembly;
-			culturePath = CultureInfo.CurrentCulture.ToString();
+			culturePath = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 			if (TryResolveAssembly(culturePath, assemblyName, out assembly))
 				return assembly;
-			culturePath = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+			culturePath = CultureInfo.CurrentCulture.ToString();
 			if (TryResolveAssembly(culturePath, assemblyName, out assembly))
 				return assembly;
 

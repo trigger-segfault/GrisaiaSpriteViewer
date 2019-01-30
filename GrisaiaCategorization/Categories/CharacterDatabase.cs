@@ -8,33 +8,6 @@ using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
 	/// <summary>
-	///  The event args used with <see cref="LocateGamesProgressHandler"/>.
-	/// </summary>
-	public struct LocateGamesProgressArgs {
-		/// <summary>
-		///  The current game whose installation directory is being located.
-		/// </summary>
-		public GameInfo CurrentGame { get; internal set; }
-		/// <summary>
-		///  The index of the current located game being parsed.
-		/// </summary>
-		public int GameIndex { get; internal set; }
-		/// <summary>
-		///  The total number of located games to parse.
-		/// </summary>
-		public int GameCount { get; internal set; }
-		/// <summary>
-		///  The total number of games that have been located.
-		/// </summary>
-		public int LocatedGames { get; internal set; }
-	}
-	/// <summary>
-	///  An event handler for use during the locating of a Grisia games.
-	/// </summary>
-	/// <param name="sender">The game database sending this callback.</param>
-	/// <param name="e">The progress event args.</param>
-	public delegate void LocateGamesProgressHandler(object sender, LocateGamesProgressArgs e);
-	/// <summary>
 	///  A database for storing all known character infos along with their information.
 	/// </summary>
 	[JsonObject]

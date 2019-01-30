@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls">
+                    xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+                    xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters">
   <Style x:Key="{x:Type local:SpriteCategoryComboBox}" TargetType="{x:Type local:SpriteCategoryComboBox}">
     <Setter Property="Template">
       <Setter.Value>
@@ -49,11 +50,17 @@
           <StackPanel Margin="{TemplateBinding Padding}">
             <StackPanel x:Name="PART_Section1"/>
 
-            <Rectangle x:Name="PART_Separator1" Fill="{TemplateBinding BorderBrush}" Height="1" Margin="-10,6,-10,0"/>
+            <Rectangle x:Name="PART_Separator1" Fill="{TemplateBinding BorderBrush}" Height="1"
+                       Margin="{TemplateBinding Padding,
+                                Converter={conv:PreserveVerticalReverseThicknessConverter},
+                                ConverterParameter='6,0'}"/>
 
             <StackPanel x:Name="PART_Section2"/>
 
-            <Rectangle x:Name="PART_Separator2" Fill="{TemplateBinding BorderBrush}" Height="1" Margin="-10,6,-10,0"/>
+            <Rectangle x:Name="PART_Separator2" Fill="{TemplateBinding BorderBrush}" Height="1"
+                       Margin="{TemplateBinding Padding,
+                                Converter={conv:PreserveVerticalReverseThicknessConverter},
+                                ConverterParameter='6,0'}"/>
 
             <StackPanel x:Name="PART_Section3"/>
 

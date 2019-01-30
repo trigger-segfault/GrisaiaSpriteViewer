@@ -14,7 +14,7 @@ using Grisaia.SpriteViewer.Model;
 using Grisaia.Utils;
 
 namespace Grisaia.SpriteViewer.ViewModel {
-	public class SpriteViewModel : ViewModelBase {
+	public class SpriteSelectionViewModel : ViewModelBase {
 		#region Constants
 
 		/// <summary>
@@ -150,7 +150,7 @@ namespace Grisaia.SpriteViewer.ViewModel {
 
 		#region Constructors
 
-		public SpriteViewModel(GrisaiaModel grisaiaDb) {
+		public SpriteSelectionViewModel(GrisaiaModel grisaiaDb) {
 			GrisaiaDatabase = grisaiaDb;
 
 			Categories.CollectionChanged += OnCategoriesCollectionChanged;
@@ -162,14 +162,9 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			PropertyChanged += OnPropertyChanged;
 
 			suppressCollectionEvents = true;
-			if (!IsInDesignMode) {
-				GameDatabase.LocateGames();
-				GameDatabase.LoadLookupCache(Settings.LoadUpdateArchives);
-				SpriteDatabase.Build(Settings.SpriteCategoryOrder);
-			}
-			else {
+			if (IsInDesignMode) {
 				GameDatabase.LocateDummyGames();
-				SpriteDatabase.BuildDummy(Settings.SpriteCategoryOrder);
+				SpriteDatabase.LoadSpritesDummy(Settings.SpriteCategoryOrder);
 			}
 			SpriteSelection newSelection = selection.ToMutable();
 			ISpriteCategory category = SpriteDatabase;

@@ -20,20 +20,34 @@ namespace Grisaia.Asmodean {
 		/// <param name="wildcard">The wildcard name of the files to look for and merge.</param>
 		/// <param name="installDir">The installation directory for both the archives and executable.</param>
 		/// <param name="vcode2">The V_CODE2 key obtained from the exe, used to decrypt the file names.</param>
+		/// <param name="callback">The optional callback for progress made during decryption.</param>
 		/// <returns>The <see cref="KifintLookup"/> merged with all loaded archives.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="wildcard"/>, <paramref name="installDir"/>, or <paramref name="vcode2"/> is null.
 		/// </exception>
-		public static KifintLookup Decrypt(string wildcard, string installDir, string vcode2) {
+		public static KifintLookup Decrypt(string wildcard, string installDir, string vcode2,
+			KifintProgressCallback callback = null)
+		{
 			if (vcode2 == null)
 				throw new ArgumentNullException(nameof(vcode2));
 			KifintType type = KifintType.Unknown;
 			KifintLookup lookup = new KifintLookup(type);
-			foreach (string kifIntPath in Directory.GetFiles(installDir, wildcard)) {
-				using (Stream stream = File.OpenRead(kifIntPath))
-					lookup.Merge(Decrypt(type, stream, kifIntPath, vcode2));
+			string[] files = Directory.GetFiles(installDir, wildcard);
+			KifintProgressArgs progress = new KifintProgressArgs {
+				ArchiveType = type,
+				ArchiveIndex = 0,
+				ArchiveCount = files.Length,
+			};
+			foreach (string kifintPath in files) {
+				progress.ArchiveName = Path.GetFileName(kifintPath);
+				using (Stream stream = File.OpenRead(kifintPath))
+					lookup.Merge(Decrypt(type, stream, kifintPath, vcode2, progress, callback));
+				progress.ArchiveIndex++;
 			}
+			progress.EntryIndex = 0;
+			progress.EntryCount = 0;
+			callback?.Invoke(progress);
 			return lookup;
 		}
 		/// <summary>
@@ -43,6 +57,7 @@ namespace Grisaia.Asmodean {
 		/// <param name="type">The type of archive to look for and decrypt.</param>
 		/// <param name="installDir">The installation directory for both the archives and executable.</param>
 		/// <param name="vcode2">The V_CODE2 key obtained from the exe, used to decrypt the file names.</param>
+		/// <param name="callback">The optional callback for progress made during decryption.</param>
 		/// <returns>The <see cref="KifintLookup"/> merged with all loaded archives.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
@@ -51,17 +66,30 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentException">
 		///  <paramref name="type"/> is <see cref="KifintType.Unknown"/>.
 		/// </exception>
-		public static KifintLookup Decrypt(KifintType type, string installDir, string vcode2) {
+		public static KifintLookup Decrypt(KifintType type, string installDir, string vcode2,
+			KifintProgressCallback callback = null)
+		{
 			if (vcode2 == null)
 				throw new ArgumentNullException(nameof(vcode2));
 			if (type == KifintType.Unknown)
 				throw new ArgumentException($"{nameof(type)} cannot be {nameof(KifintType.Unknown)}!", nameof(type));
 			KifintLookup lookup = new KifintLookup(type);
 			string wildcard = EnumInfo<KifintType>.GetAttribute<KifintWildcardAttribute>(type).Wildcard;
-			foreach (string kifIntPath in Directory.GetFiles(installDir, wildcard)) {
-				using (Stream stream = File.OpenRead(kifIntPath))
-					lookup.Merge(Decrypt(type, stream, kifIntPath, vcode2));
+			string[] files = Directory.GetFiles(installDir, wildcard);
+			KifintProgressArgs progress = new KifintProgressArgs {
+				ArchiveType = type,
+				ArchiveIndex = 0,
+				ArchiveCount = files.Length,
+			};
+			foreach (string kifintPath in files) {
+				progress.ArchiveName = Path.GetFileName(kifintPath);
+				using (Stream stream = File.OpenRead(kifintPath))
+					lookup.Merge(Decrypt(type, stream, kifintPath, vcode2, progress, callback));
+				progress.ArchiveIndex++;
 			}
+			progress.EntryIndex = 0;
+			progress.EntryCount = 0;
+			callback?.Invoke(progress);
 			return lookup;
 		}
 		
@@ -69,16 +97,16 @@ namespace Grisaia.Asmodean {
 
 		#region IdentifyFileTypes
 
-		public static string[] IdentifyFileTypes(string kifIntPath, string vcode2) {
-			using (Stream stream = File.OpenRead(kifIntPath))
-				return IdentifyFileTypes(stream, kifIntPath, vcode2);
+		public static string[] IdentifyFileTypes(string kifintPath, string vcode2) {
+			using (Stream stream = File.OpenRead(kifintPath))
+				return IdentifyFileTypes(stream, kifintPath, vcode2);
 		}
-		private static string[] IdentifyFileTypes(Stream stream, string kifIntPath, string vcode2) {
+		private static string[] IdentifyFileTypes(Stream stream, string kifintPath, string vcode2) {
 			BinaryReader reader = new BinaryReader(stream);
 			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
 
 			if (hdr.Signature != "KIF") // It's really a KIF INT file
-				throw new UnexpectedFileTypeException(kifIntPath, "KIF");
+				throw new UnexpectedFileTypeException(kifintPath, "KIF");
 
 			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
 
