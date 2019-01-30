@@ -42,7 +42,7 @@ namespace Grisaia.Asmodean {
 			IntPtr hResInfo);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		private extern static uint SizeofResource(
+		private extern static int SizeofResource(
 			IntPtr hModule,
 			IntPtr hResInfo);
 

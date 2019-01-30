@@ -3,7 +3,7 @@ using Grisaia.Categories.Sprites;
 
 namespace Grisaia.Rules.Sprites {
 	/// <summary>
-	/// 
+	///  The sprite parsing rule for Yumiko's mosaic sprites in Idol Mahou Shoujo Chiru Chiru Michiru.
 	/// </summary>
 	/// 
 	/// <remarks>
@@ -28,6 +28,7 @@ namespace Grisaia.Rules.Sprites {
 			@"_" +
 			@"moz" +
 			EndPattern;
+		private static readonly Regex Regex = new Regex(Pattern);
 
 		#endregion
 
@@ -36,7 +37,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <summary>
 		///  Gets the default regular expression used to parse the sprite.
 		/// </summary>
-		public override Regex SpriteRegex { get; } = new Regex(Pattern);
+		public override Regex SpriteRegex => Regex;
+		/// <summary>
+		///  Gets the priority order of the parsing rule when parsing sprites.
+		/// </summary>
+		public override double Priority => 2d;
 
 		#endregion
 
@@ -49,13 +54,12 @@ namespace Grisaia.Rules.Sprites {
 		/// <param name="m">The successful Regular Expression match from <see cref="SpriteRegex"/>.</param>
 		/// <returns>True if the sprite was successfully parsed.</returns>
 		protected override bool TryParseMatch(SpriteInfo s, Match m) {
-			if (!TryParseCharacter(s, m))
+			if (!TryParseCharacter(s, m, "moz")) // Append "moz" to the end of the character Id
 				return false;
-			s.CharacterId += "moz";
 
 			if (!TryParseLighting(s, m))
 				return false;
-			if (!TryParsePose(s, m))
+			if (!TryParsePoseAndBlush(s, m))
 				return false;
 			if (!TryParseDistance(s, m))
 				return false;

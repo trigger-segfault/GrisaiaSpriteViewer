@@ -8,12 +8,44 @@ using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
 	/// <summary>
+	///  The event args used with <see cref="LocateGamesProgressHandler"/>.
+	/// </summary>
+	public struct LocateGamesProgressArgs {
+		/// <summary>
+		///  The current game whose installation directory is being located.
+		/// </summary>
+		public GameInfo CurrentGame { get; internal set; }
+		/// <summary>
+		///  The index of the current located game being parsed.
+		/// </summary>
+		public int GameIndex { get; internal set; }
+		/// <summary>
+		///  The total number of located games to parse.
+		/// </summary>
+		public int GameCount { get; internal set; }
+		/// <summary>
+		///  The total number of games that have been located.
+		/// </summary>
+		public int LocatedGames { get; internal set; }
+	}
+	/// <summary>
+	///  An event handler for use during the locating of a Grisia games.
+	/// </summary>
+	/// <param name="sender">The game database sending this callback.</param>
+	/// <param name="e">The progress event args.</param>
+	public delegate void LocateGamesProgressHandler(object sender, LocateGamesProgressArgs e);
+	/// <summary>
 	///  A database for storing all known character infos along with their information.
 	/// </summary>
 	[JsonObject]
 	public sealed class CharacterDatabase : IReadOnlyCollection<CharacterInfo> {
 		#region Fields
 
+		/// <summary>
+		///  Gets the grisaia database containing this database.
+		/// </summary>
+		[JsonIgnore]
+		public GrisaiaDatabase GrisaiaDatabase { get; private set; }
 		/// <summary>
 		///  The map of character infos by sprite Id.
 		/// </summary>
@@ -34,7 +66,12 @@ namespace Grisaia.Categories {
 		///  Gets the default character parts layout when one is not specified.
 		/// </summary>
 		[JsonProperty("default_parts")]
-		public CharacterSpritePartGroup[] DefaultParts { get; private set; }
+		public CharacterSpritePartGroupInfo[] DefaultParts { get; private set; }
+		/// <summary>
+		///  The naming scheme used for characters.
+		/// </summary>
+		[JsonIgnore]
+		private CharacterNamingScheme namingScheme = new CharacterNamingScheme();
 		
 		#endregion
 
@@ -66,11 +103,56 @@ namespace Grisaia.Categories {
 				characterList.Clear();
 				characterMap.Clear();
 				characterList.AddRange(value);
+				void SetParent(CharacterInfo c, HashSet<string> encountered) {
+					if (c.ParentId == null)
+						return;
+					if (!encountered.Add(c.Id))
+						throw new InvalidOperationException($"Infinite loop detected in parents with character " +
+															$"\"{c.Id}\"!");
+					if (!TryGetValue(c.ParentId, out CharacterInfo p))
+						throw new KeyNotFoundException($"Invalid parent Id \"{c.ParentId}\" for character " +
+													   $"\"{c.Id}\"!");
+					// Hook up any dependency parents first
+					SetParent(p, encountered);
+					// Then assign the current parent
+					c.Parent = p;
+				}
+				void SetRelation(CharacterInfo c, HashSet<string> encountered) {
+					if (c.RelationId == null)
+						return;
+					if (!encountered.Add(c.Id))
+						throw new InvalidOperationException($"Infinite loop detected in relations with character " +
+															$"\"{c.Id}\"!");
+					if (!TryGetValue(c.RelationId, out CharacterInfo r))
+						throw new KeyNotFoundException($"Invalid relation Id \"{c.RelationId}\" for character " +
+													   $"\"{c.Id}\"!");
+					// Hook up any dependency relations first
+					SetRelation(r, encountered);
+					// Then assign the current relation
+					c.Relation = r;
+				}
+				// First hook up the map
 				foreach (CharacterInfo character in characterList) {
-					foreach (string id in character.Ids)
-						characterMap.Add(id, character);
+					character.Database = this;
+					characterMap.Add(character.Id, character);
+				}
+				// Then assign parents and relations
+				HashSet<string> encounteredIds = new HashSet<string>();
+				foreach (CharacterInfo character in characterList) {
+					encounteredIds.Clear();
+					SetParent(character, encounteredIds);
+					encounteredIds.Clear();
+					SetRelation(character, encounteredIds);
 				}
 			}
+		}
+		/// <summary>
+		///  Gets or sets the naming scheme used for characters.
+		/// </summary>
+		[JsonIgnore]
+		public CharacterNamingScheme NamingScheme {
+			get => namingScheme;
+			set => namingScheme = value ?? throw new ArgumentNullException(nameof(NamingScheme));
 		}
 		/// <summary>
 		///  Gets the character info at the specified index in the list.
@@ -120,6 +202,10 @@ namespace Grisaia.Categories {
 			}
 			return characterInfo;
 		}
+
+		public bool TryGetValue(string id, out CharacterInfo character) => characterMap.TryGetValue(id, out character);
+
+		public bool ContainsKey(string id) => characterMap.ContainsKey(id);
 		/// <summary>
 		///  Searches for the index of the character info in the list.
 		/// </summary>
@@ -158,17 +244,17 @@ namespace Grisaia.Categories {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="game"/> or <paramref name="character"/> is null.
 		/// </exception>
-		public CharacterSpritePartGroup[] GetPartGroup(GameInfo game, CharacterInfo character) {
+		public CharacterSpritePartGroupInfo[] GetPartGroups(GameInfo game, CharacterInfo character) {
 			if (game == null)
 				throw new ArgumentNullException(nameof(game));
 			if (character == null)
 				throw new ArgumentNullException(nameof(character));
 			if (character.GameParts != null) {
-				var partGroup = character.GameParts.FirstOrDefault(gp => gp.GameIds.Any(id => id == game.Id))?.Parts;
-				if (partGroup != null)
-					return partGroup;
+				var group = character.GameParts.FirstOrDefault(gp => gp.GameIds.Any(id => id == game.Id))?.Parts;
+				if (group != null)
+					return group.ToArray();
 			}
-			return character.Parts ?? DefaultParts;
+			return character.Parts?.ToArray() ?? DefaultParts.ToArray();
 		}
 
 		#endregion
@@ -179,15 +265,18 @@ namespace Grisaia.Categories {
 		///  Deserializes the character database from a json file.
 		/// </summary>
 		/// <param name="jsonFile">The path to the json file to load and deserialize.</param>
+		/// <param name="grisaiaDb">The grisaia database containing all databases.</param>
 		/// <returns>The deserialized character database.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="jsonFile"/> is null.
+		///  <paramref name="jsonFile"/> or <see cref="grisaiaDb"/> is null.
 		/// </exception>
-		public static CharacterDatabase FromJsonFile(string jsonFile) {
+		public static CharacterDatabase FromJsonFile(string jsonFile, GrisaiaDatabase grisaiaDb) {
 			if (jsonFile == null)
 				throw new ArgumentNullException(nameof(jsonFile));
-			return JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText(jsonFile));
+			var db = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText(jsonFile));
+			db.GrisaiaDatabase = grisaiaDb ?? throw new ArgumentNullException(nameof(grisaiaDb));
+			return db;
 		}
 
 		#endregion

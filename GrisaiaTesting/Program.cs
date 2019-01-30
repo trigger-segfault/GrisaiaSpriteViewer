@@ -30,6 +30,10 @@ namespace Grisaia.Testing {
 				Test(Path.GetFileName(dir));
 			}*/
 
+			string configPath = Path.Combine(AppContext.BaseDirectory, "ConfigSettings.json");
+			File.WriteAllText(configPath, JsonConvert.SerializeObject(new ConfigSettings(), Formatting.Indented));
+			ConfigSettings settings = JsonConvert.DeserializeObject<ConfigSettings>(File.ReadAllText(configPath));
+
 			Stopwatch watch = Stopwatch.StartNew();
 			//var gameDb = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText("Games.json"));
 			//var charDb = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText("Characters.json"));
@@ -88,18 +92,31 @@ namespace Grisaia.Testing {
 			hg3.SaveJsonToDirectory(gameDb.CachePath);*/
 
 			Console.WriteLine("Time: " + watch.ElapsedMilliseconds); watch.Restart();
-			var spriteDb = new SpriteDatabase(gameDb, charDb,
+			var spriteDb = new SpriteDatabase(gameDb, charDb);
+			spriteDb.Build(
 				new SpriteCategoryInfo[] {
 					SpriteCategoryPool.Character,
 					SpriteCategoryPool.Game,
-				},
-				new SpriteCategoryInfo[] {
+
 					SpriteCategoryPool.Distance,
 					SpriteCategoryPool.Lighting,
 					SpriteCategoryPool.Pose,
 					SpriteCategoryPool.Blush,
 				});
-			spriteDb.Build();
+			int count = spriteDb.List.Sum(c => c.Count);
+			spriteDb.Build(
+				new SpriteCategoryInfo[] {
+					SpriteCategoryPool.Game,
+					SpriteCategoryPool.Character,
+
+					SpriteCategoryPool.Distance,
+					SpriteCategoryPool.Lighting,
+					SpriteCategoryPool.Pose,
+					SpriteCategoryPool.Blush,
+				});
+			int count2 = spriteDb.List.Sum(c => c.Count);
+			Console.WriteLine(count);
+			Console.WriteLine(count2);
 			Console.WriteLine("Time: " + watch.ElapsedMilliseconds);
 			Console.WriteLine("Sprites: " + spriteDb.SpriteCount);
 			Console.WriteLine("Finished");

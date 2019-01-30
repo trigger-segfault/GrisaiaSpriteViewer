@@ -33,10 +33,6 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		private readonly List<Kifint> kifints = new List<Kifint>();
 		/// <summary>
-		///  The list of merged KIFINT archives prefixed with update kifint archives.
-		/// </summary>
-		private readonly List<Kifint> updateKifints = new List<Kifint>();
-		/// <summary>
 		///  The KIFINT lookup for all update##.int archives.
 		/// </summary>
 		private KifintLookup updateLookup;
@@ -53,6 +49,22 @@ namespace Grisaia.Asmodean {
 		///  Gets the total number of KIFINT entries in every merged KIFINT archive.
 		/// </summary>
 		public int Count => kifints.Sum(ki => ki.Count);
+		/// <summary>
+		///  Gets or sets KIFINT lookup for all update##.int archives.
+		/// </summary>
+		/// 
+		/// <exception cref="ArgumentException">
+		///  The new value is not a <see cref="KifintType.Update"/> lookup.
+		/// </exception>
+		public KifintLookup Update {
+			get => updateLookup;
+			set {
+				if (value != null && value.ArchiveType != KifintType.Update)
+					throw new ArgumentException($"{nameof(Update)} is not a " +
+												$"{nameof(KifintType)}.{nameof(KifintType.Update)} type!");
+				updateLookup = value;
+			}
+		}
 
 		#endregion
 
@@ -61,7 +73,9 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Constructs an unassigned KIFINT archive lookup.
 		/// </summary>
-		internal KifintLookup() { }
+		internal KifintLookup() {
+			ArchiveType = KifintType.Unknown;
+		}
 		/// <summary>
 		///  Constructs an unassigned KIFINT archive lookup with just the archive type.
 		/// </summary>
@@ -71,7 +85,7 @@ namespace Grisaia.Asmodean {
 
 		#endregion
 
-		#region Merge/Update
+		#region Merge
 
 		/// <summary>
 		///  Merges the <paramref name="kifint"/> archive with this lookup to include more entries to access from a
@@ -82,55 +96,84 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifint"/> is null.
 		/// </exception>
-		public void Merge(Kifint kifint) {
+		internal void Merge(Kifint kifint) {
 			if (kifint == null)
 				throw new ArgumentNullException(nameof(kifint));
 			if (kifints.Contains(kifint))
 				throw new InvalidOperationException($"{nameof(KifintLookup)} already contains this {nameof(Kifint)}!");
 			kifints.Add(kifint);
-			updateKifints.Add(kifint);
-		}
-		/// <summary>
-		///  Passes through all KIFINT archive entries in the update and adds them to
-		///  <see cref="Kifint.UpdateEntries"/> if exist in <see cref="Kifint.Entries"/>.
-		/// </summary>
-		/// <param name="update">The KIFINT lookup with all of the loaded update##.int archives.</param>
-		/// 
-		/// <exception cref="ArgumentNullException">
-		///  <paramref name="update"/> is null.
-		/// </exception>
-		public void Update(KifintLookup update) {
-			updateLookup = update;
-			foreach (Kifint updateKifint in update.kifints) {
-				updateKifints.Insert(0, updateKifint);
-			}
 		}
 
 		#endregion
 
+		/// <summary>
+		///  Gets the KIFINT entry with the specified file name key.
+		/// </summary>
+		/// <param name="key">The file name of the entry to get.</param>
+		/// <returns>The KIFINT entry with the specified file name key.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  No KIFINT entry with the file name <paramref name="key"/> was found.
+		/// </exception>
 		public KifintEntry this[string key] {
 			get {
-				foreach (Kifint kifint in updateKifints) {
-					if (kifint.TryGetValue(key, out KifintEntry entry))
+				if (key == null)
+					throw new ArgumentNullException(nameof(key));
+				if (updateLookup != null && updateLookup.TryGetValue(key, out KifintEntry entry))
+					return entry;
+
+				foreach (Kifint kifint in kifints) {
+					if (kifint.TryGetValue(key, out entry))
 						return entry;
 				}
 				throw new KeyNotFoundException($"Could not find the key \"{key}\"!");
 			}
 		}
-
-		public bool ContainsKey(string key) {
-			foreach (Kifint kifint in updateKifints) {
-				if (kifint.ContainsKey(key))
-					return true;
-			}
-			return false;
-		}
+		/// <summary>
+		///  Tries to get the KIFINT entry with the specified file name key.
+		/// </summary>
+		/// <param name="key">The file name of the entry to get.</param>
+		/// <param name="entry">The output KIFINT entry with the specified file name key.</param>
+		/// <returns>True if the KIFINT entry was found, otherwise false.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
 		public bool TryGetValue(string key, out KifintEntry entry) {
-			foreach (Kifint kifint in updateKifints) {
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (updateLookup != null && updateLookup.TryGetValue(key, out entry))
+				return true;
+
+			foreach (Kifint kifint in kifints) {
 				if (kifint.TryGetValue(key, out entry))
 					return true;
 			}
 			entry = null;
+			return false;
+		}
+		/// <summary>
+		///  Checks if a KIFINT entry with the specified file name key exists.
+		/// </summary>
+		/// <param name="key">The file name of the entry to check for.</param>
+		/// <returns>True if the KIFINT entry was found, otherwise false.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
+		public bool ContainsKey(string key) {
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			if (updateLookup != null && updateLookup.ContainsKey(key))
+				return true;
+
+			foreach (Kifint kifint in kifints) {
+				if (kifint.ContainsKey(key))
+					return true;
+			}
 			return false;
 		}
 
@@ -225,13 +268,12 @@ namespace Grisaia.Asmodean {
 			int version = reader.ReadInt32();
 			switch (version) {
 			case Version:
-				KifintType type = (KifintType) Enum.Parse(typeof(KifintType), reader.ReadString()); ;
+				KifintType type = (KifintType) Enum.Parse(typeof(KifintType), reader.ReadString());
 				lookup.ArchiveType = type;
 				int count = reader.ReadInt32();
 				for (int i = 0; i < count; i++) {
 					Kifint kifint = Kifint.Read(reader, version, installDir, type);
 					lookup.kifints.Add(kifint);
-					lookup.updateKifints.Add(kifint);
 				}
 				break;
 			default:
@@ -244,7 +286,11 @@ namespace Grisaia.Asmodean {
 
 		#region ToString Override
 
-		public override string ToString() => $"Lookup: Count={Count}";
+		/// <summary>
+		///  Gets the string representation of the KIFINT lookup.
+		/// </summary>
+		/// <returns>The string representation of the KIFINT lookup.</returns>
+		public override string ToString() => $"KifintLookup: Type={ArchiveType} Count={Count}";
 
 		#endregion
 
@@ -256,7 +302,7 @@ namespace Grisaia.Asmodean {
 		/// <returns>The enumerator for all entries.</returns>
 		public IEnumerator<KifintEntry> GetEnumerator() {
 			var enumerable = Enumerable.Empty<KifintEntry>();
-			foreach (Kifint kifint in updateKifints) {
+			foreach (Kifint kifint in kifints) {
 				enumerable = enumerable.Concat(kifint);
 			}
 			return enumerable.GetEnumerator();

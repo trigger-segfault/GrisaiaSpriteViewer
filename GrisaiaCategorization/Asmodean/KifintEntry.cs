@@ -65,11 +65,22 @@ namespace Grisaia.Asmodean {
 
 		#region I/O
 
+		/// <summary>
+		///  Writes the decrypted KIFINT entry to the stream. For use with <see cref="KifintLookup"/>.
+		/// </summary>
+		/// <param name="writer"></param>
 		internal void Write(BinaryWriter writer) {
 			writer.Write(FileName);
 			writer.Write(Offset);
 			writer.Write(Length);
 		}
+		/// <summary>
+		///  Reads the KIFINT archive from the stream. For use with <see cref="KifintLookup"/>.
+		/// </summary>
+		/// <param name="reader">The reader for the current stream.</param>
+		/// <param name="version">The current version being read.</param>
+		/// <param name="kifint">The KIFINT archive containing this entry.</param>
+		/// <returns>The loaded cached KIFINT.</returns>
 		internal static KifintEntry Read(BinaryReader reader, int version, Kifint kifint) {
 			return new KifintEntry {
 				Kifint = kifint,
@@ -121,16 +132,39 @@ namespace Grisaia.Asmodean {
 				throw new ArgumentNullException(nameof(directory));
 			ExtractToFile(Path.Combine(directory, FileName));
 		}
-
-		public Hg3 ExtractHg3(string directory, bool saveFrames, bool expand) {
-			return Kifint.ExtractHg3(this, directory, saveFrames, expand);
+		/// <summary>
+		///  Extracts the HG-3 file and the images contained within to the output <paramref name="directory"/>.
+		/// </summary>
+		/// <param name="directory">The output directory to save the images to.</param>
+		/// <param name="expand">True if the images are expanded to their full size when saving.</param>
+		/// <returns>The extracted <see cref="Hg3"/> information.</returns>
+		public Hg3 ExtractHg3AndImages(string directory, bool expand) {
+			return Kifint.ExtractHg3AndImages(this, directory, expand);
+		}
+		/// <summary>
+		///  Extracts the HG-3 image information ONLY and does not extract the actual images.
+		/// </summary>
+		/// <returns>The extracted <see cref="Hg3"/> information.</returns>
+		public Hg3 ExtractHg3() {
+			return Kifint.ExtractHg3(this);
+		}
+		/// <summary>
+		///  Extracts the ANM animation information from the entry.
+		/// </summary>
+		/// <returns>The extracted <see cref="Anm"/> animation information.</returns>
+		public Anm ExtractAnm() {
+			return Kifint.ExtractAnm(this);
 		}
 
 		#endregion
 
 		#region ToString Override
 
-		public override string ToString() => FileName;
+		/// <summary>
+		///  Gets the string representation of the KIFINT entry.
+		/// </summary>
+		/// <returns>The string representation of the KIFINT entry.</returns>
+		public override string ToString() => $"KifintEntry: \"{FileName}\"";
 
 		#endregion
 	}

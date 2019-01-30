@@ -61,14 +61,23 @@ namespace Grisaia.SpriteViewer {
 		}
 
 		private static void WriteDibToStream(Stream stream, Bitmap image, byte[] imageData) {
-			BITMAPINFOHEADER bmi = new BITMAPINFOHEADER();
+			BITMAPINFOHEADER bmi = new BITMAPINFOHEADER {
+				biSize = Marshal.SizeOf<BITMAPINFOHEADER>(),
+				biWidth = image.Width,
+				biHeight = image.Height,
+				biPlanes = 1,
+				biBitCount = 32,
+				//biCompression = 3,
+				biSizeImage = imageData.Length,
+			};
+			/*BITMAPINFOHEADER bmi = new BITMAPINFOHEADER();
 			bmi.biSize = Marshal.SizeOf<BITMAPINFOHEADER>();
 			bmi.biWidth = image.Width;
 			bmi.biHeight = image.Height;
 			bmi.biPlanes = 1;
 			bmi.biBitCount = 32;
 			//bmi.biCompression = 3;
-			bmi.biSizeImage = imageData.Length;
+			bmi.biSizeImage = imageData.Length;*/
 
 			BinaryWriter writer = new BinaryWriter(stream);
 			writer.WriteStruct(bmi);
@@ -80,7 +89,23 @@ namespace Grisaia.SpriteViewer {
 		}
 
 		private static void WriteDibV5ToStream(Stream stream, Bitmap image, byte[] imageData) {
-			BITMAPV5HEADER bmi = new BITMAPV5HEADER();
+			BITMAPV5HEADER bmi = new BITMAPV5HEADER {
+				bV5Size = Marshal.SizeOf<BITMAPV5HEADER>(),
+				bV5Width = image.Width,
+				bV5Height = image.Height,
+				bV5Planes = 1,
+				bV5BitCount = 32,
+				//bV5Compression = 3,
+				bV5SizeImage = imageData.Length,
+				bV5RedMask   = 0x00FF0000,
+				bV5GreenMask = 0x0000FF00,
+				bV5BlueMask  = 0x000000FF,
+				bV5AlphaMask = 0xFF000000,
+				bV5CSType = 0x73524742,// LCS_WINDOWS_COLOR_SPACE;
+				//bV5CSType = 0x206E6957,// GLITCHED
+				bV5Intent = 4,
+			};
+			/*BITMAPV5HEADER bmi = new BITMAPV5HEADER();
 			bmi.bV5Size = Marshal.SizeOf<BITMAPV5HEADER>();
 			bmi.bV5Width = image.Width;
 			bmi.bV5Height = image.Height;
@@ -94,7 +119,7 @@ namespace Grisaia.SpriteViewer {
 			bmi.bV5AlphaMask = 0xFF000000;
 			bmi.bV5CSType = 0x73524742;// LCS_WINDOWS_COLOR_SPACE;
 			//bmi.bV5CSType = 0x206E6957;// GLITCHED
-			bmi.bV5Intent = 4;
+			bmi.bV5Intent = 4;*/
 
 			BinaryWriter writer = new BinaryWriter(stream);
 			writer.WriteStruct(bmi);

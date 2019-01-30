@@ -46,7 +46,7 @@ namespace Grisaia {
 	/// <summary>
 	///  An exception thrown during a failure with a resource within a Grisaia executable.
 	/// </summary>
-	public class GrisaiaExecutableResourceException : GrisaiaException {
+	public class GrisaiaResourceException : GrisaiaException {
 		/// <summary>
 		///  Gets the name of the resource.
 		/// </summary>
@@ -62,7 +62,7 @@ namespace Grisaia {
 		/// <param name="name">The name of the resource being looked for.</param>
 		/// <param name="type">The type of the resource being looked for.</param>
 		/// <param name="action">The action that failed while looking for the resource.</param>
-		internal GrisaiaExecutableResourceException(string name, string type, string action)
+		internal GrisaiaResourceException(string name, string type, string action)
 			: base($"Failed to {action} resource '{name}:{type}'!")
 		{
 			Name = name;
@@ -73,7 +73,7 @@ namespace Grisaia {
 	/// <summary>
 	///  An exception thrown during a failure to load a library.
 	/// </summary>
-	public class LoadModuleException : GrisaiaException {
+	public class GrisaiaLoadModuleException : GrisaiaException {
 		/// <summary>
 		///  The name of the library file.
 		/// </summary>
@@ -83,7 +83,7 @@ namespace Grisaia {
 		///  Constructs the exception and creates a message based on the name of the library file.
 		/// </summary>
 		/// <param name="library">The file name or path of the library file.</param>
-		public LoadModuleException(string library)
+		public GrisaiaLoadModuleException(string library)
 			: base($"Failed to load '{Path.GetFileName(library)}'!")
 		{
 			Library = Path.GetFileName(library);

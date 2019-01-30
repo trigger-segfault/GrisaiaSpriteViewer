@@ -7,7 +7,7 @@ namespace Grisaia.Categories.Sprites {
 	///  The generic implementation for all sprite elements contained by <see cref="ISpriteCategory"/>'s.
 	/// </summary>
 	internal abstract class SpriteElement<TKey, TValue>
-		: IComparable<TValue>, IEquatable<TValue>, ISpriteElement
+		: IComparable<TValue>, IComparable/*, IEquatable<TValue>*/, ISpriteElement
 		where TValue : SpriteElement<TKey, TValue>
 	{
 		#region Properties
@@ -20,9 +20,9 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 
-		#region Equality/CompareTo Implementation
+		#region IEquatable/IComparable Implementation
 
-		/// <summary>
+		/*/// <summary>
 		///  Gets the hash code for the sprite element.
 		/// </summary>
 		/// <returns>The sprite element's hash code.</returns>
@@ -33,9 +33,9 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="obj">The sprite element to compare.</param>
 		/// <returns>True if <paramref name="obj"/> is the same type and of the same Id.</returns>
 		public override bool Equals(object obj) {
-			if (obj is SpriteCharacter objSpr) return Equals(objSpr);
+			if (obj is TValue objSpr) return Equals(objSpr);
 			return false;
-		}
+		}*/
 		/// <summary>
 		///  Compares the order between this sprite element and another.
 		/// </summary>
@@ -45,12 +45,12 @@ namespace Grisaia.Categories.Sprites {
 			if (obj is TValue objSpr) return CompareTo(objSpr);
 			throw new ArgumentException($"{nameof(obj)} is not a {GetType().Name}!");
 		}
-		/// <summary>
+		/*/// <summary>
 		///  Checks for equality between this sprite element and another.
 		/// </summary>
 		/// <param name="other">The sprite element to compare.</param>
 		/// <returns>True if <paramref name="other"/> is of the same Id.</returns>
-		public bool Equals(TValue other) => Id.Equals(other.Id);
+		public bool Equals(TValue other) => Id.Equals(other.Id);*/
 		/// <summary>
 		///  Compares the order between this sprite element and another.
 		/// </summary>
@@ -62,6 +62,10 @@ namespace Grisaia.Categories.Sprites {
 
 		#region ToString Override
 
+		/// <summary>
+		///  Gets the string representation of the sprite element.
+		/// </summary>
+		/// <returns>The sprite element's string representation.</returns>
 		public override string ToString() => Id.ToString();
 
 		#endregion
@@ -88,20 +92,19 @@ namespace Grisaia.Categories.Sprites {
 		#endregion
 
 		#region Properties
-
-		/// <summary>
-		///  Gets the Id of the sprite category entry.
-		/// </summary>
-		public string CategoryId => Category.Id;
-
+		
 		/// <summary>
 		///  Gets the number of elements in the category.
 		/// </summary>
 		public int Count => List.Count;
+		/// <summary>
+		///  Gets if this category is the last category and contains sprite part lists.
+		/// </summary>
+		public bool IsLastCategory => List[0] is ISpritePartList;
 
 		#endregion
 
-		#region Accessors
+		#region Element Accessors
 
 		/// <summary>
 		///  Gets the element at the specified index in the category.
@@ -109,6 +112,7 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="index">The index of the element to get.</param>
 		/// <returns>The element at the specified index.</returns>
 		public ISpriteElement this[int index] => List[index];
+
 		/// <summary>
 		///  Gets the element with the specified Id in the category.
 		/// </summary>
@@ -129,6 +133,26 @@ namespace Grisaia.Categories.Sprites {
 			return value != null;
 		}
 		/// <summary>
+		///  Tries to get the category with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the category to get.</param>
+		/// <param name="value">The output category if one was found, otherwise null.</param>
+		/// <returns>True if a category with the Id was found, otherwise null.</returns>
+		public bool TryGetValue(object id, out ISpriteCategory value) {
+			value = (ISpriteCategory) List.Find(e => e.Id.Equals(id));
+			return value != null;
+		}
+		/// <summary>
+		///  Tries to get the part list with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the part list to get.</param>
+		/// <param name="value">The output part list if one was found, otherwise null.</param>
+		/// <returns>True if a part list with the Id was found, otherwise null.</returns>
+		public bool TryGetValue(int id, out ISpritePartList value) {
+			value = (ISpritePartList) List.Find(e => e.Id.Equals(id));
+			return value != null;
+		}
+		/// <summary>
 		///  Gets if the category contains an element with the specified Id.
 		/// </summary>
 		/// <param name="id">The Id to check for an element with.</param>
@@ -137,9 +161,65 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 
-		#region Part Accessors
+		#region Category Accessors
+
+		/*/// <summary>
+		///  Gets the category at the specified index in the category.
+		/// </summary>
+		/// <param name="index">The index of the category to get.</param>
+		/// <returns>The category at the specified index.</returns>
+		ISpriteCategory ISpriteCategoryContainer.this[int index] => (ISpriteCategory) this[index];
 
 		/// <summary>
+		///  Gets the category with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the category to get.</param>
+		/// <returns>The category with the specified Id.</returns>
+		/// 
+		/// <exception cref="KeyNotFoundException">
+		///  The element with the <paramref name="id"/> was not found.
+		/// </exception>
+		ISpriteCategory ISpriteCategoryContainer.Get(object id) => (ISpriteCategory) Get(id);
+		/// <summary>
+		///  Gets if the category contains a category with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id to check for a category with.</param>
+		/// <returns>True if a category exists with the specified Id, otherwise null.</returns>
+		bool ISpriteCategoryContainer.ContainsKey(object id) => ContainsKey(id);*/
+
+		#endregion
+
+		#region Part List Accessors
+
+		/*/// <summary>
+		///  Gets the part list at the specified index in the category.
+		/// </summary>
+		/// <param name="index">The index of the part list to get.</param>
+		/// <returns>The part list at the specified index.</returns>
+		ISpritePartList ISpritePartListContainer.this[int index] => (ISpritePartList) this[index];
+
+		/// <summary>
+		///  Gets the part list with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the part list to get.</param>
+		/// <returns>The part list with the specified Id.</returns>
+		/// 
+		/// <exception cref="KeyNotFoundException">
+		///  The element with the <paramref name="id"/> was not found.
+		/// </exception>
+		ISpritePartList ISpritePartListContainer.Get(int id) => (ISpritePartList) Get(id);
+		/// <summary>
+		///  Gets if the category contains a part list with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id to check for an part list with.</param>
+		/// <returns>True if a part list exists with the specified Id, otherwise null.</returns>
+		bool ISpritePartListContainer.ContainsKey(int id) => ContainsKey(id);*/
+
+		#endregion
+
+		#region Part Accessors
+
+		/*/// <summary>
 		///  Tries to get the part types that exist for this sprite selection for the specified sprite part group.
 		/// </summary>
 		/// <param name="group">The sprite part group whose sprite parts are being acquired.</param>
@@ -150,13 +230,13 @@ namespace Grisaia.Categories.Sprites {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="group"/> is null.
 		/// </exception>
-		public bool TryGetPartTypes(CharacterSpritePartGroup group, int partId, out ISpritePart[] parts) {
+		public bool TryGetPartTypes(CharacterSpritePartGroupInfo group, int partId, out ISpritePart[] parts) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
-			int[] typeIds = group.TypeIds;
-			parts = new ISpritePart[typeIds.Length];
+			IReadOnlyList<int> typeIds = group.TypeIds;
+			parts = new ISpritePart[typeIds.Count];
 			bool found = false;
-			for (int groupIndex = 0; groupIndex < typeIds.Length; groupIndex++) {
+			for (int groupIndex = 0; groupIndex < typeIds.Count; groupIndex++) {
 				int typeId = typeIds[groupIndex];
 				if (TryGetValue(typeId, out var partTypesElement)) {
 					SpritePartList partTypes = (SpritePartList) partTypesElement;
@@ -177,14 +257,14 @@ namespace Grisaia.Categories.Sprites {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="group"/> is null.
 		/// </exception>
-		public bool TryGetFirstPartTypes(CharacterSpritePartGroup group, out int partId, out ISpritePart[] parts) {
+		public bool TryGetFirstPartTypes(CharacterSpritePartGroupInfo group, out int partId, out ISpritePart[] parts) {
 			if (group == null)
 				throw new ArgumentNullException(nameof(group));
-			int[] typeIds = group.TypeIds;
-			parts = new ISpritePart[typeIds.Length];
+			IReadOnlyList<int> typeIds = group.TypeIds;
+			parts = new ISpritePart[typeIds.Count];
 			partId = int.MaxValue;
 			bool found = false;
-			for (int groupIndex = 0; groupIndex < typeIds.Length; groupIndex++) {
+			for (int groupIndex = 0; groupIndex < typeIds.Count; groupIndex++) {
 				int typeId = typeIds[groupIndex];
 				if (TryGetValue(typeId, out var partTypesElement)) {
 					SpritePartList partTypes = (SpritePartList) partTypesElement;
@@ -196,7 +276,7 @@ namespace Grisaia.Categories.Sprites {
 				}
 			}
 			if (found) {
-				for (int groupIndex = 0; groupIndex < typeIds.Length; groupIndex++) {
+				for (int groupIndex = 0; groupIndex < typeIds.Count; groupIndex++) {
 					if (parts[groupIndex] != null && parts[groupIndex].Id != partId)
 						parts[groupIndex] = null;
 				}
@@ -205,7 +285,57 @@ namespace Grisaia.Categories.Sprites {
 				partId = -1;
 			}
 			return found;
+		}*/
+
+		#endregion
+
+		#region CreateGroups
+
+		/// <summary>
+		///  Creates sprite part groups used to categorize the sprite parts during selection.
+		/// </summary>
+		/// <param name="game">The game info associated with this sprite category.</param>
+		/// <param name="character">The character info associated with this sprite category.</param>
+		/// <returns>An array of sprite part groups for use in sprite part selection.</returns>
+		public ISpritePartGroup[] CreateGroups(GameInfo game, CharacterInfo character) {
+			CharacterSpritePartGroupInfo[] groupInfos = character.Database.GetPartGroups(game, character);
+			ISpritePartGroup[] groups = new ISpritePartGroup[groupInfos.Length];
+			for (int i = 0; i < groups.Length; i++) {
+				CharacterSpritePartGroupInfo groupInfo = groupInfos[i];
+				SpritePartGroup group = new SpritePartGroup {
+					Info = groupInfo,
+					Index = i,
+					TypeIds = groupInfo.TypeIds.ToArray(),
+					GroupParts = new List<SpritePartGroupPart> { SpritePartGroupPart.None },
+				};
+				// Add sprite part group parts that contain sprite parts for each Type Id.
+				for (int typeIndex = 0; typeIndex < groupInfo.TypeIds.Count; typeIndex++) {
+					int typeId = groupInfo.TypeIds[typeIndex];
+					SpritePartList partList = (SpritePartList) List.Find(e => e.Id.Equals(typeId));
+					if (partList != null) {
+						foreach (ISpritePart part in partList.List) {
+							SpritePartGroupPart groupPart = group.GroupParts.Find(gp => gp.Id == part.Id);
+							if (groupPart == null) {
+								groupPart = new SpritePartGroupPart {
+									Id = part.Id,
+									Parts = new SpritePart[groupInfo.TypeIds.Count],
+								};
+								group.GroupParts.Add(groupPart);
+							}
+							groupPart.Parts[typeIndex] = (SpritePart) part;
+						}
+					}
+				}
+				group.GroupParts.Sort();
+				groups[i] = group;
+			}
+			return groups;
 		}
+		/// <summary>
+		///  Creates a group part representing no selection.
+		/// </summary>
+		/// <returns>The created empty group part.</returns>
+		public ISpritePartGroupPart CreateNoneGroupPart() => SpritePartGroupPart.None;
 
 		#endregion
 

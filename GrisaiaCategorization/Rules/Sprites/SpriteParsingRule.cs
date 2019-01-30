@@ -5,7 +5,7 @@ using Grisaia.Categories.Sprites;
 
 namespace Grisaia.Rules.Sprites {
 	/// <summary>
-	/// 
+	///  The base class for implementing a sprite parsing rule.
 	/// </summary>
 	/// 
 	/// <remarks>
@@ -21,9 +21,9 @@ namespace Grisaia.Rules.Sprites {
 	///  | +- CharacterId (see Characters.json)
 	///  +- Sprite Identifier (always T)
 	/// </remarks>
-	public class SpriteParsingRule : ISpriteParsingRule {
+	public abstract class SpriteParsingRule : ISpriteParsingRule {
 		#region Constants
-
+		
 		protected const string StartPattern		= @"^T";
 		protected const string CharacterPattern	= @"(?'character'[A-Za-z]+)";
 		protected const string LightingPattern	= @"(?'lighting'\d)";
@@ -32,23 +32,17 @@ namespace Grisaia.Rules.Sprites {
 		//protected const string DistancePattern = @"(?'distance'(?:[flms]?|lll))";
 		//protected const string SizePattern		= @"(?'size'[SL]?)";
 
-		protected const string PartIdPattern	= @"(?'part_id'0*)";
-		protected const string PartPattern		= @"(?'part'" + NumberingRule.AlphaNumericPattern + @")";
+		protected const string PartTypePattern	= @"(?'part_type'0*)";
+		protected const string PartIdPattern	= @"(?'part_id'" + NumberingRule.AlphaNumericPattern + @")";
 		protected const string EndPattern		= @"$";
-		
-		private const string Pattern =
-			StartPattern +
-			CharacterPattern +
-			LightingPattern +
-			PosePattern +
-			DistancePattern +
-			//SizePattern +
-			@"_" +
-			PartIdPattern +
-			PartPattern +
-			EndPattern;
 
-		private static readonly NumberingRule PoseRule = new NumberingRule(NumberingOptions.AlphaNumeric | NumberingOptions.ZeroIndexed, 1);
+		/// <summary>
+		///  The numbering rule used in <see cref="TryParsePoseAndBlush"/>.
+		/// </summary>
+		private static readonly NumberingRule PoseBlushRule = new NumberingRule(NumberingOptions.AlphaNumeric, 1);
+		/// <summary>
+		///  The numbering rule used in <see cref="TryParsePart"/>.
+		/// </summary>
 		private static readonly NumberingRule PartRule = new NumberingRule(NumberingOptions.AlphaNumeric | NumberingOptions.ZeroIndexed, 1);
 
 		#endregion
@@ -58,7 +52,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <summary>
 		///  Gets the default regular expression used to parse the sprite.
 		/// </summary>
-		public virtual Regex SpriteRegex { get; } = new Regex(Pattern);
+		public abstract Regex SpriteRegex { get; }
+		/// <summary>
+		///  Gets the priority order of the parsing rule when parsing sprites.
+		/// </summary>
+		public abstract double Priority { get; }
 		/// <summary>
 		///  Gets the sprite should be ignored if matched.
 		/// </summary>
@@ -112,7 +110,7 @@ namespace Grisaia.Rules.Sprites {
 
 			if (!TryParseLighting(s, m))
 				return false;
-			if (!TryParsePose(s, m))
+			if (!TryParsePoseAndBlush(s, m))
 				return false;
 			if (!TryParseDistance(s, m))
 				return false;
@@ -128,35 +126,107 @@ namespace Grisaia.Rules.Sprites {
 
 		#region TryParse
 
+		/// <summary>
+		///  Tries to parse the character's identifier name.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseCharacter(SpriteInfo s, Match m) {
 			s.CharacterId = m.Groups["character"].Value.ToLower();
 			return true;
 		}
+		/// <summary>
+		///  Tries to parse the character's identifier name and appends a string to the end of the -name.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <param name="append">The extra part to append to the character identifier name.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
+		protected bool TryParseCharacter(SpriteInfo s, Match m, string append) {
+			s.CharacterId = m.Groups["character"].Value.ToLower() + append;
+			return true;
+		}
+		/// <summary>
+		///  Tries to parse the sprite's lighting level.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseLighting(SpriteInfo s, Match m) {
 			s.Lighting = AttributeHelper.ParseCode<SpriteLighting>(m.Groups["lighting"].Value, out string unk);
 			return (unk.Length == 0);
 		}
-		protected bool TryParsePose(SpriteInfo s, Match m) {
-			if (!PoseRule.TryParse(m.Groups["pose"].Value, out int pose))
+		/// <summary>
+		///  Tries to parse the sprite's pose and blush level.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
+		protected bool TryParsePoseAndBlush(SpriteInfo s, Match m) {
+			if (!PoseBlushRule.TryParse(m.Groups["pose"].Value, out int pose))
 				return false;
-			s.PoseInternal = pose;
+			if (pose < 0 || pose >= 12)
+				return false;
+			s.Pose  = (SpritePose)  (pose % 3);
+			s.Blush = (SpriteBlush) (pose / 3);
+			//s.PoseInternal = pose;
 			return true;
 		}
+		/// <summary>
+		///  Tries to parse the sprite's draw distance.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseDistance(SpriteInfo s, Match m) {
 			s.Distance = AttributeHelper.ParseCode<SpriteDistance>(m.Groups["distance"].Value, out string unk);
 			return (unk.Length == 0);
 		}
-		/*protected bool TryParseSize(SpriteInfo s, Match m) {
+		/*/// <summary>
+		///  Tries to parse the sprite's draw size.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
+		protected bool TryParseSize(SpriteInfo s, Match m) {
 			s.Size = AttributeHelper.ParseCode<SpriteSize>(m.Groups["size"].Value, out string unk);
 			return (unk.Length == 0);
 		}*/
+		/// <summary>
+		///  Tries to parse the sprite's part type and Id.
+		/// </summary>
+		/// <param name="s">The sprite info to assign the parsed value to.</param>
+		/// <param name="m">The regex match to get the value to parse from.</param>
+		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParsePart(SpriteInfo s, Match m) {
-			s.PartType = m.Groups["part_id"].Value.Length;
-			if (!PartRule.TryParse(m.Groups["part"].Value, out int part))
+			s.PartType = m.Groups["part_type"].Value.Length;
+			if (!PartRule.TryParse(m.Groups["part_id"].Value, out int part))
 				return false;
 			s.Part = part;
 			return true;
 		}
+
+
+		#endregion
+
+		#region IComparable Implementation
+
+		/// <summary>
+		///  Compares the order between this sprite parsing rule and another.
+		/// </summary>
+		/// <param name="obj">The sprite parsing rule to compare.</param>
+		/// <returns>The comparison between this sprite parsing rule and <paramref name="obj"/>.</returns>
+		public int CompareTo(object obj) {
+			if (obj is SpriteParsingRule objRule) return CompareTo(objRule);
+			throw new ArgumentException($"{nameof(obj)} is not a {GetType().Name}!");
+		}
+		/// <summary>
+		///  Compares the order between this sprite parsing rule and another.
+		/// </summary>
+		/// <param name="other">The sprite parsing rule to compare.</param>
+		/// <returns>The comparison between this sprite parsing rule and <paramref name="other"/>.</returns>
+		public int CompareTo(SpriteParsingRule other) => Priority.CompareTo(other.Priority);
 
 		#endregion
 	}

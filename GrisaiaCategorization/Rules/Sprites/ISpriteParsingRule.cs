@@ -5,7 +5,7 @@ namespace Grisaia.Rules.Sprites {
 	/// <summary>
 	///  An interface for a rule for parsing a sprite file name into a <see cref="SpriteInfo"/>.
 	/// </summary>
-	public interface ISpriteParsingRule {
+	public interface ISpriteParsingRule : IComparable<SpriteParsingRule>, IComparable {
 		#region Properties
 
 		/// <summary>

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
 	partial class Anm {
+		#region Extract
+
 		/// <summary>
 		///  Extracts the ANM animation from an ANM file.
 		/// </summary>
@@ -25,20 +23,23 @@ namespace Grisaia.Asmodean {
 		///  Extracts the ANM animation from an ANM file stream.
 		/// </summary>
 		/// <param name="stream">The stream to extract the ANM from.</param>
-		/// <param name="anmFile">The path or name of the ANM file being extracted.</param>
+		/// <param name="fileName">The path or name of the ANM file being extracted.</param>
 		/// <returns>The extracted ANM animation.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="stream"/> or <paramref name="anmFile"/> is null.
+		///  <paramref name="stream"/> or <paramref name="fileName"/> is null.
 		/// </exception>
-		public static Anm Extract(Stream stream, string anmFile) {
-			if (anmFile == null)
-				throw new ArgumentNullException(nameof(anmFile));
+		/// <exception cref="ArgumentException">
+		///  The <paramref name="stream"/> is closed.
+		/// </exception>
+		public static Anm Extract(Stream stream, string fileName) {
+			if (fileName == null)
+				throw new ArgumentNullException(nameof(fileName));
 			BinaryReader reader = new BinaryReader(stream);
 
 			ANMHDR hdr = reader.ReadStruct<ANMHDR>();
 			if (hdr.Signature != "ANM")
-				throw new UnexpectedFileTypeException(anmFile, "ANM");
+				throw new UnexpectedFileTypeException(fileName, "ANM");
 			reader.ReadBytes(20); // Unused (?)
 
 			ANMFRM[] frames = new ANMFRM[hdr.FrameCount];
@@ -47,10 +48,9 @@ namespace Grisaia.Asmodean {
 				reader.ReadInt32(); // Padding (Probably)
 			}
 
-			return new Anm {
-				FileName = Path.GetFileName(anmFile),
-				Frames = Array.AsReadOnly(frames.Select(f => new AnmFrame(f)).ToArray()),
-			};
+			return new Anm(Path.GetFileName(fileName), hdr, frames);
 		}
+
+		#endregion
 	}
 }

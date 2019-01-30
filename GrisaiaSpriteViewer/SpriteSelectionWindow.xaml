@@ -1,11 +1,12 @@
-﻿<Window x:Class="Grisaia.SpriteViewer.MainWindow"
+﻿<Window x:Class="Grisaia.SpriteViewer.SpriteSelectionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Grisaia.SpriteViewer"
+        xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
         mc:Ignorable="d"
-        Title="Grisaia Sprite Browser" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded">
+        DataContext="{Binding Sprite, Source={StaticResource Locator}}"
+        Title="Grisaia Sprite Browser" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown">
   <!--
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"-->
@@ -59,10 +60,15 @@
             <Grid.Effect>
               <DropShadowEffect ShadowDepth="0" Direction="0" BlurRadius="3" />
             </Grid.Effect>
-            <Grid x:Name="gridSprite" Background="White" RenderOptions.BitmapScalingMode="Fant">
-              <Grid.LayoutTransform>
+            <local:SpriteImage x:Name="gridSprite" Expand="{Binding Path=IsChecked, ElementName=menuItemExpand}" 
+                               SpriteDatabase="{Binding SpriteDatabase}"
+                               SpriteSelection="{Binding SpriteSelection}"
+                               RenderOptions.BitmapScalingMode="Fant" Background="White">
+              <local:SpriteImage.LayoutTransform>
                 <ScaleTransform x:Name="transform"/>
-              </Grid.LayoutTransform>
+              </local:SpriteImage.LayoutTransform>
+            </local:SpriteImage>
+            <!--<Grid x:Name="gridSprite" Background="White" RenderOptions.BitmapScalingMode="Fant">
               <Image x:Name="imagePart0" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/kajitsu-ama__L0-D5-P1-B1__0P01-2P02-3P02.png"/>
               <Image x:Name="imagePart1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
               <Image x:Name="imagePart2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -75,7 +81,7 @@
               <Image x:Name="imagePart9" HorizontalAlignment="Left" VerticalAlignment="Top"/>
               <Image x:Name="imagePart10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
               <Image x:Name="imagePart11" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            </Grid>
+            </Grid>-->
             <Grid x:Name="gridLines">
               <!--<Rectangle x:Name="lineBaseline" Fill="Blue" Height="1" VerticalAlignment="Top"/>
                             <Rectangle x:Name="lineCenter" Fill="Red" Width="1" HorizontalAlignment="Left"/>-->
@@ -84,7 +90,12 @@
         </Grid>
       </ScrollViewer>
       <Border Grid.Column="2" BorderBrush="#FFACACAC" BorderThickness="1,0,0,0">
-        <StackPanel Margin="10,2,10,5">
+        <local:SpriteSelectionControl x:Name="spriteSelection" DataContext="{Binding}"
+                                      SpriteDatabase="{Binding SpriteDatabase}"
+                                      Categories="{Binding Categories}"
+                                      Groups="{Binding Groups}"
+                                      GroupParts="{Binding GroupParts}"/>
+        <!--<StackPanel Margin="10,2,10,5">
           <TextBlock Margin="0,3">Game</TextBlock>
           <ComboBox x:Name="comboGame" VerticalAlignment="Top" SelectionChanged="OnGameChanged"/>
           <TextBlock Margin="0,3">Character</TextBlock>
@@ -187,22 +198,7 @@
               <ComboBox x:Name="comboPart7" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
             </StackPanel>
           </Grid>
-          <!--<Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="4"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Margin="0,3">Effects</TextBlock>
-                            <ComboBox x:Name="comboEffect" VerticalAlignment="Top" SelectionChanged="OnEffectsChanged"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Margin="0,3">Nyanmel</TextBlock>
-                            <ComboBox x:Name="comboNyanmel" VerticalAlignment="Top" SelectionChanged="OnNyanmelChanged"/>
-                        </StackPanel>
-                    </Grid>-->
-        </StackPanel>
+        </StackPanel>-->
       </Border>
     </Grid>
   </DockPanel>

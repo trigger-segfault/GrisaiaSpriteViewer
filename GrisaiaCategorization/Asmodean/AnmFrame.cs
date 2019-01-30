@@ -13,7 +13,7 @@ namespace Grisaia.Asmodean {
 		[JsonProperty("start")]
 		public int Start { get; private set; }
 		/// <summary>
-		///  Gets the index of the frame.
+		///  Gets the index of the frame image.
 		/// </summary>
 		[JsonProperty("index")]
 		public int Index { get; private set; }
@@ -56,7 +56,7 @@ namespace Grisaia.Asmodean {
 		///  Gets the string representation of the ANM frame.
 		/// </summary>
 		/// <returns>The ANM frame's string representation.</returns>
-		public override string ToString() => $"Frame: S={Start}, I={Index:D2}, D={Duration:D2}, N={NextFrame:D2}";
+		public override string ToString() => $"Frame: S={Start} I={Index:D2} D={Duration:D2} N={NextFrame:D2}";
 
 		#endregion
 	}

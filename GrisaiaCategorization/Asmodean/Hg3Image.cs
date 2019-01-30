@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
@@ -12,20 +14,18 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonIgnore]
 		public Hg3 Hg3 { get; internal set; }
-
-		/// <summary>
-		///  Gets the file name of the image with the .hg3 extension.
-		/// </summary>
-		//[JsonProperty("file_name")]
-		[JsonIgnore]
-		//public string FileName { get; private set; }
-		public string FileName => Hg3.FileName;
 		/// <summary>
 		///  Gets the index of the HG-3 image in the HG-3 file. This number comes before the frame index in the file
 		///  name.
 		/// </summary>
-		[JsonProperty("image_index")]
-		public int ImageIndex { get; private set; }
+		[JsonIgnore]
+		public int ImageIndex { get; internal set; }
+		/// <summary>
+		///  Gets the file name of the image with the .hg3 extension.
+		/// </summary>
+		[JsonIgnore]
+		//public string FileName { get; private set; }
+		public string FileName => Hg3.FileName;
 
 		/// <summary>
 		///  Gets the condensed width of the image.
@@ -38,12 +38,12 @@ namespace Grisaia.Asmodean {
 		[JsonProperty("height")]
 		public int Height { get; private set; }
 		/// <summary>
-		///  Gets the total width of the image with offsets applied.
+		///  Gets the total width of the image with <see cref="OffsetX"/> applied.
 		/// </summary>
 		[JsonProperty("total_width")]
 		public int TotalWidth { get; private set; }
 		/// <summary>
-		/// Gets the height width of the image with offsets applied.
+		/// Gets the height width of the image with <see cref="OffsetY"/> applied.
 		/// </summary>
 		[JsonProperty("total_height")]
 		public int TotalHeight { get; private set; }
@@ -57,7 +57,12 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonProperty("offset_y")]
 		public int OffsetY { get; private set; }
-		
+		/// <summary>
+		///  Gets the depth of the original image format in bits.
+		/// </summary>
+		[JsonProperty("depth_bits")]
+		public int DepthBits { get; private set; }
+
 		/// <summary>
 		///  Gets the number of frames in the animation.
 		/// </summary>
@@ -73,6 +78,12 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonProperty("baseline")]
 		public int Baseline { get; private set; }
+
+		/// <summary>
+		///  Gets the offsets to each frame in the HG-3 file's image.
+		/// </summary>
+		[JsonProperty("frame_offsets")]
+		public IReadOnlyList<long> FrameOffsets { get; private set; }
 
 		#endregion
 
@@ -102,7 +113,12 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonIgnore]
 		public int MarginBottom => TotalHeight - Height - OffsetY;
-		
+		/// <summary>
+		///  Gets if this HG-3 image has multiple frames. This also means the file name will have a +###+### at the end.
+		/// </summary>
+		[JsonIgnore]
+		public bool IsAnimation => FrameCount != 1;
+
 		#endregion
 
 		#region Constructors
@@ -117,10 +133,12 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		/// <param name="imageIndex">The frame index of the image.</param>
 		/// <param name="stdInfo">The HG3STDINFO struct containing image dimension information.</param>
+		/// <param name="frameOffsets">The frame offsets for each frame entry in the HG-3 file.</param>
 		/// <param name="hg3">The HG-3 containing this image set.</param>
-		internal Hg3Image(int imageIndex, Hg3.HG3STDINFO stdInfo, Hg3 hg3) {
+		internal Hg3Image(int imageIndex, Hg3.HG3STDINFO stdInfo, long[] frameOffsets, Hg3 hg3) {
 			Hg3 = hg3;
 			ImageIndex = imageIndex;
+			FrameOffsets = Array.AsReadOnly(frameOffsets);
 
 			Width = stdInfo.Width;
 			Height = stdInfo.Height;
@@ -145,8 +163,29 @@ namespace Grisaia.Asmodean {
 		/// </param>
 		/// <returns>The file name of the frame.</returns>
 		public string GetFrameFileName(int frmIndex) {
-			return Hg3.GetFrameFileName(FileName, ImageIndex, frmIndex);
+			return Hg3.GetFrameFileName(ImageIndex, frmIndex);
 		}
+		/// <summary>
+		///  Gets the file path for the PNG image with the specified image and frame indecies.
+		/// </summary>
+		/// <param name="directory">The directory of the <see cref="Hg3"/> images.</param>
+		/// <param name="frmIndex">
+		///  The second index, which is associated to a frame inside an <see cref="Hg3Image"/>.
+		/// </param>
+		/// <returns>The file path of the frame.</returns>
+		public string GetFrameFilePath(string directory, int frmIndex) {
+			return Hg3.GetFrameFilePath(directory, ImageIndex, frmIndex);
+		}
+
+		#endregion
+
+		#region ToString Override
+
+		/// <summary>
+		///  Gets the string representation of the HG-3.
+		/// </summary>
+		/// <returns>The string representation of the HG-3.</returns>
+		public override string ToString() => $"Hg3Image: {Width}x{Height} Count={FrameCount}";
 
 		#endregion
 	}

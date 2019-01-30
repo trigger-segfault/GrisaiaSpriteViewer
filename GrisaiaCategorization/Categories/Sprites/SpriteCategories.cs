@@ -1,6 +1,9 @@
 ﻿
 namespace Grisaia.Categories.Sprites {
-	internal sealed class SpriteGame : SpriteCategory<string, SpriteGame> {
+	/// <summary>
+	///  A sprite category for a specific Grisaia game.
+	/// </summary>
+	internal sealed class SpriteGame : SpriteCategory<string, SpriteGame>, ISpriteGame {
 		#region Fields
 
 		/// <summary>
@@ -28,14 +31,21 @@ namespace Grisaia.Categories.Sprites {
 		public override int CompareTo(SpriteGame other) => GameIndex.CompareTo(other.GameIndex);
 
 		#endregion
-		
+
 		#region ToString Override
 
-		public override string ToString() => GameInfo.JPShortName;
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
+		public override string ToString() => GameInfo.FormattedName;
 
 		#endregion
 	}
-	internal sealed class SpriteCharacter : SpriteCategory<string, SpriteCharacter> {
+	/// <summary>
+	///  A sprite category for a specific Grisaia character.
+	/// </summary>
+	internal sealed class SpriteCharacter : SpriteCategory<string, SpriteCharacter>, ISpriteCharacter {
 		#region Fields
 
 		/// <summary>
@@ -62,10 +72,17 @@ namespace Grisaia.Categories.Sprites {
 
 		#region ToString Override
 
-		public override string ToString() => $"{CharacterInfo.Name} ({Id})";
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
+		public override string ToString() => CharacterInfo.FormattedName;
 
 		#endregion
 	}
+	/// <summary>
+	///  A sprite category for a specific Grisaia character's lighting.
+	/// </summary>
 	internal sealed class SpriteCharacterLighting : SpriteCategory<SpriteLighting, SpriteCharacterLighting> {
 		#region SpriteCategory Overrides
 
@@ -78,10 +95,17 @@ namespace Grisaia.Categories.Sprites {
 
 		#region ToString Override
 
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
 		public override string ToString() => AttributeHelper.GetName(Id);
 
 		#endregion
 	}
+	/// <summary>
+	///  A sprite category for a specific Grisaia character's draw distance.
+	/// </summary>
 	internal sealed class SpriteCharacterDistance : SpriteCategory<SpriteDistance, SpriteCharacterDistance> {
 		#region SpriteCategory Overrides
 
@@ -94,11 +118,19 @@ namespace Grisaia.Categories.Sprites {
 
 		#region ToString Override
 
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
 		public override string ToString() => AttributeHelper.GetName(Id);
 
 		#endregion
 	}
-	/*internal sealed class SpriteCharacterSize : SpriteCategory<SpriteSize, SpriteCharacterSize> {
+
+	/*/// <summary>
+	///  A sprite category for a specific Grisaia character's draw size.
+	/// </summary>
+	internal sealed class SpriteCharacterSize : SpriteCategory<SpriteSize, SpriteCharacterSize> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -109,12 +141,19 @@ namespace Grisaia.Categories.Sprites {
 		#endregion
 
 		#region ToString Override
-
+		
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
 		public override string ToString() => AttributeHelper.GetName(Id);
 
 		#endregion
 	}*/
-	internal sealed class SpriteCharacterPose : SpriteCategory<int, SpriteCharacterPose> {
+	/// <summary>
+	///  A sprite category for a specific Grisaia character's pose.
+	/// </summary>
+	internal sealed class SpriteCharacterPose : SpriteCategory<SpritePose, SpriteCharacterPose> {
 		#region SpriteCategory Overrides
 
 		/// <summary>
@@ -123,7 +162,20 @@ namespace Grisaia.Categories.Sprites {
 		public override SpriteCategoryInfo Category => SpriteCategoryPool.Pose;
 
 		#endregion
+
+		#region ToString Override
+
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
+		public override string ToString() => AttributeHelper.GetName(Id);
+
+		#endregion
 	}
+	/// <summary>
+	///  A sprite category for a specific Grisaia character's blush level.
+	/// </summary>
 	internal sealed class SpriteCharacterBlush : SpriteCategory<SpriteBlush, SpriteCharacterBlush> {
 		#region SpriteCategory Overrides
 
@@ -136,6 +188,10 @@ namespace Grisaia.Categories.Sprites {
 
 		#region ToString Override
 
+		/// <summary>
+		///  Gets the string representation of the sprite category.
+		/// </summary>
+		/// <returns>The sprite category's string representation.</returns>
 		public override string ToString() => AttributeHelper.GetName(Id);
 
 		#endregion

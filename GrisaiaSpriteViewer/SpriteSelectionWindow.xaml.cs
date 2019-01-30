@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,39 +12,40 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using Grisaia;
 using Grisaia.Asmodean;
+using Grisaia.Categories;
+using Grisaia.Categories.Sprites;
+using Grisaia.SpriteViewer.ViewModel;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
+	public partial class SpriteSelectionWindow : Window {
 
-		internal GameDatabase gameDb;
+		/*internal GameDatabase gameDb;
 		internal CharacterDatabase charDb;
 		internal SpriteDatabase spriteDb;
 
-		private SpriteGame game;
-		private SpriteCharacter character;
-		private SpriteCharacterLighting lighting;
-		private SpriteCharacterDistance distance;
+		private ISpriteCategory game;
+		private ISpriteCategory character;
+		private ISpriteCategory lighting;
+		private ISpriteCategory distance;
 		//private SpriteCharacterSize size;
-		private SpriteCharacterPose pose;
-		private SpriteCharacterBlush blush;
+		private ISpriteCategory pose;
+		private ISpriteCategory blush;
 		//private Dictionary<int, SpritePart> parts = new Dictionary<int, SpritePart>();
 		private ComboBox[] comboPart;
 		private TextBlock[] labelPart;
 		private StackPanel[] panelPart;
 		private Image[] imagePart;
-		private SpritePart[] parts;
+		private ISpritePart[] parts;
 
 		private GameInfo currentGame;
 		private CharacterInfo currentChar;
-		private CharacterSpritePartGroup[] currentGroups;
-		private SpritePart[] currentParts;
+		private CharacterSpritePartGroupInfo[] currentGroups;
+		private ISpritePart[] currentParts;*/
 		private double scale = 1.0;
 		private bool centered = true;
 		private int currentWidth = 0;
@@ -55,50 +57,28 @@ namespace Grisaia.SpriteViewer {
 
 		private bool supressEvents = false;
 
-		public MainWindow() {
+		public SpriteViewModel ViewModel => (SpriteViewModel) DataContext;
+
+		public SpriteSelectionWindow() {
 			InitializeComponent();
 		}
 
-		public void Initialize(LoadGameCallback callback) {
+		/*public void Initialize(LoadGameCallback callback) {
 			callback("Loading known games and characters...", null, 0);
-			gameDb = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText("Games.json"));
-			charDb = JsonConvert.DeserializeObject<CharacterDatabase>(File.ReadAllText("Characters.json"));
+			string gameDbFile = Path.Combine(AppContext.BaseDirectory, "Games.json");
+			string charDbFile = Path.Combine(AppContext.BaseDirectory, "Characters.json");
+			gameDb = GameDatabase.FromJsonFile(gameDbFile);
+			charDb = CharacterDatabase.FromJsonFile(charDbFile);
 			callback("Locating known games", null, 0);
 			gameDb.LocateGames();
-			string cacheDir = Path.Combine(AppContext.BaseDirectory, "cache");
-			if (!Directory.Exists(cacheDir))
-				Directory.CreateDirectory(cacheDir);
-			int count = gameDb.LocatedCount;
-			int index = 0;
-			callback("Loading cached sprites...", null, 0);
-			foreach (var game in gameDb.LocatedGames) {
-				index++;
-				Trace.WriteLine(game.JPName);
-				string intLookupFile = Path.Combine(AppContext.BaseDirectory, "cache", game.Id);
-				if (KifintLookup.Exists(intLookupFile)) {
-					try {
-						callback("Loading cached sprites...", game.JPName, (double) index / count);
-						game.ImageLookup = KifintLookup.Load(intLookupFile, game.InstallDir);
-						Trace.WriteLine($"Loaded {KifintLookup.Extension}");
-					} catch {
-						callback("Performing one-time caching of sprites...", game.JPName, (double) index / count);
-						game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
-						//game.ImageLookup = Exkifint.DecryptImages(game.InstallDir, game.Executable);
-						game.ImageLookup.Save(intLookupFile);
-						Trace.WriteLine($"Saved {KifintLookup.Extension}");
-					}
-				}
-				else {
-					callback("Performing one-time caching of image.int files...", game.JPName, (double) index / count);
-					game.ImageLookup = Kifint.DecryptImages(game.InstallDir, game.Executable);
-					//game.ImageLookup = Exkifint.DecryptImages(game.InstallDir, game.Executable);
-					game.ImageLookup.Save(intLookupFile);
-					Trace.WriteLine($"Saved {KifintLookup.Extension}");
-				}
-			}
-			callback("Caching Complete!", null, 1);
-			Thread.Sleep(50);
-			spriteDb = new SpriteDatabase(gameDb, charDb, callback);
+			gameDb.LoadCache();
+			spriteDb = new SpriteDatabase(gameDb, charDb,
+				new SpriteCategoryInfo[] {
+
+				},
+				new SpriteCategoryInfo[] {
+
+				});
 			callback("Categorization Complete!", null, 1);
 			Thread.Sleep(200);
 			Dispatcher.Invoke(() => {
@@ -115,8 +95,8 @@ namespace Grisaia.SpriteViewer {
 				labelPart = new TextBlock[comboPart.Length];
 				panelPart = new StackPanel[comboPart.Length];
 				imagePart = new Image[12];
-				parts = new SpritePart[imagePart.Length];
-				currentParts = new SpritePart[imagePart.Length];
+				parts = new ISpritePart[imagePart.Length];
+				currentParts = new ISpritePart[imagePart.Length];
 				for (int i = 0; i < comboPart.Length; i++) {
 					comboPart[i] = (ComboBox) FindName("comboPart" + i);
 					labelPart[i] = (TextBlock) FindName("labelPart" + i);
@@ -130,14 +110,22 @@ namespace Grisaia.SpriteViewer {
 #if DEBUG
 			spriteDb.TraceUncategorizedSprites();
 #endif
-		}
+		}*/
 
 		private void OnLoaded(object sender, RoutedEventArgs e) {
-			comboGame.SelectedIndex = 0;
+			//comboGame.SelectedIndex = 0;
+			ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+			OnViewModelPropertyChanged(null, new PropertyChangedEventArgs(nameof(SpriteViewModel.CurrentParts)));
 		}
 
-		public SpritePart[] GetGroupParts(CharacterSpritePartGroup group) {
-			SpritePart[] groupParts = new SpritePart[group.TypeIds.Length];
+		private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == nameof(SpriteViewModel.CurrentParts)) {
+				UpdatePartChanges();
+			}
+		}
+
+		/*public ISpritePart[] GetGroupParts(CharacterSpritePartGroup group) {
+			ISpritePart[] groupParts = new ISpritePart[group.TypeIds.Length];
 			for (int i = 0; i < groupParts.Length; i++) {
 				int typeId = group.TypeIds[i];
 				if (parts[typeId] != null)
@@ -155,40 +143,20 @@ namespace Grisaia.SpriteViewer {
 					groupPartIds[i] = -1;
 			}
 			return groupPartIds;
-		}
+		}*/
 
 		private void UpdatePartChanges() {
 			Vector normalized = CalculateNormalizedScrollCenter();
-			for (int typeId = 0; typeId < parts.Length; typeId++) {
+			/*for (int typeId = 0; typeId < DataContext.Cur; typeId++) {
 				var part = parts[typeId];
 				var image = imagePart[typeId];
 				if (currentParts[typeId] != part) {
 					currentParts[typeId] = part;
 					SetImage(image, part);
-					/*if (part != null) {
-						var c = part.Cached;
-						if (menuItemExpand.IsChecked) {
-							image.Width = c.Width;
-							image.Height = c.Height;
-							image.Margin = new Thickness(c.MarginLeft, c.MarginTop, c.MarginRight, c.MarginBottom);
-						}
-						else {
-
-						}
-					}*/
 				}
-			}
+			}*/
 			//var usedParts = parts.Where(p => p != null);
 			UpdateExpand();
-			/*int width = usedParts.Max(p => p.Cached.TotalWidth);
-			int height = usedParts.Max(p => p.Cached.TotalHeight);
-			if (currentWidth != width || currentHeight != height) {
-				// TODO: Do a center
-				currentWidth = width;
-				currentHeight = height;
-				gridSprite.Margin = CalculateAreaMargins();
-				gridLines.Margin = gridSprite.Margin;
-			}*/
 			if (centered) {
 				UpdateCentered();
 			}
@@ -211,24 +179,24 @@ namespace Grisaia.SpriteViewer {
 		}
 
 		private void UpdateExpand() {
-			var usedParts = parts.Where(p => p != null);
+			var usedParts = ViewModel.CurrentParts.Where(p => p != null);
 			if (usedParts.Any()) {
 				Size totalSize = new Size(
-					usedParts.Max(p => p.Cached.TotalWidth),
-					usedParts.Max(p => p.Cached.TotalHeight));
+					usedParts.Max(p => p.Hg3.Images[0].TotalWidth),
+					usedParts.Max(p => p.Hg3.Images[0].TotalHeight));
 				expandShrink = new Thickness();
 				if (!menuItemExpand.IsChecked) {
 					expandShrink = new Thickness(
-						usedParts.Min(p => p.Cached.MarginLeft),
-						usedParts.Min(p => p.Cached.MarginTop),
-						usedParts.Min(p => totalSize.Width - (p.Cached.MarginLeft + p.Cached.Width)),
-						usedParts.Min(p => totalSize.Height - (p.Cached.MarginTop + p.Cached.Height)));
+						usedParts.Min(p => p.Hg3.Images[0].MarginLeft),
+						usedParts.Min(p => p.Hg3.Images[0].MarginTop),
+						usedParts.Min(p => totalSize.Width - (p.Hg3.Images[0].MarginLeft + p.Hg3.Images[0].Width)),
+						usedParts.Min(p => totalSize.Height - (p.Hg3.Images[0].MarginTop + p.Hg3.Images[0].Height)));
 				}
-				for (int typeId = 0; typeId < parts.Length; typeId++) {
-					var part = parts[typeId];
+				/*for (int typeId = 0; typeId < parts.Length; typeId++) {
+					var part = ViewModel.CurrentParts[typeId];
 					var image = imagePart[typeId];
 					if (part != null) {
-						var c = part.Cached;
+						var c = part.Hg3.Images[0];
 						image.Width = c.Width;
 						image.Height = c.Height;
 						image.Margin = new Thickness(
@@ -237,25 +205,21 @@ namespace Grisaia.SpriteViewer {
 							c.MarginRight - expandShrink.Right,
 							c.MarginBottom - expandShrink.Bottom);
 					}
-				}
-				/*foreach (Image image in imagePart) {
-					if (image.Source != null) {
-						Thickness margin = image.Margin;
-						margin.Left -= shrink.Left;
-						margin.Top -= shrink.Top;
-						margin.Right -= shrink.Right;
-						margin.Bottom -= shrink.Bottom;
-						image.Margin = margin;
-					}
 				}*/
 				currentWidth = (int) Math.Round(totalSize.Width - expandShrink.Left - expandShrink.Right);
 				currentHeight = (int) Math.Round(totalSize.Height - expandShrink.Top - expandShrink.Bottom);
-				gridSprite.Margin = CalculateAreaMargins();
-				gridLines.Margin = gridSprite.Margin;
 			}
+			else {
+				currentWidth = 1;
+				currentHeight = 1;
+			}
+			//gridSprite.Width = currentWidth;
+			//gridSprite.Height = currentHeight;
+			gridSprite.Margin = CalculateAreaMargins();
+			gridLines.Margin = gridSprite.Margin;
 		}
 
-		private void SetImage(Image image, SpritePart part) {
+		/*private void SetImage(Image image, ISpritePart part) {
 			if (part == null) {
 				image.Source = null;
 				image.Visibility = Visibility.Collapsed;
@@ -267,12 +231,13 @@ namespace Grisaia.SpriteViewer {
 			if (!File.Exists(pngFile) || !File.Exists(pngFile)) {
 				if (!Directory.Exists(outDir))
 					Directory.CreateDirectory(outDir);
-				part.Cached = Kifint.ExtractHgx(currentGame.ImageLookup[part.FileName], outDir);
+				part.Hg3 = Kifint.ExtractHg3AndImages(currentGame.ImageLookup[part.FileName], outDir, false);
+				part.Hg3.SaveJsonToDirectory(gameDb.CachePath);
 				//part.Cached = Exkifint.ExtractHgx(currentGame.ImageLookup[part.FileName + ".hg3"], outDir);
-				File.WriteAllText(jsonFile, JsonConvert.SerializeObject(part.Cached, Formatting.Indented));
+				//File.WriteAllText(jsonFile, JsonConvert.SerializeObject(part.Cached, Formatting.Indented));
 			}
-			else if (part.Cached == null) {
-				part.Cached = JsonConvert.DeserializeObject<Hg3Image>(File.ReadAllText(jsonFile));
+			else if (part.Hg3 == null) {
+				part.Hg3 = Hg3.FromJsonDirectory(gameDb.CachePath, part.FileName);
 			}
 
 			BitmapImage source = new BitmapImage();
@@ -280,22 +245,22 @@ namespace Grisaia.SpriteViewer {
 			source.UriSource = new Uri(pngFile);
 			source.EndInit();
 
-			var c = part.Cached;
+			var c = part.Hg3.Images[0];
 			image.Source = source;
 			image.Width = c.Width;
 			image.Height = c.Height;
 			image.Margin = new Thickness(c.MarginLeft, c.MarginTop, c.MarginRight, c.MarginBottom);
 			image.Visibility = Visibility.Visible;
-		}
+		}*/
 
-		private void UpdateGameChanges() {
+		/*private void UpdateGameChanges() {
 			UpdateSelection(comboCharacter, game.Characters, game.SortedCharacters, ref character);
-			currentGame = gameDb.Get(game.Id);
+			currentGame = gameDb.Get((string) game.Id);
 			UpdateCharacterChanges();
 		}
 		private void UpdateCharacterChanges() {
 			UpdateSelection(comboLighting, character.Lightings, character.SortedLightings, ref lighting);
-			currentChar = charDb.Get(character.Id);
+			currentChar = charDb.Get((string) character.Id);
 			currentGroups = charDb.GetPartGroup(currentGame, currentChar);
 
 			// Empty parts
@@ -320,16 +285,14 @@ namespace Grisaia.SpriteViewer {
 			UpdateDistanceChanges();
 		}
 		private void UpdateDistanceChanges() {
-			/*UpdateSelection(comboSize, distance.Sizes, distance.SortedSizes, ref size);
-			UpdateSizeChanges();*/
 			UpdateSelection(comboPose, distance.Poses, distance.SortedPoses, ref pose);
 			UpdatePoseChanges();
-		}
+		}*/
 		/*private void UpdateSizeChanges() {
 			UpdateSelection(comboPose, size.Poses, size.SortedPoses, ref pose);
 			UpdatePoseChanges();
 		}*/
-		private void UpdatePoseChanges() {
+		/*private void UpdatePoseChanges() {
 			UpdateSelection(comboBlush, pose.Blushes, pose.SortedBlushes, ref blush);
 			UpdateBlushChanges();
 		}
@@ -350,7 +313,10 @@ namespace Grisaia.SpriteViewer {
 		private void UpdateSelectionPartGroup(ComboBox combo, CharacterSpritePartGroup group) {
 			HashSet<int> combinedAvailableIds = new HashSet<int>();
 			foreach (int id in group.TypeIds) {
-				if (blush.PartTypes.TryGetValue(id, out var ptypes)) {
+				if (((ISpritePartListContainer) blush).TryGetValue(id, out var partList)) {
+					for (int i = 0; i < blush.Count; i++) {
+						ISpritePartList partList = ((ISpritePartListContainer) blush)[i];
+					}
 					foreach (int partIndex in ptypes.SortedParts.Select(p => p.Id))
 						combinedAvailableIds.Add(partIndex);
 				}
@@ -360,18 +326,18 @@ namespace Grisaia.SpriteViewer {
 			combo.ItemsSource = new string[] { "(none)" }.Concat(list.Select(i => i.ToString())).ToArray();
 			//int foundId = -1;
 			HashSet<int> leftoverIds = new HashSet<int>(group.TypeIds);
-			/*foreach (int typeId in group.TypeIds) {
-				if (parts[typeId] != null && blush.PartTypes.TryGetValue(typeId, out var ptypes)) {
-					if (ptypes.Parts.TryGetValue(parts[typeId].Id, out var newPart)) {
-						foundId = parts[typeId].Id;
-						parts[typeId] = newPart;
-					}
-				}
-			}*/
+			//foreach (int typeId in group.TypeIds) {
+			//	if (parts[typeId] != null && blush.PartTypes.TryGetValue(typeId, out var ptypes)) {
+			//		if (ptypes.Parts.TryGetValue(parts[typeId].Id, out var newPart)) {
+			//			foundId = parts[typeId].Id;
+			//			parts[typeId] = newPart;
+			//		}
+			//	}
+			//}
 			int partId = parts
 				.Where((p, i) => group.TypeIds.Any(typeId => typeId == i))
 				.FirstOrDefault()?.Id ?? -1;
-			if (blush.TryGetPartTypes(group.TypeIds, partId, out var newParts)) {
+			if (blush.TryGetPartTypes(group, partId, out var newParts)) {
 				for (int groupIndex = 0; groupIndex < group.TypeIds.Length; groupIndex++) {
 					int typeId = group.TypeIds[groupIndex];
 					parts[typeId] = newParts[groupIndex];
@@ -380,7 +346,7 @@ namespace Grisaia.SpriteViewer {
 			else {
 			//if (foundId == -1) {
 				//var relatedParts = blush.SortedPartTypes.Where(ptypes => group.Ids.Any(id => id == ptypes.Id));
-				if (blush.TryGetFirstPartTypes(group.TypeIds, out partId, out newParts)) {
+				if (blush.TryGetFirstPartTypes(group, out partId, out newParts)) {
 					combo.IsEnabled = true;
 					if (!group.Enabled) {
 						combo.SelectedIndex = 0; // (none)
@@ -407,32 +373,32 @@ namespace Grisaia.SpriteViewer {
 					foreach (int typeId in group.TypeIds)
 						parts[typeId] = null;
 				}
-				/*if (!relatedParts.Any()) {
-					combo.SelectedIndex = 0;
-					combo.IsEnabled = false;
-				}
-				else {
-					combo.IsEnabled = true;
-					if (!group.Enabled) {
-						combo.SelectedIndex = 0;
-						foreach (int id in group.Ids) {
-							if (parts.ContainsKey(id))
-								parts.Remove(id);
-						}
-					}
-					else {
-						int firstId = relatedParts.Min(ptypes => ptypes.SortedParts.FirstOrDefault()?.);
-						combo.SelectedIndex = list.IndexOf(firstId);
-						foreach (int id in group.Ids) {
-							if (blush.PartTypes.TryGetValue(id, out var ptypes) && ptypes.Parts.TryGetValue(firstId, out var newPart)) {
-								parts[id] = newPart;
-							}
-							else if (parts.ContainsKey(id)) {
-								parts.Remove(id);
-							}
-						}
-					}
-				}*/
+				//if (!relatedParts.Any()) {
+				//	combo.SelectedIndex = 0;
+				//	combo.IsEnabled = false;
+				//}
+				//else {
+				//	combo.IsEnabled = true;
+				//	if (!group.Enabled) {
+				//		combo.SelectedIndex = 0;
+				//		foreach (int id in group.Ids) {
+				//			if (parts.ContainsKey(id))
+				//				parts.Remove(id);
+				//		}
+				//	}
+				//	else {
+				//		int firstId = relatedParts.Min(ptypes => ptypes.SortedParts.FirstOrDefault()?.);
+				//		combo.SelectedIndex = list.IndexOf(firstId);
+				//		foreach (int id in group.Ids) {
+				//			if (blush.PartTypes.TryGetValue(id, out var ptypes) && ptypes.Parts.TryGetValue(firstId, out var newPart)) {
+				//				parts[id] = newPart;
+				//			}
+				//			else if (parts.ContainsKey(id)) {
+				//				parts.Remove(id);
+				//			}
+				//		}
+				//	}
+				//}
 			}
 		}
 		private void UpdateSelection<TKey, TValue>(ComboBox combo, Dictionary<TKey, TValue> dic, List<TValue> list, ref TValue value)
@@ -483,14 +449,14 @@ namespace Grisaia.SpriteViewer {
 			supressEvents = false;
 		}
 
-		private void OnSizeChanged(object sender, SelectionChangedEventArgs e) {
-			/*if (supressEvents) return;
-			if (comboSize.SelectedIndex == -1) return;
-			size = distance.SortedSizes[comboSize.SelectedIndex];
-			supressEvents = true;
-			UpdateSizeChanges();
-			supressEvents = false;*/
-		}
+		//private void OnSizeChanged(object sender, SelectionChangedEventArgs e) {
+		//	if (supressEvents) return;
+		//	if (comboSize.SelectedIndex == -1) return;
+		//	size = distance.SortedSizes[comboSize.SelectedIndex];
+		//	supressEvents = true;
+		//	UpdateSizeChanges();
+		//	supressEvents = false;
+		//}
 
 		private void OnPoseChanged(object sender, SelectionChangedEventArgs e) {
 			if (supressEvents) return;
@@ -509,9 +475,9 @@ namespace Grisaia.SpriteViewer {
 			supressEvents = true;
 			UpdateBlushChanges();
 			supressEvents = false;
-		}
-		private void OnPartChanged(object sender, SelectionChangedEventArgs e) {
-			ComboBox box = (ComboBox) sender;
+		}*/
+		/*private void OnPartChanged(object sender, SelectionChangedEventArgs e) {
+			/*ComboBox box = (ComboBox) sender;
 			if (supressEvents) return;
 			string partStr = box.Name.Substring("comboPart".Length);
 			int groupId = int.Parse(partStr);
@@ -520,9 +486,9 @@ namespace Grisaia.SpriteViewer {
 					parts[typeId] = null;
 					//SetImage(imagePart[typeId], null);
 				}
-				/*UpdateStatusBar();
-				UpdatePartList();
-				return;*/
+				//UpdateStatusBar();
+				//UpdatePartList();
+				//return;
 			}
 			else {
 				foreach (int typeId in currentGroups[groupId].TypeIds) {
@@ -540,17 +506,17 @@ namespace Grisaia.SpriteViewer {
 			UpdatePartChanges();
 			UpdateStatusBar();
 			UpdatePartList();
-		}
+		}*/
 
 		private void UpdatePartList() {
 			labelPartList.Text =
-				string.Join("\n", parts
+				string.Join("\n", ViewModel.CurrentParts
 				.Where(p => p != null)
 				.Select(p => p.FileName));
 		}
 
 		private void OnSaveSprite(object sender, RoutedEventArgs e) {
-			var usedParts = parts.Where(p => p != null);
+			var usedParts = ViewModel.CurrentParts.Where(p => p != null);
 			if (usedParts.Any()) {
 				SaveFileDialog dialog = new SaveFileDialog {
 					FileName = GetSpriteUniqueFileName(),
@@ -564,16 +530,15 @@ namespace Grisaia.SpriteViewer {
 				bool result = dialog.ShowDialog() ?? false;
 				if (!result)
 					return;
-				int width = usedParts.Max(p => p.Cached.TotalWidth);
-				int height = usedParts.Max(p => p.Cached.TotalHeight);
-				string dir = Path.Combine(AppContext.BaseDirectory, "cache", currentGame.Id);
+				int width = usedParts.Max(p => p.Hg3.Images[0].TotalWidth);
+				int height = usedParts.Max(p => p.Hg3.Images[0].TotalHeight);
 				using (var bitmap = BuildImage())
 					bitmap.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
 			}
 		}
 
 		private void OnCopySprite(object sender, RoutedEventArgs e) {
-			var usedParts = parts.Where(p => p != null);
+			var usedParts = ViewModel.CurrentParts.Where(p => p != null);
 			if (usedParts.Any()) {
 				using (var bitmap = BuildImage())
 				using (var bitmapNoTr = RemoveTransparency(bitmap)) {
@@ -600,18 +565,18 @@ namespace Grisaia.SpriteViewer {
 		}
 
 		private System.Drawing.Bitmap BuildImage() {
-			var usedParts = parts.Where(p => p != null);
-			string dir = Path.Combine(AppContext.BaseDirectory, "cache", currentGame.Id);
+			var usedParts = ViewModel.CurrentParts.Where(p => p != null);
+			string dir = Path.Combine(AppContext.BaseDirectory, "cache", ViewModel.CurrentGame.Id);
 			var bitmap = new System.Drawing.Bitmap(currentWidth, currentHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			try {
 				using (var g = System.Drawing.Graphics.FromImage(bitmap)) {
 					g.Clear(System.Drawing.Color.Transparent);
 					foreach (var part in usedParts) {
-						string partFile = Path.Combine(dir, part.PngFile);
+						string partFile = Path.Combine(dir, part.Hg3.GetFrameFileName(0, 0));
 						using (var partBitmap = System.Drawing.Image.FromFile(partFile))
 							g.DrawImageUnscaled(partBitmap,
-								part.Cached.MarginLeft - (int) Math.Round(expandShrink.Left),
-								part.Cached.MarginTop - (int) Math.Round(expandShrink.Top));
+								part.Hg3.Images[0].MarginLeft - (int) Math.Round(expandShrink.Left),
+								part.Hg3.Images[0].MarginTop - (int) Math.Round(expandShrink.Top));
 					}
 				}
 				return bitmap;
@@ -625,20 +590,21 @@ namespace Grisaia.SpriteViewer {
 
 		private string GetSpriteUniqueId() {
 			StringBuilder str = new StringBuilder();
-			str.Append(game.Id);
+			var selection = ViewModel.SpriteSelection;
+			str.Append(selection.GameId);
 			str.Append("-");
-			str.Append(character.Id);
+			str.Append(selection.CharacterId);
 			str.Append("__L");
-			str.Append((int) lighting.Id);
+			str.Append((int) selection.Lighting);
 			str.Append("-D");
-			str.Append((int) distance.Id);
+			str.Append((int) selection.Distance);
 			str.Append("-P");
-			str.Append(pose.Id);
+			str.Append((int) selection.Pose);
 			str.Append("-B");
-			str.Append((int) blush.Id);
+			str.Append((int) selection.Blush);
 
 			str.Append("__");
-			str.Append(string.Join("-", parts.Select((p, i) => (p != null ? $"{i}P{p.Id:D2}" : null)).Where(p => p != null)));
+			str.Append(string.Join("-", ViewModel.CurrentParts.Select((p, i) => (p != null ? $"{i}P{p.Id:D2}" : null)).Where(p => p != null)));
 			return str.ToString();
 		}
 		private string GetSpriteUniqueFileName() {
@@ -840,8 +806,8 @@ namespace Grisaia.SpriteViewer {
 			if (menuItemShowGuidelines.IsChecked) {
 				HashSet<int> centers = new HashSet<int>();
 				HashSet<int> baselines = new HashSet<int>();
-				foreach (var part in parts.Where(p => p != null)) {
-					var c = part.Cached;
+				foreach (var part in ViewModel.CurrentParts.Where(p => p != null)) {
+					var c = part.Hg3.Images[0];
 					if (centers.Add(c.Center)) {
 						System.Windows.Shapes.Rectangle r = new System.Windows.Shapes.Rectangle {
 							Fill = Brushes.Red,
@@ -868,8 +834,8 @@ namespace Grisaia.SpriteViewer {
 				HashSet<int> centers = new HashSet<int>();
 				HashSet<int> baselines = new HashSet<int>();
 				int index = 0;
-				foreach (var part in parts.Where(p => p != null)) {
-					var c = part.Cached;
+				foreach (var part in ViewModel.CurrentParts.Where(p => p != null)) {
+					var c = part.Hg3.Images[0];
 					if (centers.Add(c.Center)) {
 						System.Windows.Shapes.Rectangle r = (System.Windows.Shapes.Rectangle) gridLines.Children[index++];
 						r.Margin = new Thickness((c.Center - expandShrink.Left) * scale, 0, 0, 0);
@@ -880,6 +846,10 @@ namespace Grisaia.SpriteViewer {
 					}
 				}
 			}
+		}
+
+		private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e) {
+			Console.WriteLine("-------------------------------------");
 		}
 	}
 }

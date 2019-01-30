@@ -50,6 +50,7 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -72,24 +73,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModel\SpriteKey.cs" />
+    <Compile Include="Controls\SpriteCategoryComboBox.cs" />
+    <Compile Include="Controls\SpriteImage.cs" />
+    <Compile Include="Controls\SpritePartGroupComboBox.cs" />
+    <Compile Include="Controls\SpriteSelectionControl.cs" />
+    <Compile Include="Model\GrisaiaModel.cs" />
+    <Compile Include="Model\SpriteViewerSettings.cs" />
+    <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\SpriteSelectionViewModel.cs" />
+    <Compile Include="ViewModel\SpriteViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <None Include="Unused\ImageClipboard3.cs" />
     <None Include="Unused\ImageClipboard2 - Copy.cs" />
     <Compile Include="ImageClipboard.cs" />
     <None Include="Unused\ImageClipboard.Glitched.cs" />
-    <Compile Include="LoadingWindow.xaml.cs">
+    <None Include="LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
-    </Compile>
+    </None>
     <None Include="Unused\ZoomOnMouseWheel.cs" />
     <None Include="packages.config" />
-    <Page Include="LoadingWindow.xaml">
+    <None Include="LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
+    </None>
+    <Page Include="SpriteSelectionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -97,10 +104,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="SpriteSelectionWindow.xaml.cs">
+      <DependentUpon>SpriteSelectionWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -131,5 +142,6 @@
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

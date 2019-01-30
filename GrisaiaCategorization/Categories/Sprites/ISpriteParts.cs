@@ -27,8 +27,24 @@ namespace Grisaia.Categories.Sprites {
 
 		#region Accessors
 
+		/// <summary>
+		///  Gets the sprite part with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the sprite part to get.</param>
+		/// <returns>The sprite part with the specified Id.</returns>
 		ISpritePart Get(int id);
-		bool TryGetValue(int id, out ISpritePart part);
+		/// <summary>
+		///  Tries to get the sprite part with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the sprite part to get.</param>
+		/// <param name="value">The output sprite part if one was found, otherwise null.</param>
+		/// <returns>True if an sprite part with the Id was found, otherwise null.</returns>
+		bool TryGetValue(int id, out ISpritePart value);
+		/// <summary>
+		///  Gets if the category contains an sprite part with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id to check for an sprite part with.</param>
+		/// <returns>True if an sprite part exists with the specified Id, otherwise null.</returns>
 		bool ContainsKey(int id);
 
 		#endregion
@@ -52,18 +68,10 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the cached HG-3 data for this sprite. This is null if not cached.
 		/// </summary>
 		Hg3 Hg3 { get; set; }
-		/*/// <summary>
-		///  Gets the name of the file for loading the Png image.
-		/// </summary>
-		string BitmapFileName { get; }
-		/// <summary>
-		///  Gets the name of the file for loading the <see cref="Asmodean.Hg3"/> data.
-		/// </summary>
-		string JsonFileName { get; }*/
 
 		#endregion
 
-		#region Helpers
+		/*#region Helpers
 
 		/// <summary>
 		///  Gets the file name for the sprite with the specified image and frame indecies.
@@ -77,6 +85,6 @@ namespace Grisaia.Categories.Sprites {
 		/// <returns>The file name of the frame.</returns>
 		string GetFrameFileName(int imgIndex, int frmIndex);
 
-		#endregion
+		#endregion*/
 	}
 }

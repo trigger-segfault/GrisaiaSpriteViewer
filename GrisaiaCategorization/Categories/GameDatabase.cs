@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Grisaia.Asmodean;
 using Grisaia.Locators;
 using Newtonsoft.Json;
@@ -15,6 +16,11 @@ namespace Grisaia.Categories {
 	public sealed class GameDatabase : IReadOnlyCollection<GameInfo> {
 		#region Fields
 
+		/// <summary>
+		///  Gets the grisaia database containing this database.
+		/// </summary>
+		[JsonIgnore]
+		public GrisaiaDatabase GrisaiaDatabase { get; private set; }
 		/// <summary>
 		///  The collection of Grisaia game infos mapped to an Id.
 		/// </summary>
@@ -41,10 +47,16 @@ namespace Grisaia.Categories {
 		/// </summary>
 		[JsonIgnore]
 		private readonly IReadOnlyList<GameInfo> locatedReadonlyList;
-		/// <summary>
+		/*/// <summary>
 		///  The path leading to where cached .intlookup files are stored.
 		/// </summary>
-		private string cachePath = Path.Combine(AppContext.BaseDirectory, "cache");
+		[JsonIgnore]
+		private string cachePath = Path.Combine(AppContext.BaseDirectory, "cache");*/
+		/// <summary>
+		///  The naming scheme used for games.
+		/// </summary>
+		[JsonIgnore]
+		private GameNamingScheme namingScheme = new GameNamingScheme();
 
 		#endregion
 
@@ -63,8 +75,17 @@ namespace Grisaia.Categories {
 		#region Properties
 
 		/// <summary>
+		///  Gets or sets the naming scheme used for games.
+		/// </summary>
+		[JsonIgnore]
+		public GameNamingScheme NamingScheme {
+			get => namingScheme;
+			set => namingScheme = value ?? throw new ArgumentNullException(nameof(NamingScheme));
+		}
+		/*/// <summary>
 		///  Gets or sets the path leading to where cached .intlookup files are stored.
 		/// </summary>
+		[JsonIgnore]
 		public string CachePath {
 			get => cachePath;
 			set {
@@ -74,7 +95,7 @@ namespace Grisaia.Categories {
 					throw new ArgumentException($"{nameof(CachePath)} is invalid!");
 				cachePath = value;
 			}
-		}
+		}*/
 		/// <summary>
 		///  Gets the number of total Grisaia games in the database.
 		/// </summary>
@@ -95,8 +116,10 @@ namespace Grisaia.Categories {
 				gameList.Clear();
 				gameMap.Clear();
 				gameList.AddRange(value);
-				foreach (GameInfo game in gameList)
+				foreach (GameInfo game in gameList) {
+					game.Database = this;
 					gameMap.Add(game.Id, game);
+				}
 			}
 		}
 		/// <summary>
@@ -121,16 +144,31 @@ namespace Grisaia.Categories {
 		#region LocateGames
 
 		/// <summary>
+		///  Adds dummy known game entries.
+		/// </summary>
+		/// <returns>Always true.</returns>
+		public bool LocateDummyGames() {
+			locatedGameList.Clear();
+			foreach (GameInfo game in gameList.Take(1)) {
+				if (game.LoadDummyGame())
+					locatedGameList.Add(game);
+			}
+			return locatedGameList.Count > 0;
+		}
+		/// <summary>
 		///  Looks for all known Grisaia games' installation directories.
 		/// </summary>
-		public void LocateGames() {
+		/// <returns>True if any Grisaia games were found.</returns>
+		public bool LocateGames() {
 			locatedGameList.Clear();
 			SteamLibraryFolders steamLibraries = null;
 			try {
 				steamLibraries = SteamLocator.FindLibrariesFromRegistry();
 			} catch (SteamException) { }
 			foreach (GameInfo game in gameList) {
-				string installDir = null;
+				if (game.LoadGame(steamLibraries))
+					locatedGameList.Add(game);
+				/*string installDir = null;
 				if (installDir == null && game.SteamId.HasValue && steamLibraries != null) {
 					installDir = SteamLocator.LocateGame(steamLibraries, game.SteamId.Value);
 				}
@@ -142,8 +180,9 @@ namespace Grisaia.Categories {
 				game.ImageLookup = null; // We'll want to reload this if something has changed.
 				if (installDir != null) {
 					locatedGameList.Add(game);
-				}
+				}*/
 			}
+			return locatedGameList.Count > 0;
 		}
 
 		#endregion
@@ -171,12 +210,11 @@ namespace Grisaia.Categories {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="id"/> is null.
 		/// </exception>
+		/// 
 		/// <exception cref="KeyNotFoundException">
-		///  No game with the key of <paramref name="id"/> was found.
+		///  The game with the <paramref name="id"/> was not found.
 		/// </exception>
-		public GameInfo Get(string id) {
-			return gameMap[id];
-		}
+		public GameInfo Get(string id) => gameMap[id];
 		/// <summary>
 		///  Searches for the index of the game info in the list.
 		/// </summary>
@@ -210,31 +248,38 @@ namespace Grisaia.Categories {
 
 		#region Cache
 
-		public void ClearCache() {
-			string cachePath = this.cachePath;
+		public void ClearLookupCache() {
+			string cachePath = GrisaiaDatabase.CachePath;
 			if (Directory.Exists(cachePath))
 				Directory.Delete(cachePath, true);
-		}
 
-		public void RebuildCache() {
-			ClearCache();
-			LoadCache();
-		}
-
-		public void LoadCache() {
-			string cachePath = this.cachePath;
-			if (!Directory.Exists(cachePath))
-				Directory.CreateDirectory(cachePath);
-			
-			for (int i = 0; i < LocatedCount; i++) {
-				var game = LocatedGames[i];
-				game.ImageLookup = LoadLookup(KifintType.Image, cachePath, game);
-				game.UpdateLookup = LoadLookup(KifintType.Update, cachePath, game);
-				game.ImageLookup.Update(game.UpdateLookup);
+			foreach (GameInfo game in locatedGameList) {
+				game.ClearLookups();
 			}
 		}
 
-		private KifintLookup LoadLookup(KifintType type, string cachePath, GameInfo game) {
+		public void RebuildLookupCache(bool loadUpdateArchives = true) {
+			ClearLookupCache();
+			LoadLookupCache(loadUpdateArchives);
+		}
+
+		public void LoadLookupCache(bool loadUpdateArchives = true) {
+			string cachePath = GrisaiaDatabase.CachePath;
+			if (!Directory.Exists(cachePath))
+				Directory.CreateDirectory(cachePath);
+			
+			foreach (GameInfo game in locatedGameList) {
+				game.ClearLookups();
+				if (loadUpdateArchives)
+					game.LoadLookup(KifintType.Update);
+				game.LoadLookup(KifintType.Image);
+				//game.ImageLookup = LoadLookup(KifintType.Image, cachePath, game);
+				//game.UpdateLookup = LoadLookup(KifintType.Update, cachePath, game);
+				//game.ImageLookup.Update = game.UpdateLookup;
+			}
+		}
+
+		/*private KifintLookup LoadLookup(KifintType type, string cachePath, GameInfo game) {
 			Trace.WriteLine($"Loading {type} Cache: {game.Id}");
 			string lookupFile = GetLookupFile(type, cachePath, game);
 			KifintLookup lookup = null;
@@ -246,7 +291,7 @@ namespace Grisaia.Categories {
 			}
 			if (lookup == null) {
 				Trace.WriteLine($"Building {type} Cache: {game.Id}");
-				lookup = Kifint.Decrypt(type, game.InstallDir, game.Executable);
+				lookup = Kifint.Decrypt(type, game.InstallDir, game.VCode2);
 				lookup.Save(lookupFile);
 				//Trace.WriteLine($"Saved {type} Cache: {Path.GetFileName(lookupFile)}");
 			}
@@ -256,7 +301,7 @@ namespace Grisaia.Categories {
 		private string GetLookupFile(KifintType type, string cachePath, GameInfo game) {
 			string name = $"{game.Id}-{type.ToString().ToLower()}";
 			return Path.Combine(cachePath, Path.ChangeExtension(name, KifintLookup.Extension));
-		}
+		}*/
 
 		#endregion
 
@@ -266,15 +311,18 @@ namespace Grisaia.Categories {
 		///  Deserializes the game database from a json file.
 		/// </summary>
 		/// <param name="jsonFile">The path to the json file to load and deserialize.</param>
+		/// <param name="grisaiaDb">The grisaia database containing all databases.</param>
 		/// <returns>The deserialized game database.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="jsonFile"/> is null.
 		/// </exception>
-		public static GameDatabase FromJsonFile(string jsonFile) {
+		public static GameDatabase FromJsonFile(string jsonFile, GrisaiaDatabase grisaiaDb) {
 			if (jsonFile == null)
 				throw new ArgumentNullException(nameof(jsonFile));
-			return JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText(jsonFile));
+			var db = JsonConvert.DeserializeObject<GameDatabase>(File.ReadAllText(jsonFile));
+			db.GrisaiaDatabase = grisaiaDb ?? throw new ArgumentNullException(nameof(grisaiaDb));
+			return db;
 		}
 
 		#endregion

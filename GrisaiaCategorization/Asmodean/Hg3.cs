@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
-	///  Dimensions and other information extracted from an HG-3 file.
+	///  Image and frame information about an HG-3 file with assocaited images.
 	/// </summary>
 	[JsonObject]
-	public sealed partial class Hg3 : IReadOnlyCollection<Hg3Image> /*: IDisposable*/ {
+	public sealed partial class Hg3 : IReadOnlyCollection<Hg3Image> {
 		#region Fields
 
 		/// <summary>
@@ -18,6 +18,26 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonProperty("file_name")]
 		public string FileName { get; private set; }
+		/// <summary>
+		///  Unknown 4-byte value 1.
+		/// </summary>
+		[JsonProperty("unknown_1")]
+		public int Unknown1 { get; private set; }
+		/// <summary>
+		///  Unknown 4-byte value 2.
+		/// </summary>
+		[JsonProperty("unknown_2")]
+		public int Unknown2 { get; private set; }
+		/// <summary>
+		///  Unknown 4-byte value 3.
+		/// </summary>
+		[JsonProperty("unknown_3")]
+		public int Unknown3 { get; private set; }
+		/// <summary>
+		///  Gets the number of entries in the HG3 structure. This field doesn't seem to be very reliable.
+		/// </summary>
+		[JsonProperty("entry_count")]
+		public int EntryCount { get; private set; }
 		/// <summary>
 		///  Gets if the HG-3 frames were saved while expended.
 		/// </summary>
@@ -41,13 +61,14 @@ namespace Grisaia.Asmodean {
 			get => images;
 			set {
 				images = value;
-				foreach (Hg3Image image in images) {
-					image.Hg3 = this;
+				for (int i = 0; i < images.Count; i++) {
+					images[i].Hg3 = this;
+					images[i].ImageIndex = i;
 				}
 			}
 		}
 		/// <summary>
-		///  Gets if this HG-3 has multiple frames.
+		///  Gets if this HG-3 has multiple frames. This also means the file name will have a +###[+###] at the end.
 		/// </summary>
 		[JsonIgnore]
 		public bool IsAnimation => Images.Count != 1 || Images[0].FrameCount != 1;
@@ -65,28 +86,7 @@ namespace Grisaia.Asmodean {
 		///  Gets the name of the file for loading the <see cref="Hg3"/> data.
 		/// </summary>
 		[JsonIgnore]
-		public string JsonFileName => $"{Path.GetFileNameWithoutExtension(FileName)}.hg3.json";
-		/// <summary>
-		///  Gets the name of the file for loading or saving a single <see cref="Hg3"/> bitmap when not an animation.
-		/// </summary>
-		[JsonIgnore]
-		public string BitmapFileName => Path.ChangeExtension(FileName, ".png");
-		/*/// <summary>
-		///  Gets the bitmap for the HG-3 when <see cref="IsAnimation"/> is false.
-		/// </summary>
-		/// 
-		/// <exception cref="InvalidOperationException">
-		///  <see cref="IsAnimation"/> is true.
-		/// </exception>
-		[JsonIgnore]
-		public Bitmap Bitmap {
-			get {
-				if (IsAnimation)
-					throw new InvalidOperationException($"{nameof(Bitmap)} cannot be called when " +
-														$"{nameof(IsAnimation)} is true!");
-				return Images[0].Bitmaps[0];
-			}
-		}*/
+		public string JsonFileName => GetJsonFileName(FileName);
 
 		#endregion
 
@@ -96,31 +96,24 @@ namespace Grisaia.Asmodean {
 		///  Constructs an unassigned HG-3 for use with loading via <see cref="Newtonsoft.Json"/>.
 		/// </summary>
 		public Hg3() { }
-		/*/// <summary>
-		///  Constructs an HG-3 with the specified file name and <see cref="Hg3.HG3STDINFO"/>.
-		/// </summary>
-		/// <param name="fileName">The file name of the HG-3 with the .hg3 extension.</param>
-		/// <param name="stdInfos">The HG3STDINFO struct array containing image dimension information.</param>
-		/// <param name="bitmaps">The processed bitmap jagged array extracted from the HG-3 file.</param>
-		internal Hg3(string fileName, Hg3.HG3STDINFO[] stdInfos, Bitmap[][] bitmaps) {
-			FileName = fileName;
-			Hg3Image[] images = new Hg3Image[stdInfos.Length];
-			for (int i = 0; i < images.Length; i++) {
-				images[i] = new Hg3Image(i, stdInfos[i], bitmaps[i], this);
-			}
-			Images = Array.AsReadOnly(images);
-		}*/
 		/// <summary>
-		///  Constructs an HG-3 with the specified file name and <see cref="Hg3.HG3STDINFO"/>.
+		///  Constructs an HG-3 with the specified file name, header, images, frame offsets, and expansion setting.
 		/// </summary>
 		/// <param name="fileName">The file name of the HG-3 with the .hg3 extension.</param>
+		/// <param name="hdr">The HG3HDR containing extra information on the HG-3.</param>
 		/// <param name="stdInfos">The HG3STDINFO struct array containing image dimension information.</param>
-		internal Hg3(string fileName, Hg3.HG3STDINFO[] stdInfos, bool expand) {
+		/// <param name="frameOffsets">The frame offsets for each image frame entry in the HG-3 file.</param>
+		/// <param name="expand">True if the images were extracted while <paramref name="expand"/> was true.</param>
+		private Hg3(string fileName, Hg3.HG3HDR hdr, Hg3.HG3STDINFO[] stdInfos, long[][] frameOffsets, bool expand) {
 			FileName = fileName;
+			Unknown1 = hdr.Unknown1;
+			Unknown2 = hdr.Unknown2;
+			Unknown3 = hdr.Unknown3;
+			EntryCount = hdr.EntryCount;
 			Expanded = expand;
 			Hg3Image[] images = new Hg3Image[stdInfos.Length];
 			for (int i = 0; i < images.Length; i++) {
-				images[i] = new Hg3Image(i, stdInfos[i], this);
+				images[i] = new Hg3Image(i, stdInfos[i], frameOffsets[i], this);
 			}
 			Images = Array.AsReadOnly(images);
 		}
@@ -139,10 +132,43 @@ namespace Grisaia.Asmodean {
 		///  The second index, which is associated to a frame inside an <see cref="Hg3Image"/>.
 		/// </param>
 		/// <returns>The file name of the frame.</returns>
+		/// 
+		/// <exception cref="ArgumentOutOfRangeException">
+		///  <paramref name="imgIndex"/> or <paramref name="frmIndex"/> are not a valid frame index.
+		/// </exception>
 		public string GetFrameFileName(int imgIndex, int frmIndex) {
-			return GetFrameFileName(FileName, imgIndex, frmIndex);
+			if (imgIndex < 0 || imgIndex >= Images.Count)
+				throw new ArgumentOutOfRangeException(nameof(imgIndex));
+			if (frmIndex < 0 || frmIndex >= Images[imgIndex].FrameCount)
+				throw new ArgumentOutOfRangeException(nameof(frmIndex));
+			string baseName = Path.GetFileNameWithoutExtension(FileName);
+			if (IsAnimation) {
+				if (Images[imgIndex].IsAnimation)
+					baseName = $"{baseName}+{imgIndex:D3}+{frmIndex:D3}";
+				else
+					baseName = $"{baseName}+{imgIndex:D3}";
+			}
+			return Path.ChangeExtension(baseName, ".png");
 		}
 		/// <summary>
+		///  Gets the file path for the PNG image with the specified image and frame indecies.
+		/// </summary>
+		/// <param name="directory">The directory of the <see cref="Hg3"/> images.</param>
+		/// <param name="imgIndex">
+		///  The first index, which is assocaited to an <see cref="Hg3.ImageIndex"/>.
+		/// </param>
+		/// <param name="frmIndex">
+		///  The second index, which is associated to a frame inside an <see cref="Hg3Image"/>.
+		/// </param>
+		/// <returns>The file path of the frame.</returns>
+		/// 
+		/// <exception cref="ArgumentOutOfRangeException">
+		///  <paramref name="imgIndex"/> or <paramref name="frmIndex"/> are not a valid frame index.
+		/// </exception>
+		public string GetFrameFilePath(string directory, int imgIndex, int frmIndex) {
+			return Path.Combine(directory, GetFrameFileName(imgIndex, frmIndex));
+		}
+		/*/// <summary>
 		///  Gets the file name for the PNG image with the specified image and frame indecies.
 		/// </summary>
 		/// <param name="fileName">The base filename of the <see cref="Hg3"/>.</param>
@@ -154,20 +180,38 @@ namespace Grisaia.Asmodean {
 		/// </param>
 		/// <returns>The file name of the HG-3 image frame.</returns>
 		public static string GetFrameFileName(string fileName, int imgIndex, int frmIndex) {
-			return $"{Path.GetFileNameWithoutExtension(fileName)}+{imgIndex:D3}+{frmIndex:D3}.png";
+			string baseName = $"{Path.GetFileNameWithoutExtension(fileName)}+{imgIndex:D3}+{frmIndex:D3}";
+			return Path.ChangeExtension(baseName, ".png");
+		}*/
+		/// <summary>
+		///  Gets the file name for the JSON HG-3 information.
+		/// </summary>
+		/// <param name="fileName">The base filename of the <see cref="Hg3"/>.</param>
+		/// <returns>The file name of the JSON HG-3 information.</returns>
+		public static string GetJsonFileName(string fileName) {
+			return Path.ChangeExtension(Path.GetFileNameWithoutExtension(fileName) + "+hg3", ".json");
+		}
+		/// <summary>
+		///  Gets the file path for the JSON HG-3 information.
+		/// </summary>
+		/// <param name="directory">The directory of the <see cref="Hg3"/>.</param>
+		/// <param name="fileName">The base file name of the <see cref="Hg3"/>.</param>
+		/// <returns>The file path of the JSON HG-3 information.</returns>
+		public static string GetJsonFilePath(string directory, string fileName) {
+			return Path.Combine(directory, GetJsonFileName(fileName));
 		}
 
 		#endregion
 
 		#region I/O
-		
+
 		/// <summary>
-		///  Deserializes the HG-3 frame from a json file in the specified directory and file name.
+		///  Deserializes the HG-3 from a json file in the specified directory and file name.
 		/// </summary>
 		/// <param name="directory">
 		///  The directory for the json file to load and deserialize with <paramref name="fileName"/>.
 		/// </param>
-		/// <returns>The deserialized HG-3 frame.</returns>
+		/// <returns>The deserialized HG-3.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="directory"/> or <paramref name="fileName"/> is null.
@@ -177,11 +221,11 @@ namespace Grisaia.Asmodean {
 				throw new ArgumentNullException(nameof(directory));
 			if (fileName == null)
 				throw new ArgumentNullException(nameof(fileName));
-			string jsonFile = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(fileName)}.hg3.json");
+			string jsonFile = Path.Combine(directory, GetJsonFileName(fileName));
 			return JsonConvert.DeserializeObject<Hg3>(File.ReadAllText(jsonFile));
 		}
 		/// <summary>
-		///  Serializes the HG-3 frame to a json file in the specified directory.
+		///  Serializes the HG-3 to a json file in the specified directory.
 		/// </summary>
 		/// <param name="directory">The directory to save the json file to using <see cref="JsonFileName"/>.</param>
 		/// 
@@ -197,16 +241,14 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Opens the stream to the bitmap from the specified directory.
 		/// </summary>
-		/// <param name="directory">The directory to load the bitmap from using <see cref="BitmapFileName"/>.</param>
+		/// <param name="directory">The directory to load the bitmap from.</param>
 		/// <returns>The file stream to the bitmap.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="directory"/> is null.
 		/// </exception>
 		public FileStream OpenBitmapStream(string directory) {
-			if (directory == null)
-				throw new ArgumentNullException(nameof(directory));
-			return File.OpenRead(Path.Combine(directory, BitmapFileName));
+			return OpenBitmapStream(directory, 0, 0);
 		}
 		/// <summary>
 		///  Opens the stream to the bitmap from the specified directory.
@@ -223,34 +265,33 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="directory"/> is null.
 		/// </exception>
-		/// <exception cref="IndexOutOfRangeException">
-		///  <paramref name="imgIndex"/> or <paramref name="frmIndex"/> is out of range.
+		/// <exception cref="ArgumentOutOfRangeException">
+		///  <paramref name="imgIndex"/> or <paramref name="frmIndex"/> are not a valid frame index.
 		/// </exception>
 		public FileStream OpenBitmapStream(string directory, int imgIndex, int frmIndex) {
 			if (directory == null)
 				throw new ArgumentNullException(nameof(directory));
-			if (frmIndex < 0 || frmIndex >= Images[imgIndex].FrameCount)
-				throw new IndexOutOfRangeException($"{nameof(frmIndex)} is out of range!");
-			return File.OpenRead(Path.Combine(directory, GetFrameFileName(imgIndex, frmIndex)));
+			return File.OpenRead(Path.Combine(directory, GetFrameFilePath(directory, imgIndex, frmIndex)));
 		}
 
 		#endregion
 
-		/*#region IDisposable Implementation
+		#region ToString Override
 
 		/// <summary>
-		///  Disposes of the HG-3's image's stored <see cref="Hg3Image.Bitmaps"/>.
+		///  Gets the string representation of the HG-3.
 		/// </summary>
-		public void Dispose() {
-			foreach (Hg3Image image in Images) {
-				image.Dispose();
-			}
-		}
+		/// <returns>The string representation of the HG-3.</returns>
+		public override string ToString() => $"Hg3: \"{FileName}\" Count={Count}";
 
-		#endregion*/
+		#endregion
 
 		#region IEnumerable Implementation
-		
+
+		/// <summary>
+		///  Gets the enumerator for the HG-3's images.
+		/// </summary>
+		/// <returns>The HG-3 image enumerator.</returns>
 		public IEnumerator<Hg3Image> GetEnumerator() => Images.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

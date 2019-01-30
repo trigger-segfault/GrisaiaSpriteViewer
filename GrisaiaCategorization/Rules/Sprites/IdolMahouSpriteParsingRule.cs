@@ -3,7 +3,7 @@ using Grisaia.Categories.Sprites;
 
 namespace Grisaia.Rules.Sprites {
 	/// <summary>
-	/// 
+	///  The sprite parsing rule for magical girl sprites in Idol Mahou Shoujo Chiru Chiru Michiru.
 	/// </summary>
 	/// 
 	/// <remarks>
@@ -13,9 +13,9 @@ namespace Grisaia.Rules.Sprites {
 	///  TmicflyL_04
 	///  "\ /\ /| ""
 	///    |  | +- Size: code (SpriteDistance)
-	///    |  +- Flying identifier (always fly/kv)
+	///    |  +- Flying identifier (fly) or Transformation identifier (kv)
 	///    |  +- No Lighing, Pose, or Distance
-	///    +- CharacterId (always mic/kaz (or kap for kz), Michiru/Kazuki)
+	///    +- CharacterId (always mic/kaz, Michiru/Kazuki)
 	/// </remarks>
 	public sealed class IdolMahouSpriteParsingRule : SpriteParsingRule {
 		#region Constants
@@ -26,9 +26,10 @@ namespace Grisaia.Rules.Sprites {
 			DistancePattern +
 			//SizePattern +
 			@"_" +
+			PartTypePattern +
 			PartIdPattern +
-			PartPattern +
 			EndPattern;
+		private static readonly Regex Regex = new Regex(Pattern);
 
 		#endregion
 
@@ -37,7 +38,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <summary>
 		///  Gets the default regular expression used to parse the sprite.
 		/// </summary>
-		public override Regex SpriteRegex { get; } = new Regex(Pattern);
+		public override Regex SpriteRegex => Regex;
+		/// <summary>
+		///  Gets the priority order of the parsing rule when parsing sprites.
+		/// </summary>
+		public override double Priority => 1d;
 
 		#endregion
 

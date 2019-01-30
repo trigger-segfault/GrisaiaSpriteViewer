@@ -56,7 +56,7 @@ namespace Grisaia.Asmodean {
 		/// <param name="kifEntries">The array of unobfuscated KIFENTRIES inside the KIFINT.</param>
 		/// <param name="decrypt">True if the file key is required.</param>
 		/// <param name="fileKey">The file key when <paramref name="decrypt"/> is true.</param>
-		internal Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey, KifintType type) {
+		private Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey, KifintType type) {
 			FilePath = kifintPath;
 			FileKey = (decrypt ? fileKey : (uint?) null);
 			ArchiveType = type;
@@ -84,7 +84,7 @@ namespace Grisaia.Asmodean {
 		///  <paramref name="key"/> is null.
 		/// </exception>
 		/// <exception cref="KeyNotFoundException">
-		///  <paramref name="key"/> is not contained in <see cref="Entries"/>.
+		///  The entry with the <paramref name="key"/> was not found.
 		/// </exception>
 		public KifintEntry Get(string key) => Entries[key];
 		/// <summary>
@@ -132,9 +132,9 @@ namespace Grisaia.Asmodean {
 		///  Reads the KIFINT archive from the stream. For use with <see cref="KifintLookup"/>.
 		/// </summary>
 		/// <param name="reader">The reader for the current stream.</param>
-		/// <param name="version"></param>
+		/// <param name="version">The current version being read.</param>
 		/// <param name="installDir">The installation directory where the archive is located.</param>
-		/// <returns>The loaded cached KIFINT.</returns>
+		/// <returns>The loaded cached KIFINT archive.</returns>
 		internal static Kifint Read(BinaryReader reader, int version, string installDir, KifintType type) {
 			Kifint kifint = new Kifint {
 				FilePath = Path.Combine(installDir, reader.ReadString()),
@@ -153,6 +153,16 @@ namespace Grisaia.Asmodean {
 			kifint.Entries = new ReadOnlyDictionary<string, KifintEntry>(entries);
 			return kifint;
 		}
+
+		#endregion
+
+		#region ToString Override
+
+		/// <summary>
+		///  Gets the string representation of the KIFINT archive.
+		/// </summary>
+		/// <returns>The string representation of the KIFINT archive.</returns>
+		public override string ToString() => $"Kifint: \"{FileName}\" Type={ArchiveType} Count={Count}";
 
 		#endregion
 

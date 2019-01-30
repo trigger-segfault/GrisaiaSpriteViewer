@@ -12,21 +12,29 @@
   "characters": [
     {
       "id": "ama",
-      "name": "Amane Suou"
+      "name": "Amane Suou",
+      "first_name": "Amane",
+      "last_name": "Suou"
     },
     {
       "id": "amm",
       "name": "Amane Suou",
+      "first_name": "Amane",
+      "last_name": "Suou",
       "label": "Middle School Glasses"
     },
     {
       "id": "amp",
       "name": "Amane Suou",
+      "first_name": "Amane",
+      "last_name": "Suou",
       "label": "Middle School"
     },
     {
       "id": "mak",
       "name": "Makina Irisu",
+      "first_name": "Makina",
+      "last_name": "Irisu",
       "game_parts": [
         {
           "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
@@ -51,6 +59,8 @@
     {
       "id": "mic",
       "name": "Michiru Matsushima",
+      "first_name": "Michiru",
+      "last_name": "Matsushima",
       "parts": [
         {
           "name": "Outfit",
@@ -148,6 +158,8 @@
     {
       "id": "mib",
       "name": "Michiru Matsushima",
+      "first_name": "Michiru",
+      "last_name": "Matsushima",
       "label": "Black Hair",
       "parts": [
         {
@@ -168,6 +180,8 @@
     {
       "id": "micfly",
       "name": "Michiru Matsushima",
+      "first_name": "Michiru",
+      "last_name": "Matsushima",
       "label": "Flying",
       "parts": [
         {
@@ -203,6 +217,8 @@
     {
       "id": "mickv",
       "name": "Michiru Matsushima",
+      "first_name": "Michiru",
+      "last_name": "Matsushima",
       "label": "Transform",
       "parts": [
         {
@@ -217,11 +233,15 @@
     },
     {
       "id": "sac",
-      "name": "Sachi Komine"
+      "name": "Sachi Komine",
+      "first_name": "Sachi",
+      "last_name": "Komine"
     },
     {
       "id": "sas",
       "name": "Sachi Komine",
+      "first_name": "Sachi",
+      "last_name": "Komine",
       "label": "Battle",
       "game_parts": [
         {
@@ -243,6 +263,8 @@
     {
       "id": "yum",
       "name": "Yumiko Sakaki",
+      "first_name": "Yumiko",
+      "last_name": "Sakaki",
       "game_parts": [
         {
           "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
@@ -267,21 +289,35 @@
     {
       "id": "yummoz",
       "name": "Yumiko Sakaki",
+      "first_name": "Yumiko",
+      "last_name": "Sakaki",
       "label": "Mosiac",
       "parts": [
         {
-          "name": "Frame",
+          "name": "Mosiac",
           "id": 0
         }
       ]
     },
     {
-      "ids": [ "kar", "kap" ],
-      "name": "Kazuki Kazami"
+      "id": "kap",
+      "name": "Kazuki Kazami",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
+      "label": null
+    },
+    {
+      "id": "kar",
+      "name": "Kazuki Kazami",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
+      "label": "Child"
     },
     {
       "id": "kaz",
       "name": "Kazuki Kazami",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
       "label": "Magical Girl",
       "game_parts": [
         {
@@ -312,6 +348,8 @@
     {
       "id": "kazfly",
       "name": "Kazuki Kazami",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
       "label": "Flying",
       "parts": [
         {
@@ -327,6 +365,8 @@
     {
       "id": "kapkv",
       "name": "Kazuki Kazami",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
       "label": "Transform",
       "parts": [
         {
@@ -342,6 +382,8 @@
     {
       "id": "chi",
       "name": "Chizuru Tachibana",
+      "first_name": "Chizuru",
+      "last_name": "Tachibana",
       "game_parts": [
         {
           "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
@@ -366,6 +408,9 @@
     {
       "id": "jb",
       "name": "JB",
+      "nickname": "JB",
+      "first_name": "Julia",
+      "last_name": "Bardera",
       "game_parts": [
         {
           "game_ids": [ "idolmahou", "idolmahou1" ],
@@ -395,44 +440,71 @@
     {
       "id": "jbs",
       "name": "JB",
+      "nickname": "JB",
+      "first_name": "Julia",
+      "last_name": "Bardera",
       "label": "Past"
     },
     {
       "id": "asa",
+      "first_name": "Asako",
+      "last_name": "Kusakabe",
       "name": "Asako Kusakabe"
     },
     {
       "id": "kia",
+      "first_name": "Chiara",
+      "last_name": "Farrell",
       "name": "Chiara Farrell"
     },
     {
       "id": "yuj",
       "name": "Yuuji Kazami",
-      "type": "main",
+      "first_name": "Yuuji",
+      "last_name": "Kazami",
       "label": "Child"
     },
     {
-      "ids": [ "osr", "osl" ],
-      "name": "Heath Oslo"
+      // TODO: Determine difference between "osl" and "osr"
+      "id": "osl",
+      "name": "Heath Oslo",
+      "first_name": "Heath",
+      "last_name": "Oslo"
+    },
+    {
+      // No existing sprites
+      "id": "osr",
+      "name": "Heath Oslo",
+      "first_name": "Heath",
+      "last_name": "Oslo"
     },
 
     // RELATIVES & FRIENDS
     {
       "id": "saf",
-      "name": "Sachi's Father"
+      "relation_id": "sac",
+      "name": "$RELATION:NAME$'s Father",
+      "title": "$RELATION:NAME$'s Father"
     },
     {
       "id": "sam",
-      "name": "Sachi's Mother"
+      "relation_id": "sac",
+      "name": "$RELATION:NAME$'s Mother",
+      "title": "$RELATION:NAME$'s Mother"
     },
     {
       "id": "yuf",
+      "relation_id": "yum",
       "name": "Michiaki Sakaki",
-      "title": "Yumiko's Father"
+      "first_name": "Michiaki",
+      "last_name": "Sakaki",
+      "title": "$RELATION:NAME$'s Father"
     },
     {
       "id": "mif",
-      "name": "Michiru's Friend",
+      "relation_id": "mic",
+      "name": "$RELATION:NAME$'s Friend",
+      "title": "$RELATION:NAME$'s Friend",
       "game_parts": [
         {
           "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
@@ -456,40 +528,59 @@
     },
     {
       "id": "kiy",
+      "relation_id": "mak",
       "name": "Kiyoka Irisu",
-      "title": "Makina's Mother"
+      "first_name": "Kiyoka",
+      "last_name": "Irisu",
+      "title": "$RELATION:NAME$'s Mother"
     },
     {
       "id": "yjf",
+      "relation_id": "yuj",
       "name": "Ryouji Kazami",
-      "title": "Yuuji's Father"
+      "first_name": "Ryouji",
+      "last_name": "Kazami",
+      "title": "$RELATION:NAME$'s Father"
     },
     {
       "id": "yjm",
+      "relation_id": "yuj",
       "name": "Satoko Kazami",
-      "title": "Yuuji's Mother"
+      "first_name": "Satoko",
+      "last_name": "Kazami",
+      "title": "$RELATION:NAME$'s Mother"
     },
 
     // MILITARY
     {
       "id": "dan",
-      "name": "Daniel Bone"
+      "name": "Daniel Bone",
+      "first_name": "Daniel",
+      "last_name": "Bone"
     },
     {
       "id": "edi",
-      "name": "Edward Walker"
+      "name": "Edward Walker",
+      "first_name": "Edward",
+      "last_name": "Walker"
     },
     {
       "id": "gar",
-      "name": "Agnes Garrett"
+      "name": "Agnes Garrett",
+      "first_name": "Agnes",
+      "last_name": "Garrett"
     },
     {
       "id": "jei",
-      "name": "Justin Mikemeyer"
+      "name": "Justin Mikemeyer",
+      "first_name": "Justin",
+      "last_name": "Mikemeyer"
     },
     {
       "id": "mir",
       "name": "Milliela Stanfield",
+      "first_name": "Milliela",
+      "last_name": "Stanfield",
       "parts": [
         {
           "name": "Outfit",
@@ -533,93 +624,145 @@
     },
     {
       "id": "rob",
-      "name": "Robert Wallson"
+      "name": "Robert Wallson",
+      "first_name": "Robert",
+      "last_name": "Wallson"
     },
 
     // AMANE ROUTE
     {
       "id": "hir",
+      "relation_id": "ama",
       "name": "Hiroka Tamaki",
-      "label": "Amane's Classmate"
+      "first_name": "Hiroka",
+      "last_name": "Tamaki" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "ibu",
+      "relation_id": "ama",
       "name": "Haruna Ibuki",
-      "label": "Amane's Classmate"
+      "first_name": "Haruna",
+      "last_name": "Ibuki" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "kan",
+      "relation_id": "ama",
       "name": "Saaya Kaneda",
-      "label": "Amane's Classmate"
+      "first_name": "Saaya",
+      "last_name": "Kaneda" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "koi",
+      "relation_id": "ama",
       "name": "Ritsu Koide",
-      "label": "Amane's Classmate"
+      "first_name": "Ritsu",
+      "last_name": "Koide" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "kom",
+      "relation_id": "ama",
       "name": "Megumi Komori",
-      "label": "Amane's Classmate"
+      "first_name": "Megumi",
+      "last_name": "Komori" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "och",
+      "relation_id": "ama",
       "name": "Yoshihiko Ochi",
-      "label": "Amane's Teacher"
+      "first_name": "Yoshihiko",
+      "last_name": "Ochi" /*,
+      "label": "Amane's Teacher"*/
     },
     {
       "id": "sak",
+      "relation_id": "ama",
       "name": "Chiaki Sakashita",
-      "label": "Amane's Classmate"
+      "first_name": "Chiaki",
+      "last_name": "Sakashita" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "skm",
+      "relation_id": "ama",
       "name": "Minori Sakuma",
-      "label": "Amane's Classmate"
+      "first_name": "Minori",
+      "last_name": "Sakuma" /*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "skr",
+      "relation_id": "ama",
       "name": "Mifuyu Sakurai",
-      "label": "Amane's Classmate"
+      "first_name": "Mifuyu",
+      "last_name": "Sakurai"/*,
+      "label": "Amane's Classmate"*/
     },
     {
       "id": "tas",
-      "name": "Keiji Sakashita"
+      "relation_id": "sak",
+      "name": "Keiji Sakashita",
+      "first_name": "Keiji",
+      "last_name": "Sakashita",
+      "title": "$RELATION:NAME$'s Father"
     },
 
     // OTHER
     {
-      "ids": [ "dav", "dave" ],
-      "name": "Professor Dave"
+      // No existing sprites
+      // TODO: Determine difference between "dav" and "dave"
+      "id": "dav",
+      "name": "Professor Dave",
+      "title": "Professor Dave"
+    },
+    {
+      // No existing sprites
+      // TODO: Determine difference between "dav" and "dave"
+      "id": "dave",
+      "name": "Professor Dave",
+      "title": "Professor Dave"
     },
     {
       "id": "meg",
-      "name": "Goddess"
+      "name": "Goddess",
+      "title": "Goddess"
     },
     {
       "id": "str",
-      "name": "Stranger"
+      "name": "Stranger",
+      "title": "Stranger"
     },
     {
       "id": "kam",
-      "name": "Kami-sama"
+      "name": "Kami-sama",
+      "nickname": "Kami-sama",
+      "title": "Kami-sama" // Title: God (?)
       // Surprisingly uses normal part setup
     },
     {
       // Unused
       "id": "nan",
-      "name": "Nanano Suou"
+      "name": "Nanano Suou",
+      "first_name": "Nanano",
+      "last_name": "Suou"
     },
     {
       // Unused
       "id": "ren",
-      "name": "Renge Yamabuki"
+      "name": "Renge Yamabuki",
+      "first_name": "Renge",
+      "last_name": "Yamabuki"
     },
 
     // INHUMAN
     {
       "id": "cha",
       "name": "Chaos",
+      "title": "Chaos",
       "parts": [
         {
           "name": "Body",
@@ -630,6 +773,7 @@
     {
       "id": "gho",
       "name": "Ghost",
+      "title": "Ghost",
       "parts": [
         {
           "name": "Body",
@@ -639,8 +783,12 @@
     },
     {
       "id": "joh",
+      "relation_id": "yuj",
       "name": "John",
-      "title": "Yuuji's Dog",
+      "nickname": "John",
+      "first_name": "John",
+      "last_name": null,
+      "title": "$RELATION:NAME$'s Dog",
       "parts": [
         {
           "name": "Body",
@@ -656,6 +804,8 @@
     {
       "id": "mar",
       "name": "Marin",
+      "first_name": "Marin",
+      "last_name": null,
       "parts": [
         {
           "name": "Body",
@@ -666,6 +816,9 @@
     {
       "id": "nya",
       "name": "Nyanmel",
+      "nickname": "Nyanmel",
+      "first_name": "Nyanmel",
+      "last_name": null,
       "parts": [
         {
           "name": "Body",
@@ -704,6 +857,9 @@
     {
       "id": "tan",
       "name": "Thanatochu",
+      "nickname": "Thanatochu",
+      "first_name": "Thanatochu",
+      "last_name": null,
       "parts": [
         {
           "name": "Body",
@@ -722,6 +878,10 @@
     {
       "id": "mag",
       "name": "Tunafish Man",
+      "nickname": "Tunafish Man",
+      "first_name": "Tunafish Man",
+      "last_name": null,
+      "title": "Tunafish Man",
       "parts": [
         {
           "name": "Body",
@@ -736,7 +896,9 @@
     {
       "id": "iza",
       "name": "Isabella Fitzgerald",
-      "title": "Major Isabella Fitzgerald",
+      "first_name": "Isabella",
+      "last_name": "Fitzgerald",
+      "title": "Major %FULLNAME%",
       "parts": [
         {
           "name": "Outfit",
@@ -756,6 +918,8 @@
     {
       "id": "mro",
       "name": "Marion Garland",
+      "first_name": "Marion",
+      "last_name": "Garland",
       "parts": [
         {
           "name": "Outfit",
@@ -775,6 +939,8 @@
     {
       "id": "nob",
       "name": "Ramon Noboa",
+      "first_name": "Ramon",
+      "last_name": "Noboa",
       "parts": [
         {
           "name": "Outfit",
@@ -793,24 +959,35 @@
     },
     {
       "id": "adm",
-      "name": "Adam Black"
+      "name": "Adam Black",
+      "first_name": "Adam",
+      "last_name": "Black"
     },
     {
       "id": "rby",
+      "relation_id": "rob",
       "name": "Zoey Graham",
-      "title": "Robbie's Wife"
+      "first_name": "Zoey",
+      "last_name": "Graham",
+      "title": "$RELATION:NAME$'s Wife"
     },
     {
       "id": "tpo",
-      "name": "Typhoon"
+      "name": "Typhoon",
+      "nickname": "Typhoon",
+      "title": "Typhoon"
     },
     {
       "id": "tra",
-      "name": "Travis"
+      "name": "Travis",
+      "first_name": "Travis",
+      "last_name": null
     },
     {
       "id": "yam",
-      "name": "Yamamoto"
+      "name": "Yamamoto",
+      "first_name": "Yamamoto",
+      "last_name": null
     }
   ]
 }
