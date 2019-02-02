@@ -10,7 +10,8 @@
           <StackPanel>
             <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=SelectedItem.Category.Name, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3"/>
             <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource.List, RelativeSource={RelativeSource TemplatedParent}}"
-                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                       IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
               <ComboBox.ItemTemplate>
                 <ItemContainerTemplate>
                   <TextBlock Text="{Binding}"/>
@@ -29,7 +30,8 @@
           <StackPanel>
             <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=ItemsSource.Name, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3"/>
             <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource.GroupParts, RelativeSource={RelativeSource TemplatedParent}}"
-                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                       IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
               <ComboBox.ItemTemplate>
                 <ItemContainerTemplate>
                   <TextBlock Text="{Binding}"/>

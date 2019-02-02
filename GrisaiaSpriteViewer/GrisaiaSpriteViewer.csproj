@@ -61,7 +61,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\SpriteCategoryComboBox.cs" />
-    <None Include="Controls\SpriteImage.Old.cs" />
     <Compile Include="Controls\SpriteImage.cs" />
     <Compile Include="Controls\SpritePartGroupComboBox.cs" />
     <Compile Include="Controls\SpriteSelectionControl.cs" />

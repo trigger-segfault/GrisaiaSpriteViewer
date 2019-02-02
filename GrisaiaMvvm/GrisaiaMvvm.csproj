@@ -70,6 +70,7 @@
     <Compile Include="Converters\RadioButtonConverter.cs" />
     <Compile Include="Converters\ScaleConverter.cs" />
     <Compile Include="Converters\TextToHorizontalAlignment.cs" />
+    <Compile Include="Converters\BooleanWhenEqual.cs" />
     <Compile Include="Converters\ZeroWhenNull.cs" />
     <Compile Include="Converters\ZeroWhenBoolean.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
