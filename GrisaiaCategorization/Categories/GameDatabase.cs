@@ -103,7 +103,7 @@ namespace Grisaia.Categories {
 		///  Gets the grisaia database containing this database.
 		/// </summary>
 		[JsonIgnore]
-		public GrisaiaDatabase GrisaiaDatabase { get; private set; }
+		public GrisaiaDatabase GrisaiaDatabase { get; internal set; }
 		/// <summary>
 		///  The collection of Grisaia game infos mapped to an Id.
 		/// </summary>

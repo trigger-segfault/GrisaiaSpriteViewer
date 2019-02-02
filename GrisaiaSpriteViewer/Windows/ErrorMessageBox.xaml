@@ -22,8 +22,10 @@
     <Rectangle Fill="#FFF0F0F0" Height="49" Margin="0" VerticalAlignment="Bottom" StrokeThickness="0"/>
     <Separator Background="#FFDFDFDF" Margin="0,0,0,48" VerticalAlignment="Bottom"/>
 
-    <Button x:Name="buttonException" Content="See Full Exception" HorizontalAlignment="Left" Margin="18,0,0,12" VerticalAlignment="Bottom" Width="128" Click="OnSeeFullException"/>
-    <Button x:Name="buttonCopy" Content="Copy to Clipboard" HorizontalAlignment="Left" Margin="151,0,0,12" VerticalAlignment="Bottom" Width="128" Click="OnCopyToClipboard"/>
+    <StackPanel Margin="18,0,0,12" VerticalAlignment="Bottom" HorizontalAlignment="Left" Orientation="Horizontal">
+    <Button x:Name="buttonException" Content="See Full Exception" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="128" Click="OnSeeFullException"/>
+      <Button x:Name="buttonCopy" Content="Copy to Clipboard" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom" Width="128" Click="OnCopyToClipboard"/>
+    </StackPanel>
     <StackPanel Margin="0,0,18,12" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
       <Button x:Name="buttonContinue" Content="Continue" HorizontalAlignment="Right" Margin="0" VerticalAlignment="Bottom" Width="80" IsCancel="True"/>
       <Button x:Name="buttonExit" Content="Exit" HorizontalAlignment="Right" Margin="5,0,0,0" VerticalAlignment="Bottom" Width="80" Click="OnExit" IsDefault="True"/>

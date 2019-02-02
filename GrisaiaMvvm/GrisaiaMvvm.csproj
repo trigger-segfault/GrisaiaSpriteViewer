@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3649D829-EE95-4C9F-B56A-7CA6654D22DD}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>Grisaia.Mvvm</RootNamespace>
+    <AssemblyName>GrisaiaMvvm</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\IRelayCommand.cs" />
+    <Compile Include="Commands\IRelayCommand.Generic.cs" />
+    <Compile Include="Commands\IRelayCommandBase.cs" />
+    <Compile Include="Commands\IRelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfo.Collection.cs" />
+    <Compile Include="Commands\RelayInfo.cs" />
+    <Compile Include="Commands\RelayInfoCollection.cs" />
+    <Compile Include="Commands\RelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfoCommand.Generic.cs" />
+    <Compile Include="Commands\RelayInfoCommandBinding.cs" />
+    <Compile Include="Controls\CommandButton.cs" />
+    <Compile Include="Controls\CommandMenuItem.cs" />
+    <Compile Include="Controls\ImageButton.cs" />
+    <Compile Include="Controls\ImageMenuItem.cs" />
+    <Compile Include="Converters\CollapsedWhenNull.cs" />
+    <Compile Include="Converters\CollapsedWhenBoolean.cs" />
+    <Compile Include="Converters\InverseBoolean.cs" />
+    <Compile Include="Converters\PreserveThickness.cs" />
+    <Compile Include="Converters\RadioButtonConverter.cs" />
+    <Compile Include="Converters\ScaleConverter.cs" />
+    <Compile Include="Converters\TextToHorizontalAlignment.cs" />
+    <Compile Include="Converters\ZeroWhenNull.cs" />
+    <Compile Include="Converters\ZeroWhenBoolean.cs" />
+    <Compile Include="Extensions\CommandExtensions.cs" />
+    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="Input\AnyKeyGesture.cs" />
+    <Compile Include="Input\AnyKeyGestureConverter.cs" />
+    <Compile Include="Model\GrisaiaModel.cs" />
+    <Compile Include="Model\SpriteViewerSettings.cs" />
+    <Compile Include="ObservableCollectionObject.cs" />
+    <Compile Include="ObservableObjectEx.cs" />
+    <Compile Include="ObservablePropertyCollectionObject.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Services\IGrisaiaDialogService.cs" />
+    <Compile Include="Services\UIService.cs" />
+    <Compile Include="Utils\ImageClipboard.cs" />
+    <None Include="Utils\ImageClipboard.Glitched.cs" />
+    <Compile Include="ViewModelRelayCommand.cs" />
+    <Compile Include="ViewModelWindow.cs" />
+    <Compile Include="ViewModel\LoadingViewModel.cs" />
+    <Compile Include="ViewModel\SpriteImageViewModel.cs" />
+    <Compile Include="ViewModel\SpritePartViewModelItem.cs" />
+    <Compile Include="ViewModel\SpriteSelectionViewModel.cs" />
+    <None Include="Properties\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj">
+      <Project>{1b907c39-eb5d-4f07-b70e-142e2c88e8b5}</Project>
+      <Name>GrisaiaCategorization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MvvmLightLibs">
+      <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

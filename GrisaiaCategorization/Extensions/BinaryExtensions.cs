@@ -48,8 +48,8 @@ namespace Grisaia.Extensions {
 			return new string(reader.ReadChars(length));
 		}
 
-		public static bool IsEndOfStream(this Stream stream) {
+		/*public static bool IsEndOfStream(this Stream stream) {
 			return stream.Position >= stream.Length;
-		}
+		}*/
 	}
 }

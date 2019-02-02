@@ -1,9 +1,4 @@
 {
-  /*"frontwing_registry": "HKEY_CURRENT_USER\\Software\\Frontwing",
-  "steam_registry": "HKEY_CURRENT_USER\\Software\\Valve\\Steam",
-  "steam_apps": "steamapps",
-  "steam_libraries": "libraryfolders.vdf",
-  "steam_app_manifest": "appmanifest_{0}.acf",*/
   "games": [
     {
       "id": "kajitsu",

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using GalaSoft.MvvmLight;
+using Grisaia.Utils;
+using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
 	public class GrisaiaDatabase {
@@ -18,10 +20,6 @@ namespace Grisaia.Categories {
 		///  Gets the path leading to where saved sprites are stored.
 		/// </summary>
 		public string SavedPath { get; }
-		/// <summary>
-		///  The path to the dummy data.
-		/// </summary>
-		public string DummyPath { get; }
 		
 		/// <summary>
 		///  Gets the database of games.
@@ -42,18 +40,25 @@ namespace Grisaia.Categories {
 
 		public GrisaiaDatabase() {
 			string baseDirectory = AppContext.BaseDirectory;
-			if (ViewModelBase.IsInDesignModeStatic)
-				baseDirectory = DummyCategorizationContext.BaseDirectory;
 			CachePath = Path.Combine(baseDirectory, "cache");
 			DataPath = Path.Combine(baseDirectory, "data");
 			SavedPath = Path.Combine(baseDirectory, "saved");
-			DummyPath = Path.Combine(DummyCategorizationContext.BaseDirectory, "data", "dummy");
 
-			string gamePath = Path.Combine(DataPath, "games.json");
-			string charactersPath = Path.Combine(DataPath, "characters.json");
+			if (ViewModelBase.IsInDesignModeStatic) {
+				string gameJson = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data", "games.json"));
+				string charactersJson = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data", "characters.json"));
+				GameDatabase = JsonConvert.DeserializeObject<GameDatabase>(gameJson);
+				CharacterDatabase = JsonConvert.DeserializeObject<CharacterDatabase>(charactersJson);
+				GameDatabase.GrisaiaDatabase = this;
+				CharacterDatabase.GrisaiaDatabase = this;
+			}
+			else {
+				string gamePath = Path.Combine(DataPath, "games.json");
+				string charactersPath = Path.Combine(DataPath, "characters.json");
 
-			GameDatabase = GameDatabase.FromJsonFile(gamePath, this);
-			CharacterDatabase = CharacterDatabase.FromJsonFile(charactersPath, this);
+				GameDatabase = GameDatabase.FromJsonFile(gamePath, this);
+				CharacterDatabase = CharacterDatabase.FromJsonFile(charactersPath, this);
+			}
 			SpriteDatabase = new SpriteDatabase(this);
 		}
 

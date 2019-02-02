@@ -117,7 +117,7 @@ namespace Grisaia.Categories.Sprites {
 		[JsonProperty("part_type")]
 		public int PartType { get; internal set; }
 		[JsonProperty("part_index")]
-		public int Part { get; internal set; }
+		public int PartId { get; internal set; }
 		//[JsonIgnore]
 		//private int poseInternal;// = 1;
 		/*[JsonIgnore]

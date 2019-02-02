@@ -154,8 +154,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <param name="m">The regex match to get the value to parse from.</param>
 		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseLighting(SpriteInfo s, Match m) {
-			s.Lighting = AttributeHelper.ParseCode<SpriteLighting>(m.Groups["lighting"].Value, out string unk);
-			return (unk.Length == 0);
+			if (AttributeHelper.TryParseCode(m.Groups["lighting"].Value, out SpriteLighting l)) {
+				s.Lighting = l;
+				return true;
+			}
+			return false;
 		}
 		/// <summary>
 		///  Tries to parse the sprite's pose and blush level.
@@ -170,7 +173,6 @@ namespace Grisaia.Rules.Sprites {
 				return false;
 			s.Pose  = (SpritePose)  (pose % 3);
 			s.Blush = (SpriteBlush) (pose / 3);
-			//s.PoseInternal = pose;
 			return true;
 		}
 		/// <summary>
@@ -180,8 +182,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <param name="m">The regex match to get the value to parse from.</param>
 		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseDistance(SpriteInfo s, Match m) {
-			s.Distance = AttributeHelper.ParseCode<SpriteDistance>(m.Groups["distance"].Value, out string unk);
-			return (unk.Length == 0);
+			if (AttributeHelper.TryParseCode(m.Groups["distance"].Value, out SpriteDistance d)) {
+				s.Distance = d;
+				return true;
+			}
+			return false;
 		}
 		/*/// <summary>
 		///  Tries to parse the sprite's draw size.
@@ -190,8 +195,11 @@ namespace Grisaia.Rules.Sprites {
 		/// <param name="m">The regex match to get the value to parse from.</param>
 		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParseSize(SpriteInfo s, Match m) {
-			s.Size = AttributeHelper.ParseCode<SpriteSize>(m.Groups["size"].Value, out string unk);
-			return (unk.Length == 0);
+			if (AttributeHelper.TryParseCode(m.Groups["size"].Value, out SpriteSize s)) {
+				s.Size = s;
+				return true;
+			}
+			return false;
 		}*/
 		/// <summary>
 		///  Tries to parse the sprite's part type and Id.
@@ -200,14 +208,14 @@ namespace Grisaia.Rules.Sprites {
 		/// <param name="m">The regex match to get the value to parse from.</param>
 		/// <returns>True if the parse was successful, otherwise false.</returns>
 		protected bool TryParsePart(SpriteInfo s, Match m) {
-			s.PartType = m.Groups["part_type"].Value.Length;
-			if (!PartRule.TryParse(m.Groups["part_id"].Value, out int part))
-				return false;
-			s.Part = part;
-			return true;
+			if (PartRule.TryParse(m.Groups["part_id"].Value, out int part)) {
+				s.PartType = m.Groups["part_type"].Value.Length;
+				s.PartId = part;
+				return true;
+			}
+			return false;
 		}
-
-
+		
 		#endregion
 
 		#region IComparable Implementation

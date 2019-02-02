@@ -8,10 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
+using Grisaia.Mvvm.Converters;
+using Grisaia.Mvvm.ViewModel;
 using Grisaia.Utils;
 
 namespace Grisaia.SpriteViewer.Controls {
@@ -19,20 +23,20 @@ namespace Grisaia.SpriteViewer.Controls {
 	///  A control that displays a sprite selection as an image of all selected parts.
 	/// </summary>
 	public class SpriteImage : Control {
-		#region Constants
+		/*#region Constants
 
 		/// <summary>
 		///  The total number of part group part Ids.
 		/// </summary>
 		private const int PartCount = Categories.Sprites.SpriteSelection.PartCount;
-		/*/// <summary>
+		/// <summary>
 		///  True if HG-3 image data is cached in the <see cref="ISpritePart"/>.
 		/// </summary>
-		private readonly static bool CacheHg3s = true;*/
+		private readonly static bool CacheHg3s = true;
 
-		#endregion
+		#endregion*/
 
-		#region Fields
+		/*#region Fields
 		
 		/// <summary>
 		///  The container that holds all images.
@@ -51,9 +55,9 @@ namespace Grisaia.SpriteViewer.Controls {
 		/// </summary>
 		private readonly Image[] images = new Image[PartCount];
 
-		#endregion
+		#endregion*/
 
-		#region Dependency Properties
+		/*#region Dependency Properties
 
 		/// <summary>
 		///  The property for the sprite database used to get the sprite parts from.
@@ -141,7 +145,7 @@ namespace Grisaia.SpriteViewer.Controls {
 			set => SetValue(ExpandProperty, value);
 		}
 
-		#endregion
+		#endregion*/
 
 		#region Static Constructor
 
@@ -157,25 +161,40 @@ namespace Grisaia.SpriteViewer.Controls {
 
 		#endregion
 
-		#region Control Overrides
+		/*#region Control Overrides
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
 			PART_Container = GetTemplateChild("PART_Container") as Grid;
 			for (int i = 0; i < PartCount; i++) {
-				images[i] = new Image {
+				Image image = images[i] = new Image {
 					HorizontalAlignment = HorizontalAlignment.Left,
 					VerticalAlignment = VerticalAlignment.Top,
 				};
-				images[i].Visibility = Visibility.Collapsed;
+				image.SetBinding(Image.VisibilityProperty, new Binding {
+					Path = new PropertyPath(nameof(SpritePartViewModelItem.ImageSource)),
+					Converter = CollapsedWhenNull.Instance,
+				});
+				image.SetBinding(Image.SourceProperty, new Binding {
+					Path = new PropertyPath(nameof(SpritePartViewModelItem.ImageSource)),
+				});
+				image.SetBinding(Image.MarginProperty, new Binding {
+					Path = new PropertyPath(nameof(SpritePartViewModelItem.Margin)),
+				});
+				image.SetBinding(Image.WidthProperty, new Binding {
+					Path = new PropertyPath(nameof(SpritePartViewModelItem.Width)),
+				});
+				image.SetBinding(Image.HeightProperty, new Binding {
+					Path = new PropertyPath(nameof(SpritePartViewModelItem.Height)),
+				});
 				PART_Container.Children.Add(images[i]);
 			}
 			UpdateSelection();
 		}
 
-		#endregion
+		#endregion*/
 
-		#region Event Handlers
+		/*#region Event Handlers
 
 		private void OnSpriteDatabaseBuildComplete(object sender, EventArgs e) {
 			UpdateSelection();
@@ -187,9 +206,9 @@ namespace Grisaia.SpriteViewer.Controls {
 			UpdateSelection();
 		}
 
-		#endregion
+		#endregion*/
 
-		#region Private Methods
+		/*#region Private Methods
 
 		/// <summary>
 		///  Updates the currently drawn sprite parts and the margins for the images.
@@ -266,40 +285,21 @@ namespace Grisaia.SpriteViewer.Controls {
 				image.Visibility = Visibility.Collapsed;
 				return;
 			}
-
-			/*if (part.Hg3 == null || !CacheHg3s) {
-				if (!Directory.Exists(cachePath))
-					Directory.CreateDirectory(cachePath);
-				// Extract and save the HG-3 if it's not physically cached
-				if (!File.Exists(Hg3.GetJsonFilePath(cachePath, part.FileName))) {
-					var kifintEntry = currentGame.Lookups.Image[part.FileName];
-					hg3 = kifintEntry.ExtractHg3AndImages(cachePath, false);
-					hg3.SaveJsonToDirectory(cachePath);
-				}
-				else {
-					hg3 = Hg3.FromJsonDirectory(cachePath, part.FileName);
-				}
-				if (CacheHg3s)
-					part.Hg3 = hg3;
-			}
-			else {
-				hg3 = part.Hg3;
-			}
-			hg3s[index] = hg3 = part.Hg3;*/
-
+			
 			string cachePath = game.CachePath;
-			if (DesignerProperties.GetIsInDesignMode(this))
-				cachePath = SpriteDatabase.GrisaiaDatabase.DummyPath;
 
 			BitmapImage source = new BitmapImage();
 			source.BeginInit();
-			source.UriSource = new Uri(part.Hg3.GetFrameFilePath(cachePath, 0, 0));
+			if (ViewModelBase.IsInDesignModeStatic)
+				source.StreamSource = Embedded.Open(typeof(GrisaiaDatabase).Assembly, Embedded.Combine("GrisaiaCategorization.data.dummy", part.Hg3.GetFrameFileName(0, 0)));
+			else
+				source.UriSource = new Uri(part.Hg3.GetFrameFilePath(cachePath, 0, 0));
 			source.EndInit();
 			
 			image.Source = source;
 			image.Visibility = Visibility.Visible;
 		}
 
-		#endregion
+		#endregion*/
 	}
 }

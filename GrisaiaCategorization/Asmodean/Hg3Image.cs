@@ -102,7 +102,7 @@ namespace Grisaia.Asmodean {
 		[JsonIgnore]
 		public int MarginTop => OffsetY;
 		/// <summary>
-		///  Gets the bottom margin of the image when expanded.<para/>
+		///  Gets the right margin of the image when expanded.<para/>
 		///  This is the same as <see cref="TotalWidth"/> - <see cref="Width"/> - <see cref="OffsetX"/>.
 		/// </summary>
 		[JsonIgnore]
@@ -113,6 +113,57 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[JsonIgnore]
 		public int MarginBottom => TotalHeight - Height - OffsetY;
+
+		/// <summary>
+		///  Gets the distance to the center from the left of the image when expanded.<para/>
+		///  This is the same as <see cref="Center"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int CenterLeft => Center;
+		/// <summary>
+		///  Gets the distance to the baseline from the top of the image when expanded.<para/>
+		///  This is the same as <see cref="Baseline"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int BaselineTop => Baseline;
+		/// <summary>
+		///  Gets the distance to the center from the right of the image when expanded.<para/>
+		///  This is the same as <see cref="TotalWidth"/> - <see cref="Center"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int CenterRight => TotalWidth - Center;
+		/// <summary>
+		///  Gets the distance to the baseline from the bottom of the image when expanded.<para/>
+		///  This is the same as <see cref="TotalHeight"/> - <see cref="Baseline"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int BaselineBottom => TotalHeight - Baseline;
+
+		/*/// <summary>
+		///  Gets the distance to the center from the left of the image when expanded.<para/>
+		///  This is the same as <see cref="Center"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int CenterLeft => Center;
+		/// <summary>
+		///  Gets the distance to the baseline from the top of the image when expanded.<para/>
+		///  This is the same as <see cref="Baseline"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int BaselineTop => Baseline;
+		/// <summary>
+		///  Gets the distance to the center from the right of the image when expanded.<para/>
+		///  This is the same as <see cref="TotalWidth"/> - <see cref="Center"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int CenterRight => TotalWidth - Center;
+		/// <summary>
+		///  Gets the distance to the baseline from the bottom of the image when expanded.<para/>
+		///  This is the same as <see cref="TotalHeight"/> - <see cref="Baseline"/>.
+		/// </summary>
+		[JsonIgnore]
+		public int BaselineBottom => TotalHeight - Baseline;*/
+
 		/// <summary>
 		///  Gets if this HG-3 image has multiple frames. This also means the file name will have a +###+### at the end.
 		/// </summary>

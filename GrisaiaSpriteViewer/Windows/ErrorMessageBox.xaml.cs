@@ -222,14 +222,10 @@ namespace Grisaia.SpriteViewer.Windows {
 		/// </summary>
 		/// <param name="app">The Wpf application to hook to.</param>
 		public static void GlobalHook(Application app) {
-			app.DispatcherUnhandledException +=
-				OnDispatcherUnhandledException;
-			AppDomain.CurrentDomain.UnhandledException +=
-				OnAppDomainUnhandledException;
-			TaskScheduler.UnobservedTaskException +=
-				OnTaskSchedulerUnobservedTaskException;
-			WinFormsApplication.ThreadException +=
-				OnWinFormsThreadException;
+			app.DispatcherUnhandledException           += OnDispatcherUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+			TaskScheduler.UnobservedTaskException      += OnTaskSchedulerUnobservedTaskException;
+			WinFormsApplication.ThreadException        += OnWinFormsThreadException;
 			app.Exit += OnAppShutdown;
 		}
 
@@ -241,51 +237,37 @@ namespace Grisaia.SpriteViewer.Windows {
 		///  Unhooks all exception catching.
 		/// </summary>
 		private static void OnAppShutdown(object sender, ExitEventArgs e) {
-			(sender as Application).DispatcherUnhandledException -=
-				OnDispatcherUnhandledException;
-			AppDomain.CurrentDomain.UnhandledException -=
-				OnAppDomainUnhandledException;
-			TaskScheduler.UnobservedTaskException -=
-				OnTaskSchedulerUnobservedTaskException;
-			WinFormsApplication.ThreadException -=
-				OnWinFormsThreadException;
+			Application app = (Application) sender;
+			app.DispatcherUnhandledException           -= OnDispatcherUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnhandledException;
+			TaskScheduler.UnobservedTaskException      -= OnTaskSchedulerUnobservedTaskException;
+			WinFormsApplication.ThreadException        -= OnWinFormsThreadException;
+			app.Exit -= OnAppShutdown;
 		}
 		/// <summary>
 		///  Show an exception window for an exception that occurred in a dispatcher thread.
 		/// </summary>
-		private static void OnDispatcherUnhandledException(object sender,
-			DispatcherUnhandledExceptionEventArgs e)
-		{
+		private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
 			ShowErrorMessageBox(e.Exception);
 			e.Handled = true;
 		}
 		/// <summary>
 		///  Show an exception window for an exception that occurred in the AppDomain.
 		/// </summary>
-		private static void OnAppDomainUnhandledException(object sender,
-			UnhandledExceptionEventArgs e)
-		{
-			Application.Current.Dispatcher.Invoke(
-				() => ShowErrorMessageBox(e.ExceptionObject));
+		private static void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+			Application.Current.Dispatcher.Invoke(() => ShowErrorMessageBox(e.ExceptionObject));
 		}
-
 		/// <summary>
 		///  Show an exception window for an exception that occurred in a task.
 		/// </summary>
-		private static void OnTaskSchedulerUnobservedTaskException(object sender,
-			UnobservedTaskExceptionEventArgs e)
-		{
-			Application.Current.Dispatcher.Invoke(
-				() => ShowErrorMessageBox(e.Exception));
+		private static void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
+			Application.Current.Dispatcher.Invoke(() => ShowErrorMessageBox(e.Exception));
 		}
 		/// <summary>
 		///  Show an exception window for an exception that occurred in winforms.
 		///  </summary>
-		private static void OnWinFormsThreadException(object sender,
-			ThreadExceptionEventArgs e)
-		{
-			Application.Current.Dispatcher.Invoke(
-				() => ShowErrorMessageBox(e.Exception));
+		private static void OnWinFormsThreadException(object sender, ThreadExceptionEventArgs e) {
+			Application.Current.Dispatcher.Invoke(() => ShowErrorMessageBox(e.Exception));
 		}
 		/// <summary>
 		///  The helper method for showing an error message.

@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
-        xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
+        xmlns:cmd="clr-namespace:Grisaia.Mvvm.Commands;assembly=GrisaiaMvvm"
+        xmlns:ctrl="clr-namespace:Grisaia.Mvvm.Controls;assembly=GrisaiaMvvm"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
         DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
-        Title="Grisaia Sprite Viewer" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown">
+        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
+        cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}">
   <DockPanel>
     <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
       <Menu>
@@ -18,25 +20,33 @@
           <MenuItem Header="Copy Sprite" Click="OnCopySprite"/>
         </MenuItem>
         <MenuItem Header="View">
-          <MenuItem x:Name="menuItemExpand" Header="Expand" Click="OnExpandChanged" IsChecked="False" IsCheckable="True"/>
-          <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" Click="OnShowLinesChanged" IsChecked="False" IsCheckable="True"/>
+          <MenuItem x:Name="menuItemExpand" Header="Expand" Click="OnExpandChanged" IsChecked="{Binding Expand}" IsCheckable="True"/>
+          <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" Click="OnShowLinesChanged" IsChecked="{Binding ShowGridLines}" IsCheckable="True"/>
         </MenuItem>
       </Menu>
     </Border>
     <Border DockPanel.Dock="Bottom" BorderBrush="#FFACACAC" BorderThickness="0,1,0,0">
       <StatusBar HorizontalAlignment="Left">
         <StatusBarItem>Dimensions:</StatusBarItem>
-        <StatusBarItem x:Name="statusItemDimensions">727x1020</StatusBarItem>
+        <StatusBarItem>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding SpriteSize.Width}"/>
+            <TextBlock Text="x"/>
+            <TextBlock Text="{Binding SpriteSize.Height}"/>
+          </StackPanel>
+        </StatusBarItem>
 
         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
 
         <StatusBarItem>Scale:</StatusBarItem>
-        <StatusBarItem x:Name="statusItemScale">100%</StatusBarItem>
+        <StatusBarItem>
+          <TextBlock Text="{Binding Scale, StringFormat=P0}"/>
+        </StatusBarItem>
 
         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
 
         <StatusBarItem>Unique Id:</StatusBarItem>
-        <StatusBarItem x:Name="statusItemUniqueId">kajitsu-ama__L0-D5-P1-B1__0P01-2P02-3P02</StatusBarItem>
+        <StatusBarItem x:Name="statusItemUniqueId">kajitsu-ama__L0-D1-P0-B0__0P01-2P02</StatusBarItem>
       </StatusBar>
     </Border>
     <Grid>
@@ -51,154 +61,21 @@
           <TextBlock x:Name="labelPartList" Text="Tama04s_1&#xA;Tama04s_002&#xA;Tama04s_0002" FontFamily="Courier New" FontSize="11"/>
         </StackPanel>
       </Border>
-      <ScrollViewer Grid.Column="1" x:Name="scrollSprite" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,1,1" Margin="0,0,1,1" SizeChanged="OnScrollSizeChanged" ScrollChanged="OnScrollChanged" >
-        <Grid x:Name="gridSpriteArea" Background="#FFCFCFCF" MouseWheel="OnZoomImage">
-          <!--<i:Interaction.Behaviors>
-                        <local:ZoomOnMouseWheel ModifierKey="LeftCtrl" TranformMode="Layout"/>
-                    </i:Interaction.Behaviors>-->
-          <Grid x:Name="gridSpriteContainer">
-            <Grid.Effect>
-              <DropShadowEffect ShadowDepth="0" Direction="0" BlurRadius="3" />
-            </Grid.Effect>
-            <local:SpriteImage x:Name="gridSprite" Expand="{Binding Path=IsChecked, ElementName=menuItemExpand}" 
-                               SpriteDatabase="{Binding SpriteDatabase}"
-                               SpriteSelection="{Binding SpriteSelection}"
-                               RenderOptions.BitmapScalingMode="Fant" Background="White">
-              <local:SpriteImage.LayoutTransform>
-                <ScaleTransform x:Name="transform"/>
-              </local:SpriteImage.LayoutTransform>
-            </local:SpriteImage>
-            <!--<Grid x:Name="gridSprite" Background="White" RenderOptions.BitmapScalingMode="Fant">
-              <Image x:Name="imagePart0" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Resources/kajitsu-ama__L0-D5-P1-B1__0P01-2P02-3P02.png"/>
-              <Image x:Name="imagePart1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart3" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart4" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart5" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart6" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart7" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart8" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart9" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-              <Image x:Name="imagePart11" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            </Grid>-->
-            <Grid x:Name="gridLines">
-              <!--<Rectangle x:Name="lineBaseline" Fill="Blue" Height="1" VerticalAlignment="Top"/>
-                            <Rectangle x:Name="lineCenter" Fill="Red" Width="1" HorizontalAlignment="Left"/>-->
-            </Grid>
-          </Grid>
-        </Grid>
-      </ScrollViewer>
+      <local:SpriteSelectionViewer Grid.Column="1" x:Name="viewer"
+                                   DataContext="{Binding}"
+                                   Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   SpriteOrigin="{Binding SpriteOrigin}"
+                                   SpriteSize="{Binding SpriteSize}"
+                                   CurrentParts="{Binding CurrentParts}"
+                                   Centered="{Binding Centered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   ShowGridLines="{Binding ShowGridLines}"
+                                   Expand="{Binding Expand}"/>
       <Border Grid.Column="2" BorderBrush="#FFACACAC" BorderThickness="1,0,0,0">
         <local:SpriteSelectionControl x:Name="spriteSelection" DataContext="{Binding}"
                                       SpriteDatabase="{Binding SpriteDatabase}"
                                       Categories="{Binding Categories}"
                                       Groups="{Binding Groups}"
                                       GroupParts="{Binding GroupParts}"/>
-        <!--<StackPanel Margin="10,2,10,5">
-          <TextBlock Margin="0,3">Game</TextBlock>
-          <ComboBox x:Name="comboGame" VerticalAlignment="Top" SelectionChanged="OnGameChanged"/>
-          <TextBlock Margin="0,3">Character</TextBlock>
-          <ComboBox x:Name="comboCharacter" VerticalAlignment="Top" SelectionChanged="OnCharacterChanged"/>
-
-          <Rectangle Fill="#FFACACAC" Height="1" Margin="-10,6,-10,0"/>
-
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-              <TextBlock Margin="0,3">Lighting</TextBlock>
-              <ComboBox x:Name="comboLighting" VerticalAlignment="Top" SelectionChanged="OnLightingChanged"/>
-            </StackPanel>
-            <StackPanel Grid.Column="2">
-              <TextBlock Margin="0,3">Distance</TextBlock>
-              <ComboBox x:Name="comboDistance" VerticalAlignment="Top" SelectionChanged="OnDistanceChanged"/>
-            </StackPanel>
-          </Grid>
-          <TextBlock Margin="0,3" Visibility="Collapsed">Size</TextBlock>
-          <ComboBox x:Name="comboSize" VerticalAlignment="Top" SelectionChanged="OnSizeChanged" Visibility="Collapsed"/>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-              <TextBlock Margin="0,3">Pose</TextBlock>
-              <ComboBox x:Name="comboPose" VerticalAlignment="Top" SelectionChanged="OnPoseChanged"/>
-            </StackPanel>
-            <StackPanel Grid.Column="2">
-              <TextBlock Margin="0,3">Blush</TextBlock>
-              <ComboBox x:Name="comboBlush" VerticalAlignment="Top" SelectionChanged="OnBlushChanged"/>
-            </StackPanel>
-          </Grid>
-
-          <Rectangle Fill="#FFACACAC" Height="1" Margin="-10,6,-10,0"/>
-
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel x:Name="panelPart0" Grid.Column="0">
-              <TextBlock x:Name="labelPart0" Margin="0,3">Group 0</TextBlock>
-              <ComboBox x:Name="comboPart0" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-            <StackPanel x:Name="panelPart1" Grid.Column="2">
-              <TextBlock x:Name="labelPart1" Margin="0,3">Group 1</TextBlock>
-              <ComboBox x:Name="comboPart1" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-          </Grid>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel x:Name="panelPart2" Grid.Column="0">
-              <TextBlock x:Name="labelPart2" Margin="0,3">Group 2</TextBlock>
-              <ComboBox x:Name="comboPart2" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-            <StackPanel x:Name="panelPart3" Grid.Column="2">
-              <TextBlock x:Name="labelPart3" Margin="0,3">Group 3</TextBlock>
-              <ComboBox x:Name="comboPart3" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-          </Grid>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel x:Name="panelPart4" Grid.Column="0">
-              <TextBlock x:Name="labelPart4" Margin="0,3">Group 4</TextBlock>
-              <ComboBox x:Name="comboPart4" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-            <StackPanel x:Name="panelPart5" Grid.Column="2">
-              <TextBlock x:Name="labelPart5" Margin="0,3">Group 5</TextBlock>
-              <ComboBox x:Name="comboPart5" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-          </Grid>
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="4"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel x:Name="panelPart6" Grid.Column="0">
-              <TextBlock x:Name="labelPart6" Margin="0,3">Group 6</TextBlock>
-              <ComboBox x:Name="comboPart6" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-            <StackPanel x:Name="panelPart7" Grid.Column="2">
-              <TextBlock x:Name="labelPart7" Margin="0,3">Group 7</TextBlock>
-              <ComboBox x:Name="comboPart7" VerticalAlignment="Top" SelectionChanged="OnPartChanged"/>
-            </StackPanel>
-          </Grid>
-        </StackPanel>-->
       </Border>
     </Grid>
   </DockPanel>

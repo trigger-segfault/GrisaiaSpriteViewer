@@ -276,6 +276,37 @@ namespace Grisaia {
 				return defaultValue;
 			}
 		}
+		/// <summary>Parses the code and returns it as an enum.</summary>
+		public static bool TryParseCode<TEnum>(string code, out TEnum value) where TEnum : Enum {
+			EnumInfo enumInfo = GetEnumInfo<TEnum>();
+			if (enumInfo.IsFlags) {
+				int intValue = 0;
+				bool foundAny = false;
+				foreach (AttributeInfo attrInfo in enumInfo.SortedCodes) {
+					if (code.Length == 0)
+						break;
+					foreach (string attrCode in attrInfo.Codes) {
+						int index = code.IndexOf(attrCode);
+						if (index != -1) {
+							foundAny = true;
+							intValue |= attrInfo.IntValue;
+							code = code.Remove(index, attrCode.Length);
+							break;
+						}
+					}
+				}
+				if (foundAny) {
+					value = (TEnum) Enum.ToObject(typeof(TEnum), intValue);
+					return true;
+				}
+			}
+			else if (enumInfo.Codes.TryGetValue(code, out var attrInfo)) {
+				value = (TEnum) attrInfo.EnumValue;
+				return true;
+			}
+			value = default;
+			return false;
+		}
 
 		public static IEnumerable<AttributeInfo> GetAttributeInfos<TEnum>(TEnum enumValue, bool includeDefault = true) {
 			int intValue = Convert.ToInt32(enumValue);

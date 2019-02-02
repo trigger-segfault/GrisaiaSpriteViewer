@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using Grisaia.SpriteViewer.ViewModel;
 using Grisaia.SpriteViewer.Windows;
 
 namespace Grisaia.SpriteViewer {
@@ -14,6 +15,13 @@ namespace Grisaia.SpriteViewer {
 	///  Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
+		#region Properties
+
+		public ViewModelLocator Locator { get; private set; }
+
+		#endregion
+
+
 		/// <summary>
 		///  Constructs the app and sets up embedded assembly resolving.
 		/// </summary>
@@ -26,9 +34,17 @@ namespace Grisaia.SpriteViewer {
 		///  Called to avoid referencing assemblies before the assembly resolver can be added.
 		/// </summary>
 		private void Initialize() {
+			ErrorMessageBox.ProgramName = "Grisaia Extract Sprite Viewer";
+			ErrorMessageBox.HyperlinkName = "GitHub Page";
+			ErrorMessageBox.HyperlinkUri = new Uri(@"https://github.com/trigger-death/GrisaiaSpriteViewer");
 			ErrorMessageBox.GlobalHook(this);
 		}
-		
+
+		private void OnAppStartup(object sender, StartupEventArgs e) {
+			Locator = (ViewModelLocator) FindResource("Locator");
+			Locator.Loading.LoadEverything.Execute();
+		}
+
 		/// <summary>
 		///  Resolves assemblies that may be embedded in the executable.
 		/// </summary>

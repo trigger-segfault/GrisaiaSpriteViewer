@@ -19,7 +19,10 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.SpriteViewer.Model;
+using Grisaia.Mvvm.Model;
+using Grisaia.Mvvm.ViewModel;
+using Grisaia.Mvvm.Services;
+using Grisaia.SpriteViewer.Services;
 
 namespace Grisaia.SpriteViewer.ViewModel {
 	/// <summary>
@@ -51,17 +54,10 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			//SimpleIoc.Default.Register<SpriteViewerSettings>();
 			//SimpleIoc.Default.Register<SpriteDatabase>(true);
 			//SimpleIoc.Default.Register<MainViewModel>();
+			SimpleIoc.Default.Register<IGrisaiaDialogService, GrisaiaDialogService>();
+			SimpleIoc.Default.Register<UIService>();
 			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
 			SimpleIoc.Default.Register<LoadingViewModel>();
-		}
-
-		public string DataPath {
-			get {
-				if (ViewModelBase.IsInDesignModeStatic)
-					return Path.Combine(DummyCategorizationContext.BaseDirectory, "data");
-				else
-					return Path.Combine(AppContext.BaseDirectory, "data");
-			}
 		}
 
 		//public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();

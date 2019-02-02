@@ -8,6 +8,8 @@ using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Categories.Sprites;
 using Grisaia.Rules.Sprites;
+using Grisaia.Utils;
+using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
 	/// <summary>
@@ -241,22 +243,24 @@ namespace Grisaia.Categories {
 				}
 			}
 
-			string cachePath = game.CachePath;
-			if (ViewModelBase.IsInDesignModeStatic)
-				cachePath = GrisaiaDatabase.DummyPath;
-
 			foreach (ISpritePart part in parts.Where(p => p != null)) {
 				if (part.Hg3 == null) {
-					if (!Directory.Exists(game.CachePath))
-						Directory.CreateDirectory(game.CachePath);
-					// Extract and save the HG-3 if it's not physically cached
-					if (!File.Exists(Hg3.GetJsonFilePath(game.CachePath, part.FileName))) {
-						var kifintEntry = game.Lookups.Image[part.FileName];
-						part.Hg3 = kifintEntry.ExtractHg3AndImages(game.CachePath, false);
-						part.Hg3.SaveJsonToDirectory(game.CachePath);
+					if (ViewModelBase.IsInDesignModeStatic) {
+						string json = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data.dummy", Hg3.GetJsonFileName(part.FileName)));
+						part.Hg3 = JsonConvert.DeserializeObject<Hg3>(json);
 					}
 					else {
-						part.Hg3 = Hg3.FromJsonDirectory(game.CachePath, part.FileName);
+						if (!Directory.Exists(game.CachePath))
+							Directory.CreateDirectory(game.CachePath);
+						// Extract and save the HG-3 if it's not physically cached
+						if (!File.Exists(Hg3.GetJsonFilePath(game.CachePath, part.FileName))) {
+							var kifintEntry = game.Lookups.Image[part.FileName];
+							part.Hg3 = kifintEntry.ExtractHg3AndImages(game.CachePath, false);
+							part.Hg3.SaveJsonToDirectory(game.CachePath);
+						}
+						else {
+							part.Hg3 = Hg3.FromJsonDirectory(game.CachePath, part.FileName);
+						}
 					}
 				}
 			}
@@ -322,8 +326,9 @@ namespace Grisaia.Categories {
 					};
 					list.Add(gameCategory);
 				}
-				foreach (string fileName in Directory.EnumerateFiles(GrisaiaDatabase.DummyPath)) {
-					if (fileName[0] == 'T' && Path.GetExtension(fileName) == ".png") {
+				string[] files = { "Tama01_1.hg3", "Tama01_001.hg3" };
+				foreach (string fileName in files) {
+					if (fileName[0] == 'T' && Path.GetExtension(fileName) == ".hg3") {
 						// We have a sprite, (most likely)
 						bool parsed = false;
 						bool ignored = false;
@@ -572,7 +577,7 @@ namespace Grisaia.Categories {
 			}
 
 			int partType = sprite.PartType;
-			int partId = sprite.Part;
+			int partId = sprite.PartId;
 			SpritePartList partList;
 			if (!category.TryGetValue(partType, out var partListElement)) {
 				partList = new SpritePartList { Id = partType };
@@ -587,7 +592,7 @@ namespace Grisaia.Categories {
 				Trace.WriteLine($"WARNING: \"{sprite.FileName}\" was found but \"{existingPart.FileName}\" already exists!");
 				return;
 			}
-			SpritePart part = new SpritePart { Id = sprite.Part, FileName = fileName };
+			SpritePart part = new SpritePart { Id = sprite.PartId, FileName = fileName };
 			partList.List.Add(part);
 			SpriteCount++;
 		}
@@ -605,7 +610,7 @@ namespace Grisaia.Categories {
 			}
 
 			int partType = sprite.PartType;
-			int partId = sprite.Part;
+			int partId = sprite.PartId;
 			SpritePartList partList;
 			if (!category.TryGetValue(partType, out var partListElement)) {
 				partList = new SpritePartList { Id = partType };
@@ -620,7 +625,7 @@ namespace Grisaia.Categories {
 				Trace.WriteLine($"WARNING: \"{sprite.FileName}\" was found but \"{existingPart.FileName}\" already exists!");
 				return;
 			}
-			SpritePart part = new SpritePart { Id = sprite.Part, FileName = kif.FileName };
+			SpritePart part = new SpritePart { Id = sprite.PartId, FileName = kif.FileName };
 			partList.List.Add(part);
 			SpriteCount++;
 		}

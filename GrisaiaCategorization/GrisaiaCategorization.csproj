@@ -1,115 +1,141 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
-    <RootNamespace>Grisaia</RootNamespace>
-    <LangVersion>latest</LangVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1B907C39-EB5D-4F07-B70E-142E2C88E8B5}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GrisaiaCategorization</RootNamespace>
+    <AssemblyName>GrisaiaCategorization</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Asmodean\Exkifint.cs" />
-    <Compile Remove="Asmodean\Exkifint.MersenneTwister.cs" />
-    <Compile Remove="Asmodean\Exkifint.PInvoke.cs" />
-    <Compile Remove="Asmodean\Exkifint.Structs.cs" />
-    <Compile Remove="Asmodean\Hgx2png.cs" />
-    <Compile Remove="Asmodean\Hgx2png.New.cs" />
-    <Compile Remove="Asmodean\Hgx2png.PInvoke.cs" />
-    <Compile Remove="Asmodean\Hgx2png.Structs.cs" />
-    <Compile Remove="Categories\Sprites\SpriteCategoryDatabase.cs" />
-    <Compile Remove="ConfigSettings.cs" />
-    <Compile Remove="Extracting.cs" />
-    <Compile Remove="IKey.cs" />
-    <Compile Remove="Ini\IniDocument.cs" />
-    <Compile Remove="Ini\IniEnums.cs" />
-    <Compile Remove="Ini\IniProperty.cs" />
-    <Compile Remove="Ini\IniReflectionSettings.cs" />
-    <Compile Remove="Ini\IniSection.cs" />
-    <Compile Remove="Ini\ReflectionHelper.cs" />
-    <Compile Remove="Ini\TypeHelper.cs" />
-    <Compile Remove="Json\JsonSpriteCategoryInfoConverter.cs" />
-    <Compile Remove="SpriteCharacter.cs" />
-    <Compile Remove="SpriteDatabase.cs" />
-    <Compile Remove="Unused\Exkifint.cs" />
-    <Compile Remove="Unused\Exkifint.MersenneTwister.cs" />
-    <Compile Remove="Unused\Exkifint.PInvoke.cs" />
-    <Compile Remove="Unused\Exkifint.Structs.cs" />
-    <Compile Remove="Unused\Extracting.cs" />
-    <Compile Remove="Unused\Hgx2png.cs" />
-    <Compile Remove="Unused\Hgx2png.PInvoke.cs" />
-    <Compile Remove="Unused\Hgx2png.Structs.cs" />
-    <Compile Remove="Unused\Identifying\Character.cs" />
-    <Compile Remove="Unused\Identifying\Old\Backgrounds.cs" />
-    <Compile Remove="Unused\Identifying\Old\Character.cs" />
-    <Compile Remove="Unused\Identifying\Old\Effect.cs" />
-    <Compile Remove="Unused\Identifying\Old\ImageIdentification.cs" />
-    <Compile Remove="Unused\Identifying\Old\ImageIdentifier.cs" />
-    <Compile Remove="Unused\Identifying\Old\Item.cs" />
-    <Compile Remove="Unused\Identifying\Old\Logo.cs" />
-    <Compile Remove="Unused\Identifying\Old\MiscChibi.cs" />
-    <Compile Remove="Unused\Identifying\Old\StoryCGChibi.cs" />
-    <Compile Remove="Unused\Identifying\Old\TmbIcon.cs" />
-    <Compile Remove="Unused\Identifying\Old\Transition.cs" />
-    <Compile Remove="Unused\Identifying\Old\Unidentified.cs" />
-    <Compile Remove="Unused\Identifying\Old\UserInterface.cs" />
-    <Compile Remove="Unused\Identifying\Sprite.cs" />
-    <Compile Remove="Unused\IKey.cs" />
-    <Compile Remove="Unused\ISpriteCategory.cs" />
-    <Compile Remove="Unused\Json\JsonCodeEnumConverter.cs" />
-    <Compile Remove="Unused\Json\JsonStringEnumConverter.cs" />
-    <Compile Remove="Program.cs" />
-    <Compile Remove="Rules\ISpriteCategory.cs" />
-    <Compile Remove="Unused\Program.cs" />
-    <Compile Remove="Unused\SpriteCategoryDatabase.cs" />
-    <Compile Remove="Unused\SpriteCharacter.cs" />
-    <Compile Remove="Unused\SpriteDatabase.cs" />
-    <Compile Remove="Unused\SpriteGame.cs" />
-    <Compile Remove="UserSettings.cs" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
-
   <ItemGroup>
-    <None Remove="Characters.json" />
-    <None Remove="Games.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ConfigSettings.cs" />
-    <None Include="Ini\IniDocument.cs" />
-    <None Include="Ini\IniEnums.cs" />
-    <None Include="Ini\IniProperty.cs" />
-    <None Include="Ini\IniReflectionSettings.cs" />
-    <None Include="Ini\IniSection.cs" />
-    <None Include="Ini\ReflectionHelper.cs" />
-    <None Include="Ini\TypeHelper.cs" />
-    <None Include="Json\JsonSpriteCategoryInfoConverter.cs" />
-    <None Include="Unused\Hgx2png.cs" />
-    <None Include="Unused\Hgx2png.PInvoke.cs" />
-    <None Include="Unused\Hgx2png.Structs.cs" />
-    <None Include="Unused\SpriteCategoryDatabase.cs" />
-    <None Include="Unused\IKey.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="data\characters.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\games.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Unused\SpriteCharacter.cs" />
-    <None Include="Unused\SpriteDatabase.cs" />
+    <Compile Include="Asmodean\Anm.cs" />
+    <Compile Include="Asmodean\Anm.Extract.cs" />
+    <Compile Include="Asmodean\Anm.Structs.cs" />
+    <Compile Include="Asmodean\AnmFrame.cs" />
+    <Compile Include="Asmodean\Hg3.cs" />
+    <Compile Include="Asmodean\Hg3.Extract.cs" />
+    <Compile Include="Asmodean\Hg3.Extract.Private.cs" />
+    <Compile Include="Asmodean\Hg3.PInvoke.cs" />
+    <Compile Include="Asmodean\Hg3.Structs.cs" />
+    <Compile Include="Asmodean\Hg3Image.cs" />
+    <Compile Include="Asmodean\Kifint.Callbacks.cs" />
+    <Compile Include="Asmodean\Kifint.cs" />
+    <Compile Include="Asmodean\Kifint.Extract.cs" />
+    <Compile Include="Asmodean\Kifint.Extract.Private.cs" />
+    <Compile Include="Asmodean\Kifint.PInvoke.cs" />
+    <Compile Include="Asmodean\Kifint.Structs.cs" />
+    <Compile Include="Asmodean\KifintEntry.cs" />
+    <Compile Include="Asmodean\KifintLookup.cs" />
+    <Compile Include="Asmodean\KifintLookupCollection.cs" />
+    <Compile Include="Asmodean\KifintType.Attributes.cs" />
+    <Compile Include="Asmodean\KifintType.cs" />
+    <Compile Include="Asmodean\MersenneTwister.cs" />
+    <Compile Include="Asmodean\VCode2.cs" />
+    <Compile Include="Asmodean\VCode2.PInvoke.cs" />
+    <Compile Include="Attributes.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Utils\ArgumentOutOfRangeUtils.cs" />
+    <Compile Include="Utils\ArgumentOutOfRangeUtils.MinMax.object.cs" />
+    <Compile Include="Utils\ArgumentOutOfRangeUtils.Range.object.cs" />
+    <Compile Include="Utils\ResourceNotFoundException.cs" />
     <None Include="Categories\Backgrounds\BackgroundInfo.cs" />
+    <Compile Include="Categories\CharacterDatabase.cs" />
+    <Compile Include="Categories\CharacterInfo.cs" />
+    <Compile Include="Categories\CharacterNamingScheme.cs" />
+    <Compile Include="Categories\GameDatabase.cs" />
+    <Compile Include="Categories\GameInfo.cs" />
+    <Compile Include="Categories\GameNamingScheme.cs" />
+    <Compile Include="Categories\GrisaiaDatabase.cs" />
+    <Compile Include="Categories\SpriteDatabase.cs" />
+    <Compile Include="Categories\Sprites\AbstractSpriteCategories.cs" />
+    <Compile Include="Categories\Sprites\ISpriteCategories.cs" />
+    <Compile Include="Categories\Sprites\ISpriteCategoryBuilder.cs" />
+    <Compile Include="Categories\Sprites\ISpritePartGroup.cs" />
+    <Compile Include="Categories\Sprites\ISpriteParts.cs" />
+    <Compile Include="Categories\Sprites\Selection\ImmutableSpriteSelection.cs" />
+    <Compile Include="Categories\Sprites\Selection\IReadOnlySpriteSelection.cs" />
+    <Compile Include="Categories\Sprites\Selection\ISpriteSelection.cs" />
+    <None Include="Categories\Sprites\Selection\ObservableSpriteSelection.cs" />
+    <Compile Include="Categories\Sprites\Selection\SpriteSelection.cs" />
+    <Compile Include="Categories\Sprites\SpriteCategories.cs" />
+    <Compile Include="Categories\Sprites\SpriteCategoryInfo.cs" />
+    <Compile Include="Categories\Sprites\SpriteCategoryPool.cs" />
+    <Compile Include="Categories\Sprites\SpriteInfo.cs" />
+    <Compile Include="Categories\Sprites\SpritePartGroup.cs" />
+    <Compile Include="Categories\Sprites\SpriteParts.cs" />
+    <None Include="ConfigSettings.cs" />
+    <Compile Include="DummyCategorizationContext.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Extensions\BinaryExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.Surround.cs" />
+    <EmbeddedResource Include="data\characters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\games.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\dummy\Tama01_001+hg3.json" />
+    <EmbeddedResource Include="data\dummy\Tama01_1+hg3.json" />
+    <None Include="Unused\Ini\IniDocument.cs" />
+    <None Include="Unused\Ini\IniEnums.cs" />
+    <None Include="Unused\Ini\IniProperty.cs" />
+    <None Include="Unused\Ini\IniReflectionSettings.cs" />
+    <None Include="Unused\Ini\IniSection.cs" />
+    <None Include="Unused\Ini\ReflectionHelper.cs" />
+    <None Include="Unused\Ini\TypeHelper.cs" />
+    <None Include="Unused\Json\JsonSpriteCategoryInfoConverter.cs" />
+    <Compile Include="Json\JsonStringEnumConverter.cs" />
+    <Compile Include="Locators\FrontwingLocator.cs" />
+    <Compile Include="Locators\SteamLocator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rules\NumberingRule.cs" />
+    <Compile Include="Rules\Sprites\DefaultSpriteParsingRule.cs" />
+    <Compile Include="Rules\Sprites\DoublePartSpriteParsingRule.cs" />
+    <Compile Include="Rules\Sprites\IdolMahouSpriteParsingRule.cs" />
+    <Compile Include="Rules\Sprites\ISpriteParsingRule.cs" />
+    <Compile Include="Rules\Sprites\MosiacSpriteParsingRule.cs" />
+    <Compile Include="Rules\Sprites\SpriteParsingRule.cs" />
     <None Include="Unused\Exkifint.cs" />
     <None Include="Unused\Exkifint.MersenneTwister.cs" />
     <None Include="Unused\Exkifint.PInvoke.cs" />
     <None Include="Unused\Exkifint.Structs.cs" />
     <None Include="Unused\Extracting.cs" />
+    <None Include="Unused\Hgx2png.cs" />
+    <None Include="Unused\Hgx2png.PInvoke.cs" />
+    <None Include="Unused\Hgx2png.Structs.cs" />
     <None Include="Unused\Identifying\Character.cs" />
     <None Include="Unused\Identifying\Old\Backgrounds.cs" />
     <None Include="Unused\Identifying\Old\Character.cs" />
@@ -125,22 +151,24 @@
     <None Include="Unused\Identifying\Old\Unidentified.cs" />
     <None Include="Unused\Identifying\Old\UserInterface.cs" />
     <None Include="Unused\Identifying\Sprite.cs" />
+    <None Include="Unused\IKey.cs" />
+    <None Include="Unused\ISpriteCategory.cs" />
     <None Include="Unused\Json\JsonCodeEnumConverter.cs" />
     <None Include="Unused\Json\JsonStringEnumConverter.cs" />
     <None Include="Unused\Program.cs" />
-    <None Include="Unused\ISpriteCategory.cs" />
+    <None Include="Unused\SpriteCategoryDatabase.cs" />
+    <None Include="Unused\SpriteCharacter.cs" />
+    <None Include="Unused\SpriteDatabase.cs" />
     <None Include="Unused\SpriteGame.cs" />
     <None Include="UserSettings.cs" />
-    <None Include="Utils\EnumInfo.cs" />
+    <Compile Include="Utils\ArrayCollection.cs" />
+    <Compile Include="Utils\BitUtils.cs" />
+    <Compile Include="Utils\Embedded.cs" />
+    <Compile Include="Utils\EnumInfo.cs" />
+    <Compile Include="Utils\ObservableArray.cs" />
+    <Compile Include="Utils\PathUtils.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Gameloop.Vdf" Version="0.5.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
-    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
       <Project>{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}</Project>
       <Name>asmodean</Name>
@@ -149,24 +177,25 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Private>True</Private>
     </ProjectReference>
-    <ContentWithTargetPath Include="..\Asmodean\bin\Release\zlib1.dll">
+    <ContentWithTargetPath Include="..\zlib\bin\zlib1.dll">
       <TargetPath>zlib1.dll</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ContentWithTargetPath>
+  </ItemGroup>-->
+  <ItemGroup>
+    <PackageReference Include="Gameloop.Vdf">
+      <Version>0.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="MvvmLightLibs">
+      <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="data\dummy\Tama0a_0001+hg3.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="data\dummy\Tama0a_0001.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="data\dummy\Tama0a_001+hg3.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="data\dummy\Tama0a_001.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="data\dummy\Tama01_001.png" />
+    <EmbeddedResource Include="data\dummy\Tama01_1.png" />
   </ItemGroup>
-
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
