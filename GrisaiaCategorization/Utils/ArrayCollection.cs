@@ -23,31 +23,27 @@ namespace Grisaia.Utils {
 			Items = new T[length];
 		}
 		public ArrayCollection(T[] array) {
-			if (array == null)
-				throw new ArgumentNullException(nameof(array));
-			Items = new T[array.Length];
-			Array.Copy(array, Items, Items.Length);
-		}
-		public ArrayCollection(ICollection<T> collection) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
-			Items = new T[collection.Count];
-			collection.CopyTo(Items, 0);
-		}
-		public ArrayCollection(IEnumerable<T> collection) {
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
-			Items = collection.ToArray();
+			// Behave just like Collection<T> where we act as a wrapper for the collection.
+			Items = array ?? throw new ArgumentNullException(nameof(array));
 		}
 
 		#endregion
 
 		#region IList Properties
 
+		/// <summary>
+		///  Gets the number of elements in the array.
+		/// </summary>
 		public int Count => Items.Length;
 		public bool IsSynchronized => false;
 		public object SyncRoot => Items.SyncRoot;
+		/// <summary>
+		///  Gets if the array is read only, always false.
+		/// </summary>
 		public bool IsReadOnly => false;
+		/// <summary>
+		///  Gets if the array is of a fixed length, always true.
+		/// </summary>
 		public bool IsFixedSize => true;
 
 		#endregion
@@ -85,8 +81,8 @@ namespace Grisaia.Utils {
 		bool IList.Contains(object value)          => (IsCompatibleObject(value) ? Contains((T) value) : false);
 		int  IList.IndexOf(object value)           => (IsCompatibleObject(value) ?  IndexOf((T) value) : -1);
 		
-		public IEnumerator<T> GetEnumerator() => Items.Cast<T>().GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => Items.GetEnumerator();
+		public IEnumerator<T> GetEnumerator()      => Items.Cast<T>().GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator()    => Items.GetEnumerator();
 
 		#endregion
 

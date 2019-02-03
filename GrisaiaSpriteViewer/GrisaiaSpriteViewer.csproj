@@ -60,12 +60,44 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\IRelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfo.Collection.cs" />
+    <Compile Include="Commands\RelayInfo.cs" />
+    <Compile Include="Commands\RelayInfoCollection.cs" />
+    <Compile Include="Commands\RelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfoCommand.Generic.cs" />
+    <Compile Include="Commands\RelayInfoCommandBinding.cs" />
+    <Compile Include="Controls\CommandButton.cs" />
+    <Compile Include="Controls\CommandMenuItem.cs" />
+    <Compile Include="Controls\ImageButton.cs" />
+    <Compile Include="Controls\ImageMenuItem.cs" />
+    <Compile Include="Controls\ProgressBarSmoother.cs" />
     <Compile Include="Controls\SpriteCategoryComboBox.cs" />
     <Compile Include="Controls\SpriteImage.cs" />
     <Compile Include="Controls\SpritePartGroupComboBox.cs" />
     <Compile Include="Controls\SpriteSelectionControl.cs" />
     <Compile Include="Controls\SpriteSelectionViewer.cs" />
+    <Compile Include="Converters\BooleanWhenEqual.cs" />
+    <Compile Include="Converters\CollapsedWhenBoolean.cs" />
+    <Compile Include="Converters\CollapsedWhenNull.cs" />
+    <Compile Include="Converters\InverseBoolean.cs" />
+    <Compile Include="Converters\PreserveThickness.cs" />
+    <Compile Include="Converters\RadioButtonConverter.cs" />
+    <Compile Include="Converters\ScaleConverter.cs" />
+    <Compile Include="Converters\TextToHorizontalAlignment.cs" />
+    <Compile Include="Converters\ZeroWhenBoolean.cs" />
+    <Compile Include="Converters\ZeroWhenNull.cs" />
+    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="Input\AnyKeyGesture.cs" />
+    <Compile Include="Input\AnyKeyGestureConverter.cs" />
+    <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\GrisaiaDialogService.cs" />
+    <Compile Include="Services\RelayInfoCommandFactory.cs" />
+    <Compile Include="SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ImageClipboard.cs" />
+    <None Include="Unused\ImageClipboard.Glitched.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Windows\ErrorMessageBox.xaml.cs">
       <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
@@ -77,6 +109,10 @@
     </Compile>
     <None Include="Unused\ZoomOnMouseWheel.cs" />
     <Page Include="LoadingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

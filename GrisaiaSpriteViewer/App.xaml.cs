@@ -15,18 +15,26 @@ namespace Grisaia.SpriteViewer {
 	///  Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
+		#region Constants
+
+		private static readonly string[] assemblyExtensions = { ".dll", ".exe" };
+
+		#endregion
+
 		#region Properties
 
 		public ViewModelLocator Locator { get; private set; }
 
 		#endregion
 
+		#region Constructors
 
 		/// <summary>
 		///  Constructs the app and sets up embedded assembly resolving.
 		/// </summary>
 		public App() {
 			AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssemblies;
+			// Call this to avoid referencing assemblies before the assembly resolver can be added.
 			Initialize();
 		}
 
@@ -40,6 +48,10 @@ namespace Grisaia.SpriteViewer {
 			ErrorMessageBox.GlobalHook(this);
 		}
 
+		#endregion
+
+		#region Event Handlers
+
 		private void OnAppStartup(object sender, StartupEventArgs e) {
 			Locator = (ViewModelLocator) FindResource("Locator");
 			Locator.Loading.LoadEverything.Execute();
@@ -50,20 +62,24 @@ namespace Grisaia.SpriteViewer {
 		/// </summary>
 		private Assembly OnResolveAssemblies(object sender, ResolveEventArgs args) {
 			AssemblyName assemblyName = new AssemblyName(args.Name);
-			string culturePath;
+			string assemblyPath;
 
 			if (TryResolveAssembly(assemblyName, out Assembly assembly))
 				return assembly;
-			culturePath = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-			if (TryResolveAssembly(culturePath, assemblyName, out assembly))
+			assemblyPath = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+			if (TryResolveAssembly(assemblyPath, assemblyName, out assembly))
 				return assembly;
-			culturePath = CultureInfo.CurrentCulture.ToString();
-			if (TryResolveAssembly(culturePath, assemblyName, out assembly))
+			assemblyPath = CultureInfo.CurrentCulture.ToString();
+			if (TryResolveAssembly(assemblyPath, assemblyName, out assembly))
 				return assembly;
 
 			return null;
 		}
-		private static readonly string[] assemblyExtensions = { ".dll", ".exe" };
+
+		#endregion
+
+		#region TryResolveAssembly
+
 		private bool TryResolveAssembly(AssemblyName assemblyName, out Assembly assembly) {
 			return TryResolveAssembly(null, assemblyName, out assembly);
 		}
@@ -82,5 +98,7 @@ namespace Grisaia.SpriteViewer {
 			assembly = null;
 			return false;
 		}
+
+		#endregion
 	}
 }

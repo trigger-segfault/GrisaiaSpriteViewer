@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using GalaSoft.MvvmLight;
 using Grisaia.Json;
+using Grisaia.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -12,7 +13,7 @@ namespace Grisaia.Categories {
 	/// <summary>
 	///  A list of settings defining how character infos should display their name.
 	/// </summary>
-	public sealed class CharacterNamingScheme {
+	public sealed class CharacterNamingScheme : ObservableObject {
 		#region Constants
 
 		/// <summary>
@@ -25,25 +26,71 @@ namespace Grisaia.Categories {
 		#region Fields
 
 		/// <summary>
+		///  True if all naming rules should be ignored and the Id should be used instead.
+		/// </summary>
+		[JsonIgnore]
+		private bool onlyId = false;
+		/// <summary>
+		///  True if the Id is appended to the end of the name when <see cref="IdOnly"/> is false.
+		/// </summary>
+		[JsonIgnore]
+		private bool appendId = false;
+		/// <summary>
+		///  How a character's first and last name are displayed.
+		/// </summary>
+		[JsonIgnore]
+		private CharacterRealNameType realName = CharacterRealNameType.FirstLast;
+		/// <summary>
+		///  The order used to determine which character naming method goes first.
+		/// </summary>
+		[JsonIgnore]
+		private CharacterNamingOrder order = new CharacterNamingOrder();
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
 		///  Gets or sets if all naming rules should be ignored and the Id should be used instead.
 		/// </summary>
-		[JsonProperty("use_id")]
-		public bool UseId { get; set; } = false;
+		[JsonProperty("id_only")]
+		public bool IdOnly {
+			get => onlyId;
+			set => Set(ref onlyId, value);
+		}
 		/// <summary>
-		///  Gets or sets if the Id is appended to the end of the name when <see cref="UseId"/> is false.
+		///  Gets or sets if the Id is appended to the end of the name when <see cref="IdOnly"/> is false.
 		/// </summary>
 		[JsonProperty("append_id")]
-		public bool AppendId { get; set; } = false;
+		public bool AppendId {
+			get => appendId;
+			set => Set(ref appendId, value);
+		}
 		/// <summary>
 		///  Gets how a character's first and last name are displayed.
 		/// </summary>
-		[JsonProperty("first_last")]
-		public FirstLastNamingScheme FirstLast { get; private set; } = new FirstLastNamingScheme();
+		[JsonProperty("real_name")]
+		public CharacterRealNameType RealName {
+			get => realName;
+			set {
+				if (!Enum.IsDefined(typeof(CharacterRealNameType), value))
+					throw new ArgumentException($"{nameof(CharacterRealNameType)} {value} is undefined!",
+						nameof(RealName));
+				Set(ref realName, value);
+			}
+		}
 		/// <summary>
 		///  Gets the order used to determine which character naming method goes first.
 		/// </summary>
 		[JsonProperty("order")]
-		public CharacterNamingOrder Order { get; private set; } = new CharacterNamingOrder();
+		public CharacterNamingOrder Order {
+			get => order;
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(Order));
+				Set(ref order, value);
+			}
+		}
 
 		#endregion
 
@@ -64,16 +111,16 @@ namespace Grisaia.Categories {
 		public string GetName(CharacterInfo character) {
 			if (character == null)
 				throw new ArgumentNullException(nameof(character));
-			if (UseId)
+			if (IdOnly)
 				return character.Id;
 			
 			StringBuilder str = new StringBuilder();
 
 			foreach (CharacterNameType type in Order) {
 				switch (type) {
-				case CharacterNameType.FirstLast: str.Append(FirstLast.GetFullName(character)); break;
-				case CharacterNameType.Nickname:  str.Append(character.Nickname); break;
-				case CharacterNameType.Title:     str.Append(character.Title); break;
+				case CharacterNameType.RealName: str.Append(GetRealFullName(character)); break;
+				case CharacterNameType.Nickname: str.Append(character.Nickname); break;
+				case CharacterNameType.Title:    str.Append(character.Title); break;
 				}
 				if (str.Length != 0)
 					break; // We've found a naming method with an existing name to use.
@@ -119,6 +166,75 @@ namespace Grisaia.Categories {
 			return character.Id;
 		}
 		/// <summary>
+		///  Formats the full name of the specified character info using the naming scheme settings.
+		/// </summary>
+		/// <param name="character">The character with the name to format.</param>
+		/// <returns>
+		///  The character's full name with the first/last naming scheme applied.<para/>
+		///  Returns null if the character does not have a first or last name.
+		/// </returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="character"/> is null.
+		/// </exception>
+		public string GetRealFullName(CharacterInfo character) {
+			if (character == null)
+				throw new ArgumentNullException(nameof(character));
+
+			if (character.FirstName == null) {
+				if (character.LastName == null)
+					return null;
+				return character.LastName;
+			}
+			else if (character.LastName == null) {
+				return character.FirstName;
+			}
+			switch (RealName) {
+			case CharacterRealNameType.First:
+				return character.FirstName;
+			case CharacterRealNameType.FirstLast:
+				return $"{character.FirstName} {character.LastName}";
+			case CharacterRealNameType.LastFirst:
+				return $"{character.LastName} {character.FirstName}";
+			default:
+				throw new ArgumentException($"Invalid {nameof(RealName)}!");
+			}
+		}
+		/// <summary>
+		///  Formats the single name of the specified character info using the naming scheme settings.
+		/// </summary>
+		/// <param name="character">The character with the name to format.</param>
+		/// <returns>
+		///  The character's single name with the first/last naming scheme applied.<para/>
+		///  Returns null if the character does not have a first or last name.
+		/// </returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="character"/> is null.
+		/// </exception>
+		public string GetRealName(CharacterInfo character) {
+			if (character == null)
+				throw new ArgumentNullException(nameof(character));
+
+			if (character.FirstName == null) {
+				if (character.LastName == null)
+					return null;
+				return character.LastName;
+			}
+			else if (character.LastName == null) {
+				return character.FirstName;
+			}
+			switch (RealName) {
+			case CharacterRealNameType.First:
+			case CharacterRealNameType.FirstLast:
+				return character.FirstName;
+			case CharacterRealNameType.LastFirst:
+				return character.LastName;
+			default:
+				throw new ArgumentException($"Invalid {nameof(RealName)}!");
+			}
+		}
+		/// <summary>
 		///  Gets the token name for a specific character.
 		/// </summary>
 		/// <param name="c">The character to get the name of.</param>
@@ -133,7 +249,7 @@ namespace Grisaia.Categories {
 			switch (token) {
 			case "NAME":
 			case "FULLNAME":
-				value = (token == "NAME" ? FirstLast.GetName(c) : FirstLast.GetFullName(c));
+				value = (token == "NAME" ? GetRealName(c) : GetRealFullName(c));
 				if (value == null)
 					throw new InvalidOperationException($"Character \"{c.Id}\" does not have a first or last name!");
 				break;
@@ -163,9 +279,9 @@ namespace Grisaia.Categories {
 		/// <returns>The clone of this character naming scheme.</returns>
 		public CharacterNamingScheme Clone() {
 			return new CharacterNamingScheme {
-				UseId = UseId,
+				IdOnly = IdOnly,
 				AppendId = AppendId,
-				FirstLast = FirstLast.Clone(),
+				RealName = RealName,
 				Order = Order.Clone(),
 			};
 		}
@@ -173,13 +289,28 @@ namespace Grisaia.Categories {
 		#endregion
 	}
 	/// <summary>
+	///  An enumeration deciding how character's first and last names are displayed.
+	/// </summary>
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public enum CharacterRealNameType {
+		/// <summary>Only the character's first name will be displayed.</summary>
+		[Name("First")]
+		First,
+		/// <summary>The character's first then last name will be displayed.</summary>
+		[Name("First Last")]
+		FirstLast,
+		/// <summary>The character's last then first name will be displayed.</summary>
+		[Name("Last First")]
+		LastFirst,
+	}
+	/// <summary>
 	///  An enum used in <see cref="CharacterNamingOrder"/> to determine what type of naming method goes first.
 	/// </summary>
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public enum CharacterNameType {
-		/// <summary>Character's first and or last name.</summary>
-		[JsonProperty("first_last")]
-		FirstLast,
+		/// <summary>Character's real name.</summary>
+		[JsonProperty("real_name")]
+		RealName,
 		/// <summary>Character's nickname.</summary>
 		[JsonProperty("nickname")]
 		Nickname,
@@ -191,7 +322,7 @@ namespace Grisaia.Categories {
 	///  The order used to determine which character naming method goes first.
 	/// </summary>
 	[JsonConverter(typeof(JsonCharacterNamingOrderConverter))]
-	public sealed class CharacterNamingOrder : IReadOnlyList<CharacterNameType> {
+	public sealed class CharacterNamingOrder : ObservableArray<CharacterNameType> {
 		#region Converters
 
 		private class JsonCharacterNamingOrderConverter : JsonConverter {
@@ -205,7 +336,7 @@ namespace Grisaia.Categories {
 
 			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
 				CharacterNamingOrder order = (CharacterNamingOrder) value;
-				value = order.order;
+				value = order.ToArray();
 				serializer.Serialize(writer, value);
 			}
 
@@ -216,34 +347,30 @@ namespace Grisaia.Categories {
 
 		#endregion
 
-		#region Fields
-
-		/// <summary>
-		///  The order used to determine which character naming method goes first.
-		/// </summary>
-		private readonly List<CharacterNameType> order;
-
-		#endregion
-
 		#region Constructors
 
 		/// <summary>
 		///  Constructs the character naming order using the default order of Nickname, FirstLast, then Title.
 		/// </summary>
-		public CharacterNamingOrder() {
-			// Default order
-			order = new List<CharacterNameType> {
+		public CharacterNamingOrder()
+			: base(new[] { // Default order
 				CharacterNameType.Nickname,
-				CharacterNameType.FirstLast,
+				CharacterNameType.RealName,
 				CharacterNameType.Title,
-			};
+			})
+		{
 		}
 		/// <summary>
 		///  Constructs the character naming order using an existing order.
 		/// </summary>
 		/// <param name="order">The existing order to copy.</param>
-		internal CharacterNamingOrder(IEnumerable<CharacterNameType> order) {
-			this.order = new List<CharacterNameType>(order);
+		internal CharacterNamingOrder(IReadOnlyList<CharacterNameType> order) : base(order) {
+			// Make sure someone didn't fudge the config file
+			HashSet<CharacterNameType> used = new HashSet<CharacterNameType>();
+			foreach (CharacterNameType type in order) {
+				if (!used.Add(type))
+					throw new ArgumentException($"Character name type \"{type}\" is already contained in array!");
+			}
 		}
 
 		#endregion
@@ -257,55 +384,51 @@ namespace Grisaia.Categories {
 				throw new ArgumentException($"{nameof(CharacterNameType)} {typeB} is invalid!", nameof(typeB));
 			Swap(IndexOf(typeA), IndexOf(typeB));
 		}
-		public void Swap(CharacterNameType typeA, int indexB) {
-			if (!Enum.IsDefined(typeof(CharacterNameType), typeA))
-				throw new ArgumentException($"{nameof(CharacterNameType)} {typeA} is invalid!", nameof(typeA));
-			Swap(IndexOf(typeA), indexB);
-		}
-		public void Move(CharacterNameType typeA, CharacterNameType typeB) {
-			if (!Enum.IsDefined(typeof(CharacterNameType), typeA))
-				throw new ArgumentException($"{nameof(CharacterNameType)} {typeA} is invalid!", nameof(typeA));
-			if (!Enum.IsDefined(typeof(CharacterNameType), typeB))
-				throw new ArgumentException($"{nameof(CharacterNameType)} {typeB} is invalid!", nameof(typeB));
-			Move(IndexOf(typeA), IndexOf(typeB));
-		}
-		public void Move(CharacterNameType type, int newIndex) {
+		public void MoveUp(CharacterNameType type) {
 			if (!Enum.IsDefined(typeof(CharacterNameType), type))
 				throw new ArgumentException($"{nameof(CharacterNameType)} {type} is invalid!", nameof(type));
-			Move(IndexOf(type), newIndex);
+			MoveUp(IndexOf(type));
+		}
+		public void MoveDown(CharacterNameType type) {
+			if (!Enum.IsDefined(typeof(CharacterNameType), type))
+				throw new ArgumentException($"{nameof(CharacterNameType)} {type} is invalid!", nameof(type));
+			MoveDown(IndexOf(type));
 		}
 		public void Swap(int indexA, int indexB) {
-			if (indexA < 0 || indexA >= order.Count)
+			if (indexA < 0 || indexA >= Count)
 				throw new ArgumentOutOfRangeException(nameof(indexA));
-			if (indexB < 0 || indexB >= order.Count)
+			if (indexB < 0 || indexB >= Count)
 				throw new ArgumentOutOfRangeException(nameof(indexB));
 			if (indexA == indexB)
 				return; // Do nothing
-			CharacterNameType orderSwap = order[indexA];
-			order[indexA] = order[indexB];
-			order[indexB] = orderSwap;
+			CharacterNameType orderSwap = this[indexA];
+			this[indexA] = this[indexB];
+			this[indexB] = orderSwap;
 		}
-		public void Move(int oldIndex, int newIndex) {
-			if (oldIndex < 0 || oldIndex >= order.Count)
-				throw new ArgumentOutOfRangeException(nameof(oldIndex));
-			if (newIndex < 0 || newIndex >= order.Count)
-				throw new ArgumentOutOfRangeException(nameof(newIndex));
-			if (oldIndex == newIndex)
+		public void MoveUp(int index) {
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			if (index == 0)
 				return; // Do nothing
-			CharacterNameType orderMove = order[oldIndex];
-			order.RemoveAt(oldIndex);
-			order.Insert(newIndex, orderMove);
+			Swap(index, index - 1);
+		}
+		public void MoveDown(int index) {
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException(nameof(index));
+			if (index + 1 >= Count)
+				return; // Do nothing
+			Swap(index, index + 1);
 		}
 
 		#endregion
 
 		#region Accessors
 
-		public int IndexOf(CharacterNameType type) {
+		/*public int IndexOf(CharacterNameType type) {
 			if (!Enum.IsDefined(typeof(CharacterNameType), type))
 				throw new ArgumentException($"{nameof(CharacterNameType)} {type} is undefined!", nameof(type));
-			return order.IndexOf(type);
-		}
+			return ((IEnumerable<CharacterNameType>) this).IndexOf(type);
+		}*/
 
 		#endregion
 
@@ -315,11 +438,11 @@ namespace Grisaia.Categories {
 		///  Creates a deep clone of this character naming order.
 		/// </summary>
 		/// <returns>The clone of this character naming order.</returns>
-		public CharacterNamingOrder Clone() => new CharacterNamingOrder(order);
+		public CharacterNamingOrder Clone() => new CharacterNamingOrder(this);
 
 		#endregion
-
-		#region IReadOnlyList Implementation
+		
+		/*#region IReadOnlyList Implementation
 
 		/// <summary>
 		///  Gets the character naming type at the specified index in the order.
@@ -343,10 +466,10 @@ namespace Grisaia.Categories {
 		public IEnumerator<CharacterNameType> GetEnumerator() => order.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		#endregion
+		#endregion*/
 	}
 
-	/// <summary>
+	/*/// <summary>
 	///  The settings for how a character's first and last name should be displayed.
 	/// </summary>
 	public sealed class FirstLastNamingScheme {
@@ -450,5 +573,5 @@ namespace Grisaia.Categories {
 		}
 
 		#endregion
-	}
+	}*/
 }

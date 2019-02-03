@@ -75,18 +75,22 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Gets if this HG-3 has multiple frames. This also means the file name will have a +###[+###] at the end.
 		/// </summary>
+		[JsonIgnore]
 		public bool IsAnimation => Images.Count != 1 || Images[0].FrameCount != 1;
 		/// <summary>
 		///  Gets the number of HG-3 images in <see cref="Images"/>.
 		/// </summary>
+		[JsonIgnore]
 		public int Count => Images.Count;
 		/// <summary>
 		///  Gets the total number of frames in this HG-3.
 		/// </summary>
+		[JsonIgnore]
 		public int FrameCount => Images.Sum(i => i.FrameCount);
 		/// <summary>
 		///  Gets the name of the file for loading the <see cref="Hg3"/> data.
 		/// </summary>
+		[JsonIgnore]
 		public string JsonFileName => GetJsonFileName(FileName);
 
 		#endregion

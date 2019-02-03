@@ -130,23 +130,28 @@ namespace Grisaia.Geometry {
 		/// <summary>
 		///  Gets if all lengths in the thickness are the same.
 		/// </summary>
+		[JsonIgnore]
 		public bool IsUniform => Left == Top && Left == Right && Left == Bottom;
 
 		/// <summary>
 		///  Returns true if all of the lengths are 0.
 		/// </summary>
+		[JsonIgnore]
 		public bool IsZero => (Left == 0 && Top == 0 && Right == 0 && Bottom == 0);
 		/// <summary>
 		///  Returns true if any of the lengths are 0.
 		/// </summary>
+		[JsonIgnore]
 		public bool IsAnyZero => (Left == 0 || Top == 0 || Right == 0 || Bottom == 0);
 		/// <summary>
 		///  Gets the combined left and right lengths.
 		/// </summary>
+		[JsonIgnore]
 		public int Horizontal => Left + Right;
 		/// <summary>
 		///  Gets the combined top and bottom lengths.
 		/// </summary>
+		[JsonIgnore]
 		public int Vertical => Top + Bottom;
 
 		#endregion

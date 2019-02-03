@@ -32,9 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -52,31 +50,7 @@
     <Compile Include="Commands\IRelayCommand.cs" />
     <Compile Include="Commands\IRelayCommand.Generic.cs" />
     <Compile Include="Commands\IRelayCommandBase.cs" />
-    <Compile Include="Commands\IRelayInfoCommand.cs" />
-    <Compile Include="Commands\RelayInfo.Collection.cs" />
-    <Compile Include="Commands\RelayInfo.cs" />
-    <Compile Include="Commands\RelayInfoCollection.cs" />
-    <Compile Include="Commands\RelayInfoCommand.cs" />
-    <Compile Include="Commands\RelayInfoCommand.Generic.cs" />
-    <Compile Include="Commands\RelayInfoCommandBinding.cs" />
-    <Compile Include="Controls\CommandButton.cs" />
-    <Compile Include="Controls\CommandMenuItem.cs" />
-    <Compile Include="Controls\ImageButton.cs" />
-    <Compile Include="Controls\ImageMenuItem.cs" />
-    <Compile Include="Converters\CollapsedWhenNull.cs" />
-    <Compile Include="Converters\CollapsedWhenBoolean.cs" />
-    <Compile Include="Converters\InverseBoolean.cs" />
-    <Compile Include="Converters\PreserveThickness.cs" />
-    <Compile Include="Converters\RadioButtonConverter.cs" />
-    <Compile Include="Converters\ScaleConverter.cs" />
-    <Compile Include="Converters\TextToHorizontalAlignment.cs" />
-    <Compile Include="Converters\BooleanWhenEqual.cs" />
-    <Compile Include="Converters\ZeroWhenNull.cs" />
-    <Compile Include="Converters\ZeroWhenBoolean.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
-    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
-    <Compile Include="Input\AnyKeyGesture.cs" />
-    <Compile Include="Input\AnyKeyGestureConverter.cs" />
     <Compile Include="Model\GrisaiaModel.cs" />
     <Compile Include="Model\SpriteViewerSettings.cs" />
     <Compile Include="ObservableCollectionObject.cs" />
@@ -85,17 +59,18 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\IClipboardService.cs" />
     <Compile Include="Services\IGrisaiaDialogService.cs" />
+    <Compile Include="Services\IRelayCommandFactory.cs" />
     <Compile Include="Services\UIService.cs" />
-    <Compile Include="Utils\ImageClipboard.cs" />
-    <None Include="Utils\ImageClipboard.Glitched.cs" />
     <Compile Include="ViewModelRelayCommand.cs" />
     <Compile Include="ViewModelWindow.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
-    <Compile Include="ViewModel\SpriteImageViewModel.cs" />
-    <Compile Include="ViewModel\SpritePartViewModelItem.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\SpriteDrawInfoViewModel.cs" />
+    <Compile Include="ViewModel\SpritePartDrawInfoViewModel.cs" />
+    <Compile Include="ViewModel\SpriteSelectionViewModel.Commands.cs" />
     <Compile Include="ViewModel\SpriteSelectionViewModel.cs" />
-    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj">

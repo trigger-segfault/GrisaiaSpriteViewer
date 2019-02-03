@@ -58,6 +58,8 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			SimpleIoc.Default.Register<UIService>();
 			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
 			SimpleIoc.Default.Register<LoadingViewModel>();
+			SimpleIoc.Default.Register<IRelayCommandFactory, RelayInfoCommandFactory>();
+			SimpleIoc.Default.Register<IClipboardService, ClipboardService>();
 		}
 
 		//public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();

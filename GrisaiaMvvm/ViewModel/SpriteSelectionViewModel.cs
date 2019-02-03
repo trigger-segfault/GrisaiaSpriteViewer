@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using GalaSoft.MvvmLight;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.Mvvm;
-using Grisaia.Mvvm.Commands;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
 using Grisaia.Utils;
 
 namespace Grisaia.Mvvm.ViewModel {
-	public class SpriteSelectionViewModel : ViewModelWindow {
+	public partial class SpriteSelectionViewModel : ViewModelWindow {
 		#region Constants
 
 		/// <summary>
@@ -49,6 +44,13 @@ namespace Grisaia.Mvvm.ViewModel {
 		private bool centered = true;
 		private double scale = 1.0;
 
+		private bool expand;
+
+		/// <summary>
+		///  The unique Id of the sprite
+		/// </summary>
+		private string uniqueSpriteId = string.Empty;
+
 		#endregion
 
 		#region Properties
@@ -74,10 +76,13 @@ namespace Grisaia.Mvvm.ViewModel {
 		/// </summary>
 		public SpriteViewerSettings Settings => GrisaiaDatabase.Settings;
 
+		public IClipboardService Clipboard { get; }
+
 		public IGrisaiaDialogService Dialogs { get; }
 		public UIService UI { get; }
 
-		public SpriteImageViewModel SpriteImage { get; }
+		//public SpriteImageViewModel SpriteImage { get; }
+		public SpriteDrawInfoViewModel SpriteImage { get; }
 
 		/// <summary>
 		///  Gets the categories used for selecting the next category in the sprite or the sprite parts.
@@ -128,7 +133,7 @@ namespace Grisaia.Mvvm.ViewModel {
 			get => currentParts;
 			private set => Set(ref currentParts, value);
 		}*/
-		public IReadOnlyList<ISpritePart> CurrentParts => SpriteImage.CurrentParts;
+		//public IReadOnlyList<ISpritePart> CurrentParts => SpriteImage.CurrentParts;
 		public bool ShowGridLines {
 			get => showGridLines;
 			set => Set(ref showGridLines, value);
@@ -137,8 +142,11 @@ namespace Grisaia.Mvvm.ViewModel {
 		///  Gets or sets if the image should be expanded to the total size of all sprites combined.
 		/// </summary>
 		public bool Expand {
-			get => SpriteImage.Expand;
-			set => SpriteImage.Expand = value;
+			get => expand;
+			set {
+				if (Set(ref expand, value))
+					SpriteImage.SpriteDrawInfo = SpriteDatabase.BuildSprite(SpriteSelection, expand);
+			}
 		}
 		public bool Centered {
 			get => centered;
@@ -148,32 +156,55 @@ namespace Grisaia.Mvvm.ViewModel {
 			get => scale;
 			set => Set(ref scale, value);
 		}
-		public Point SpriteOrigin => SpriteImage.SpriteOrigin;
-		public Size SpriteSize => SpriteImage.SpriteSize;
+		/// <summary>
+		///  Gets the info used to draw the current sprite.
+		/// </summary>
+		public SpriteDrawInfo SpriteDrawInfo => SpriteImage.SpriteDrawInfo;
+		public Point SpriteOrigin => new Point(SpriteDrawInfo.Origin.X, SpriteDrawInfo.Origin.Y);
+		public Size SpriteSize => new Size(SpriteDrawInfo.TotalSize.X, SpriteDrawInfo.TotalSize.Y);
 		/// <summary>
 		///  Gets the selection for the current character sprite.
 		/// </summary>
 		public IReadOnlySpriteSelection SpriteSelection {
-			get => SpriteImage.SpriteSelection;
-			set => SpriteImage.SpriteSelection = value;
+			get => SpriteImage.SpriteDrawInfo.Selection;
+			set {
+				if (value != SpriteImage.SpriteDrawInfo.Selection)
+					SpriteImage.SpriteDrawInfo = SpriteDatabase.BuildSprite(value, expand);
+			}
 		}
-
-		public IRelayCommand ToggleCenterSprite => GetCommand(OnToggleCenterSprite);
+		public string SpriteUniqueId {
+			get {
+				if (SpriteDrawInfo.IsNone)
+					return string.Empty;
+				return SpriteDatabase.GetUniqueSpriteId(SpriteDrawInfo);
+			}
+		}
+		public string SpritePartList {
+			get {
+				var names = SpriteDrawInfo.SpriteParts.Where(p => p != null)
+													  .Select(p => Path.GetFileNameWithoutExtension(p.FileName));
+				return string.Join("\n", names);
+			}
+		}
 
 		#endregion
 
 		#region Constructors
 
-		public SpriteSelectionViewModel(GrisaiaModel grisaiaDb,
+		public SpriteSelectionViewModel(IRelayCommandFactory relayFactory,
+										IClipboardService clipboard,
+										GrisaiaModel grisaiaDb,
 										IGrisaiaDialogService dialogs,
 										UIService ui)
+			: base(relayFactory)
 		{
 			Title = "Grisaia Extract Sprite Viewer";
 			GrisaiaDatabase = grisaiaDb;
 			Dialogs = dialogs;
+			Clipboard = clipboard;
 			UI = ui;
-			SpriteImage = new SpriteImageViewModel(SpriteDatabase);
-			SpriteImage.PropertyChanged += OnSpriteImagePropertyChanged;
+			SpriteImage = new SpriteDrawInfoViewModel();
+			SpriteImage.PropertyChanged += OnSpriteDrawInfoPropertyChanged;
 
 			Categories.CollectionChanged += OnCategoriesCollectionChanged;
 			GroupParts.CollectionChanged += OnGroupPartsCollectionChanged;
@@ -201,28 +232,19 @@ namespace Grisaia.Mvvm.ViewModel {
 			suppressCollectionEvents = false;
 		}
 
-		private void OnSpriteImagePropertyChanged(object sender, PropertyChangedEventArgs e) {
+		private void OnSpriteDrawInfoPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
-			case nameof(SpriteImageViewModel.Expand):
-				RaisePropertyChanged(nameof(Expand));
-				break;
-			case nameof(SpriteImageViewModel.SpriteSelection):
+			case nameof(SpriteDrawInfoViewModel.SpriteDrawInfo):
+				RaisePropertyChanged(nameof(SpriteDrawInfo));
 				RaisePropertyChanged(nameof(SpriteSelection));
-				break;
-			case nameof(SpriteImageViewModel.SpriteOrigin):
 				RaisePropertyChanged(nameof(SpriteOrigin));
-				break;
-			case nameof(SpriteImageViewModel.SpriteSize):
 				RaisePropertyChanged(nameof(SpriteSize));
-				break;
-			case nameof(SpriteImageViewModel.CurrentParts):
-				RaisePropertyChanged(nameof(CurrentParts));
+				RaisePropertyChanged(nameof(SpriteUniqueId));
+				RaisePropertyChanged(nameof(SpritePartList));
+				SaveSprite.RaiseCanExecuteChanged();
+				CopySprite.RaiseCanExecuteChanged();
 				break;
 			}
-		}
-
-		private void OnToggleCenterSprite() {
-			Centered = !Centered;
 		}
 
 		#endregion

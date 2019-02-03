@@ -19,9 +19,13 @@
     <TextBlock x:Name="labelStatus" Text="{Binding MainStatus}" Margin="5"/>
     <StackPanel VerticalAlignment="Bottom">
       <TextBlock x:Name="labelEntries" Text="{Binding EntriesStatus, StringFormat='Entries: {0}'}" Margin="5"/>
-      <ProgressBar x:Name="minorProgressBar" Value="{Binding MinorProgress}" Maximum="1" Height="24"/>
+      <ProgressBar x:Name="minorProgressBar" Maximum="1" Height="24"
+                   local:ProgressBarSmoother.SmoothValue="{Binding MinorProgress}"
+                   local:ProgressBarSmoother.Duration="200"/>
       <TextBlock x:Name="labelGame" Text="{Binding GameStatus, StringFormat='Game: {0}'}" Margin="5"/>
-      <ProgressBar x:Name="majorProgressBar" Value="{Binding MajorProgress}" Maximum="1" Height="24"/>
+      <ProgressBar x:Name="majorProgressBar" Maximum="1" Height="24"
+                   local:ProgressBarSmoother.SmoothValue="{Binding MajorProgress}"
+                   local:ProgressBarSmoother.Duration="200"/>
     </StackPanel>
   </Grid>
 </Window>

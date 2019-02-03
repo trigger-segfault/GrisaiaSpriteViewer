@@ -58,13 +58,6 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteSelectionViewer),
 				new FrameworkPropertyMetadata(
 					OnSpriteOriginChanged));
-		public static readonly DependencyProperty CurrentPartsProperty =
-			DependencyProperty.Register(
-				"CurrentParts",
-				typeof(IReadOnlyList<ISpritePart>),
-				typeof(SpriteSelectionViewer),
-				new FrameworkPropertyMetadata(
-					OnCurrentPartsChanged));
 
 		private static void OnScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
@@ -75,29 +68,33 @@ namespace Grisaia.SpriteViewer.Controls {
 		}
 		private static void OnExpandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.UpdateExpand();
+			if (!control.IsEmpty)
+				control.UpdatePartChanges();
+			//control.UpdateExpand();
 		}
 		private static void OnShowGridLinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.UpdateLines();
+			if (!control.IsEmpty)
+				control.UpdateLines();
 		}
 		private static void OnSpriteSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.UpdateExpand();
+			Size previousSize = (Size) e.OldValue;
+			if (!control.IsEmpty) {
+				control.validSpriteSize = control.SpriteSize;
+				if (previousSize.Width == 0 || previousSize.Height == 0)
+					control.UpdateEmptyChanged();
+				control.UpdatePartChanges();
+			}
+			else {
+				control.UpdateEmptyChanged();
+			}
 		}
 		private static void OnSpriteOriginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.UpdateLines();
+			if (!control.IsEmpty)
+				control.UpdateLines();
 		}
-		private static void OnCurrentPartsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.UpdatePartChanges();
-		}
-		/*private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			control.ViewModel.PropertyChanged += control.OnViewModelPropertyChanged;
-			control.OnViewModelPropertyChanged(null, new PropertyChangedEventArgs(nameof(SpriteSelectionViewModel.CurrentParts)));
-		}*/
 
 		public double Scale {
 			get => (double) GetValue(ScaleProperty);
@@ -123,10 +120,6 @@ namespace Grisaia.SpriteViewer.Controls {
 			get => (Point) GetValue(SpriteOriginProperty);
 			set => SetValue(SpriteOriginProperty, value);
 		}
-		public IReadOnlyList<ISpritePart> CurrentParts {
-			get => (IReadOnlyList<ISpritePart>) GetValue(CurrentPartsProperty);
-			set => SetValue(CurrentPartsProperty, value);
-		}
 
 		#endregion
 
@@ -146,6 +139,16 @@ namespace Grisaia.SpriteViewer.Controls {
 		private Grid PART_GridLines;
 		private Rectangle PART_GridLineCenter;
 		private Rectangle PART_GridLineBaseline;
+		/// <summary>
+		///  The last non-empty sprite size. Used for scroll calculations when empty sprite size cannot be used.
+		/// </summary>
+		private Size validSpriteSize = new Size(1, 1);
+
+		#endregion
+
+		#region Private Properties
+
+		private bool IsEmpty => SpriteSize.Width == 0 || SpriteSize.Height == 0;
 
 		#endregion
 
@@ -175,66 +178,13 @@ namespace Grisaia.SpriteViewer.Controls {
 			PART_SpriteArea.MouseWheel += OnSpriteAreaZoom;
 			templateApplied = true;
 
+			UpdateEmptyChanged();
 			UpdatePartChanges();
 		}
-		
-		private void CenterToggled() {
-			if (!templateApplied || CurrentParts == null || supressEvents) return;
 
-			Vector normalizedScroll = CalculateNormalizedScrollCenter(true);
-			Vector newScroll = CalculateAreaCenter();
-			if (Centered) {
-				savedScale = Scale;
-				savedNormalizedScroll = normalizedScroll;
-				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-				PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-				UpdateCentered();
-			}
-			else {
-				supressEvents = true;
-				Scale = savedScale;
-				supressEvents = false;
-				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-				PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-				PART_ScaleTransform.ScaleX = Scale;
-				PART_ScaleTransform.ScaleY = Scale;
-				PART_SpriteImage.Margin = CalculateAreaMargins();
-				PART_GridLines.Margin = PART_SpriteImage.Margin;
-				if (savedNormalizedScroll.X >= 0 && savedNormalizedScroll.Y >= 0) {
-					Vector areaCenter = CalculateAreaCenter();
-					newScroll.X = savedNormalizedScroll.X * areaCenter.X;
-					newScroll.Y = savedNormalizedScroll.Y * areaCenter.Y;
-				}
-				PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
-				PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
-				//UpdateStatusBar();
-			}
-		}
+		#endregion
 
-		private void UpdatePartChanges() {
-			if (!templateApplied || CurrentParts == null) return;
-
-			Vector normalized = CalculateNormalizedScrollCenter();
-			UpdateExpand();
-			if (Centered) {
-				UpdateCentered();
-			}
-			else {
-				Vector areaCenter = CalculateAreaCenter();
-				Vector newScroll = new Vector(
-					normalized.X * areaCenter.X,
-					normalized.Y * areaCenter.Y);
-				PART_ScaleTransform.ScaleX = Scale;
-				PART_ScaleTransform.ScaleY = Scale;
-				PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
-				PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
-			}
-			UpdateLines();
-			//NewLines();
-			//GC.Collect();
-			//GC.WaitForPendingFinalizers();
-			//GC.Collect();
-		}
+		#region Event Handlers
 
 		private void OnSpriteAreaZoom(object sender, MouseWheelEventArgs e) {
 			if (Keyboard.Modifiers!= ModifierKeys.Control)
@@ -243,13 +193,15 @@ namespace Grisaia.SpriteViewer.Controls {
 				supressEvents = true;
 				Centered = false;
 				supressEvents = false;
-				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-				PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+				if (!IsEmpty) {
+					PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+					PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+				}
 			}
 
 			Point spritePoint = e.GetPosition(PART_SpriteImage);
 			Point scrollPoint = e.GetPosition(PART_ScrollViewer);
-			
+
 			Vector beforeCenter = new Vector(
 				scrollPoint.X - PART_ScrollViewer.ViewportWidth  / 2,
 				scrollPoint.Y - PART_ScrollViewer.ViewportHeight / 2);
@@ -283,11 +235,13 @@ namespace Grisaia.SpriteViewer.Controls {
 
 			PART_SpriteImage.Margin = CalculateAreaMargins();
 			PART_GridLines.Margin = PART_SpriteImage.Margin;
-			
+
 			Vector newScroll = afterArea - beforeCenter;
-			PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
-			PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
-			
+			if (PART_ScrollViewer.ViewportWidth != 0 && PART_ScrollViewer.ViewportHeight != 0) {
+				PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
+				PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
+			}
+
 			e.Handled = true;
 		}
 		private void OnScrollChanged(object sender, ScrollChangedEventArgs e) {
@@ -305,8 +259,75 @@ namespace Grisaia.SpriteViewer.Controls {
 			UpdateLines();
 		}
 
+		#endregion
+
+		#region Private Methods
+
+		private void CenterToggled() {
+			if (!templateApplied || supressEvents) return;
+
+			Vector normalizedScroll = CalculateNormalizedScrollCenter(true);
+			Vector newScroll = CalculateAreaCenter();
+			if (Centered) {
+				savedScale = Scale;
+				savedNormalizedScroll = normalizedScroll;
+				if (!IsEmpty) {
+					PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+					PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+				}
+				UpdateCentered();
+			}
+			else {
+				supressEvents = true;
+				Scale = savedScale;
+				supressEvents = false;
+				if (!IsEmpty) {
+					PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+					PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+				}
+				PART_ScaleTransform.ScaleX = Scale;
+				PART_ScaleTransform.ScaleY = Scale;
+				PART_SpriteImage.Margin = CalculateAreaMargins();
+				PART_GridLines.Margin = PART_SpriteImage.Margin;
+				if (savedNormalizedScroll.X >= 0 && savedNormalizedScroll.Y >= 0) {
+					Vector areaCenter = CalculateAreaCenter();
+					newScroll.X = savedNormalizedScroll.X * areaCenter.X;
+					newScroll.Y = savedNormalizedScroll.Y * areaCenter.Y;
+				}
+				if (PART_ScrollViewer.ViewportWidth != 0 && PART_ScrollViewer.ViewportHeight != 0) {
+					PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
+					PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
+				}
+			}
+		}
+
+		private void UpdatePartChanges() {
+			if (!templateApplied) return;
+
+			Vector normalized = CalculateNormalizedScrollCenter();
+			UpdateExpand();
+			if (Centered) {
+				UpdateCentered();
+			}
+			else {
+				Vector areaCenter = CalculateAreaCenter();
+				Vector newScroll = new Vector(
+					normalized.X * areaCenter.X,
+					normalized.Y * areaCenter.Y);
+				PART_ScaleTransform.ScaleX = Scale;
+				PART_ScaleTransform.ScaleY = Scale;
+				if (PART_ScrollViewer.ViewportWidth != 0 && PART_ScrollViewer.ViewportHeight != 0) {
+					PART_ScrollViewer.ScrollToHorizontalOffset(newScroll.X - PART_ScrollViewer.ViewportWidth / 2);
+					PART_ScrollViewer.ScrollToVerticalOffset(newScroll.Y - PART_ScrollViewer.ViewportHeight / 2);
+				}
+			}
+			UpdateLines();
+		}
+
+
 		private Vector CalculateAreaCenter(bool noCentered = false) {
-			return new Vector(SpriteSize.Width, SpriteSize.Height) * Scale / 2 + CalculateAreaOffset(noCentered);
+			return new Vector(validSpriteSize.Width, validSpriteSize.Height) * Scale / 2 +
+				CalculateAreaOffset(noCentered);
 		}
 		private Vector CalculateScrollCenter() {
 			return new Vector(
@@ -326,8 +347,8 @@ namespace Grisaia.SpriteViewer.Controls {
 				return new Vector(15, 15);
 			double viewWidth = PART_ScrollViewer.ViewportWidth;
 			double viewHeight = PART_ScrollViewer.ViewportHeight;
-			double scaledWidth = SpriteSize.Width  * Scale;
-			double scaledHeight = SpriteSize.Height * Scale;
+			double scaledWidth = validSpriteSize.Width  * Scale;
+			double scaledHeight = validSpriteSize.Height * Scale;
 			double x, y;
 			if (scaledWidth > viewWidth)
 				x = viewWidth / 2;
@@ -346,12 +367,14 @@ namespace Grisaia.SpriteViewer.Controls {
 
 
 		private void UpdateCentered() {
-			if (SpriteSize.Width == 0 || SpriteSize.Height == 0) {
+			if (IsEmpty) {
 				supressEvents = true;
 				Scale = 1;
 				supressEvents = false;
 				PART_ScaleTransform.ScaleX = Scale;
 				PART_ScaleTransform.ScaleY = Scale;
+				PART_SpriteImage.Margin = new Thickness();
+				PART_GridLines.Margin = PART_SpriteImage.Margin;
 			}
 			else {
 				Vector areaOffset = CalculateAreaOffset();
@@ -359,17 +382,17 @@ namespace Grisaia.SpriteViewer.Controls {
 					PART_ScrollViewer.ViewportWidth,
 					PART_ScrollViewer.ViewportHeight) - areaOffset * 2;
 				double areaRatio = area.X / area.Y;
-				double spriteRatio = SpriteSize.Width / SpriteSize.Height;
+				double spriteRatio = validSpriteSize.Width / validSpriteSize.Height;
 				supressEvents = true;
 				if (areaRatio > spriteRatio) {
-					Scale = Math.Min(1, area.Y / SpriteSize.Height);
+					Scale = Math.Min(1, area.Y / validSpriteSize.Height);
 				}
 				else {
-					Scale = Math.Min(1, area.X / SpriteSize.Width);
+					Scale = Math.Min(1, area.X / validSpriteSize.Width);
 				}
 				supressEvents = false;
-				areaOffset.X = (PART_ScrollViewer.ViewportWidth - SpriteSize.Width * Scale) / 2;
-				areaOffset.Y = (PART_ScrollViewer.ViewportHeight - SpriteSize.Height * Scale) / 2;
+				areaOffset.X = (PART_ScrollViewer.ViewportWidth - validSpriteSize.Width * Scale) / 2;
+				areaOffset.Y = (PART_ScrollViewer.ViewportHeight - validSpriteSize.Height * Scale) / 2;
 				PART_SpriteImage.Margin = new Thickness(areaOffset.X, areaOffset.Y, areaOffset.X, areaOffset.Y);
 				PART_GridLines.Margin = PART_SpriteImage.Margin;
 				PART_ScaleTransform.ScaleX = Scale;
@@ -378,7 +401,7 @@ namespace Grisaia.SpriteViewer.Controls {
 		}
 
 		private void UpdateExpand() {
-			if (!templateApplied || CurrentParts == null) return;
+			if (!templateApplied) return;
 			
 			PART_SpriteImage.Margin = CalculateAreaMargins();
 			PART_GridLines.Margin = PART_SpriteImage.Margin;
@@ -386,10 +409,34 @@ namespace Grisaia.SpriteViewer.Controls {
 		}
 
 		private void UpdateLines() {
-			if (!templateApplied || CurrentParts == null) return;
+			if (!templateApplied) return;
 
 			PART_GridLineCenter.Margin = new Thickness(SpriteOrigin.X * Scale, 0, 0, 0);
 			PART_GridLineBaseline.Margin = new Thickness(0, SpriteOrigin.Y * Scale, 0, 0);
+		}
+
+		private void UpdateEmptyChanged() {
+			if (!templateApplied) return;
+			if (IsEmpty) {
+				PART_SpriteImage.Width = 0;
+				PART_SpriteImage.Height = 0;
+				PART_GridLines.Visibility = Visibility.Hidden;
+			}
+			else {
+				PART_SpriteImage.Width = double.NaN;
+				PART_SpriteImage.Height = double.NaN;
+				PART_GridLines.Visibility = Visibility.Visible;
+			}
+			if (IsEmpty || Centered) {
+				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+				PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+				if (Centered)
+					UpdateCentered();
+			}
+			else {
+				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+				PART_ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
+			}
 		}
 
 		#endregion

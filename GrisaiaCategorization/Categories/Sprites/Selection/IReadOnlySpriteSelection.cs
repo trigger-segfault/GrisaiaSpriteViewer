@@ -54,12 +54,12 @@ namespace Grisaia.Categories.Sprites {
 		///  Creates a mutable clone of the sprite selection.
 		/// </summary>
 		/// <returns>The mutable copy of the sprite selection.</returns>
-		ISpriteSelection ToMutable();
+		SpriteSelection ToMutable();
 		/// <summary>
 		///  Creates an immutable clone of the sprite selection.
 		/// </summary>
 		/// <returns>The immutable copy of the sprite selection.</returns>
-		IReadOnlySpriteSelection ToImmutable();
+		ImmutableSpriteSelection ToImmutable();
 
 		#endregion
 	}

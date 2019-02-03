@@ -18,7 +18,7 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  The current highest known file version for the KIFINT lookup.
 		/// </summary>
-		public const int Version = 4;
+		public const int Version = 5;
 		/// <summary>
 		///  The required file signature to load this file.
 		/// </summary>

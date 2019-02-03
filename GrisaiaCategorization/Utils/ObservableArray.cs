@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Grisaia.Utils {
@@ -28,9 +29,29 @@ namespace Grisaia.Utils {
 		#region Constructors
 
 		public ObservableArray(int length) : base(length) { }
-		public ObservableArray(T[] array) : base(array) { }
-		public ObservableArray(ICollection<T> collection) : base(collection) { }
-		public ObservableArray(IEnumerable<T> collection) : base(collection) { }
+		public ObservableArray(T[] array) : base(CopyFrom(array)) { }
+		public ObservableArray(ICollection<T> collection) : base(CopyFrom(collection)) { }
+		public ObservableArray(IEnumerable<T> collection) : base(CopyFrom(collection)) { }
+
+		private static T[] CopyFrom(T[] array) {
+			if (array == null)
+				throw new ArgumentNullException(nameof(array));
+			T[] newArray = new T[array.Length];
+			Array.Copy(array, newArray, array.Length);
+			return newArray;
+		}
+		private static T[] CopyFrom(ICollection<T> collection) {
+			if (collection == null)
+				throw new ArgumentNullException(nameof(collection));
+			T[] newArray = new T[collection.Count];
+			collection.CopyTo(newArray, 0);
+			return newArray;
+		}
+		private static T[] CopyFrom(IEnumerable<T> collection) {
+			if (collection == null)
+				throw new ArgumentNullException(nameof(collection));
+			return collection.ToArray();
+		}
 
 		#endregion
 

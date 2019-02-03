@@ -4,24 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
-        xmlns:cmd="clr-namespace:Grisaia.Mvvm.Commands;assembly=GrisaiaExtractMvvm"
-        xmlns:ctrl="clr-namespace:Grisaia.Mvvm.Controls;assembly=GrisaiaExtractMvvm"
+        xmlns:cmd="clr-namespace:Grisaia.SpriteViewer.Commands"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
         DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
-        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewKeyDown="OnPreviewKeyDown" Loaded="OnLoaded" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
+        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
         cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}">
   <DockPanel>
     <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
       <Menu>
         <MenuItem Header="File">
-          <MenuItem Header="Save Sprite" Click="OnSaveSprite"/>
-          <MenuItem Header="Copy Sprite" Click="OnCopySprite"/>
+          <MenuItem Header="Save Sprite" Command="{Binding SaveSprite}"/>
+          <MenuItem Header="Copy Sprite" Command="{Binding CopySprite}"/>
         </MenuItem>
         <MenuItem Header="View">
-          <MenuItem x:Name="menuItemExpand" Header="Expand" Click="OnExpandChanged" IsChecked="{Binding Expand}" IsCheckable="True"/>
-          <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" Click="OnShowLinesChanged" IsChecked="{Binding ShowGridLines}" IsCheckable="True"/>
+          <MenuItem x:Name="menuItemExpand" Header="Expand" IsChecked="{Binding Expand}" IsCheckable="True"/>
+          <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" IsChecked="{Binding ShowGridLines}" IsCheckable="True"/>
+        </MenuItem>
+        <MenuItem Header="Options" Visibility="Collapsed">
+          <MenuItem x:Name="menuItemSettings" Header="Settings"/>
         </MenuItem>
       </Menu>
     </Border>
@@ -46,7 +48,9 @@
         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
 
         <StatusBarItem>Unique Id:</StatusBarItem>
-        <StatusBarItem x:Name="statusItemUniqueId">kajitsu-ama__L0-D1-P0-B0__0P01-2P02</StatusBarItem>
+        <StatusBarItem>
+          <TextBlock Text="{Binding SpriteUniqueId}"/>
+        </StatusBarItem>
       </StatusBar>
     </Border>
     <Grid>
@@ -58,7 +62,7 @@
       <Border Grid.Column="0" BorderBrush="#FFACACAC" BorderThickness="0,0,1,0" Padding="10,5" Background="White">
         <StackPanel>
           <TextBlock Text="Sprite Parts" FontWeight="Bold" Margin="-2,0,0,5"/>
-          <TextBlock x:Name="labelPartList" Text="Tama04s_1&#xA;Tama04s_002&#xA;Tama04s_0002" FontFamily="Courier New" FontSize="11"/>
+          <TextBlock x:Name="labelPartList" Text="{Binding SpritePartList}" FontFamily="Courier New" FontSize="11"/>
         </StackPanel>
       </Border>
       <local:SpriteSelectionViewer Grid.Column="1" x:Name="viewer"
@@ -66,7 +70,6 @@
                                    Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                    SpriteOrigin="{Binding SpriteOrigin}"
                                    SpriteSize="{Binding SpriteSize}"
-                                   CurrentParts="{Binding CurrentParts}"
                                    Centered="{Binding Centered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                    ShowGridLines="{Binding ShowGridLines}"
                                    Expand="{Binding Expand}"/>

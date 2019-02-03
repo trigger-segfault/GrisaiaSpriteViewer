@@ -45,8 +45,8 @@ namespace Grisaia.Categories {
 			SavedPath = Path.Combine(baseDirectory, "saved");
 
 			if (ViewModelBase.IsInDesignModeStatic) {
-				string gameJson = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data", "games.json"));
-				string charactersJson = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data", "characters.json"));
+				string gameJson = Embedded.ReadAllText(Embedded.Combine("Grisaia.data", "games.json"));
+				string charactersJson = Embedded.ReadAllText(Embedded.Combine("Grisaia.data", "characters.json"));
 				GameDatabase = JsonConvert.DeserializeObject<GameDatabase>(gameJson);
 				CharacterDatabase = JsonConvert.DeserializeObject<CharacterDatabase>(charactersJson);
 				GameDatabase.GrisaiaDatabase = this;

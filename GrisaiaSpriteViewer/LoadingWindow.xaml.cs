@@ -21,12 +21,30 @@ using Grisaia.Mvvm.ViewModel;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
-	/// Interaction logic for LoadingWindow.xaml
+	///  Interaction logic for LoadingWindow.xaml
 	/// </summary>
 	public partial class LoadingWindow : Window {
 		#region Properties
 		
 		public LoadingViewModel ViewModel => (LoadingViewModel) DataContext;
+
+		#endregion
+
+		#region Static Constructors
+
+		static LoadingWindow() {
+			DataContextProperty.AddOwner(typeof(LoadingWindow),
+				new FrameworkPropertyMetadata(
+					OnDataContextChanged));
+		}
+
+		#endregion
+
+		#region Constructors
+
+		public LoadingWindow() {
+			InitializeComponent();
+		}
 
 		#endregion
 
@@ -38,24 +56,6 @@ namespace Grisaia.SpriteViewer {
 		}
 		private void OnClosed(object sender, EventArgs e) {
 			ViewModel.WindowOwner = null;
-		}
-
-		#endregion
-
-		#region Static Constructors
-
-		static LoadingWindow() {
-			//DataContextProperty.AddOwner(typeof(LoadingWindow),
-			//	new FrameworkPropertyMetadata(
-			//		OnDataContextChanged));
-		}
-
-		#endregion
-
-		#region Constructors
-
-		public LoadingWindow() {
-			InitializeComponent();
 		}
 
 		#endregion

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+using Grisaia.Mvvm.Services;
 
 namespace Grisaia.Mvvm {
 	/// <summary>
@@ -24,10 +19,14 @@ namespace Grisaia.Mvvm {
 		private string title = "Grisaia Sprite Viewer";
 
 		#endregion
-
+		
 		#region Constructors
 
-		public ViewModelWindow() { }
+		/// <summary>
+		///  Constructs the <see cref="ViewModelWindow"/>.
+		/// </summary>
+		/// <param name="relayFactory">The factory used to create relay commands.</param>
+		public ViewModelWindow(IRelayCommandFactory relayFactory) : base(relayFactory) { }
 
 		#endregion
 

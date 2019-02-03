@@ -1,32 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
 	/// <summary>
 	///  A list of settings defining how game infos should display their name.
 	/// </summary>
-	public sealed class GameNamingScheme {
+	public sealed class GameNamingScheme : ObservableObject {
 		#region Fields
+		
+		/// <summary>
+		///  True if all naming rules should be ignored and the Id should be used instead.
+		/// </summary>'
+		[JsonIgnore]
+		private bool onlyId = false;
+		/// <summary>
+		///  True if the English name of the game should be used.
+		/// </summary>
+		[JsonIgnore]
+		private bool englishName = false;
+		/// <summary>
+		///  True if the short name of the game should be used.
+		/// </summary>
+		[JsonIgnore]
+		private bool shortName = true;
+
+		#endregion
+
+		#region Properties
 
 		/// <summary>
 		///  Gets or sets if all naming rules should be ignored and the Id should be used instead.
 		/// </summary>
-		[JsonProperty("use_id")]
-		public bool UseId { get; set; } = false;
+		[JsonProperty("id_only")]
+		public bool IdOnly {
+			get => onlyId;
+			set => Set(ref onlyId, value);
+		}
 		/// <summary>
 		///  Gets or sets if the English name of the game should be used.
 		/// </summary>
-		[JsonProperty("use_en_name")]
-		public bool UseEnglishName { get; set; } = false;
+		[JsonProperty("en_name")]
+		public bool EnglishName {
+			get => englishName;
+			set => Set(ref englishName, value);
+		}
 		/// <summary>
 		///  Gets or sets if the short name of the game should be used.
 		/// </summary>
-		[JsonProperty("use_short_name")]
-		public bool UseShortName { get; set; } = true;
+		[JsonProperty("short_name")]
+		public bool ShortName {
+			get => shortName;
+			set => Set(ref shortName, value);
+		}
 
 		#endregion
 
@@ -44,20 +70,36 @@ namespace Grisaia.Categories {
 		public string GetName(GameInfo game) {
 			if (game == null)
 				throw new ArgumentNullException(nameof(game));
-			if (UseId)
+			if (IdOnly)
 				return game.Id;
-			if (UseShortName) {
-				if (UseEnglishName)
+			if (ShortName) {
+				if (EnglishName)
 					return game.ENShortName;
 				else
 					return game.JPShortName;
 			}
 			else {
-				if (UseEnglishName)
+				if (EnglishName)
 					return game.ENName;
 				else
 					return game.JPName;
 			}
+		}
+
+		#endregion
+
+		#region Clone
+
+		/// <summary>
+		///  Creates a deep clone of this game naming scheme.
+		/// </summary>
+		/// <returns>The clone of this game naming scheme.</returns>
+		public GameNamingScheme Clone() {
+			return new GameNamingScheme {
+				IdOnly = IdOnly,
+				EnglishName = EnglishName,
+				ShortName = ShortName,
+			};
 		}
 
 		#endregion

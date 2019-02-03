@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using Grisaia.Mvvm.Commands;
+using Grisaia.Mvvm.Services;
 
 namespace Grisaia.Mvvm {
 	/// <summary>
@@ -17,7 +17,11 @@ namespace Grisaia.Mvvm {
 		///  The list of loaded commands.
 		/// </summary>
 		private readonly Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>();
-		
+		/// <summary>
+		///  The factory used to create relay commands.
+		/// </summary>
+		private readonly IRelayCommandFactory relayFactory;
+
 		#endregion
 
 		#region Constructors
@@ -25,12 +29,9 @@ namespace Grisaia.Mvvm {
 		/// <summary>
 		///  Constructs the <see cref="ViewModelRelayCommand"/>.
 		/// </summary>
-		public ViewModelRelayCommand() {
-			/*// A really dumb method of making sure all relay commands are initialized
-			foreach (PropertyInfo prop in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
-				if (typeof(ICommand).IsAssignableFrom(prop.PropertyType))
-					prop.GetValue(this);
-			}*/
+		/// <param name="relayFactory">The factory used to create relay commands.</param>
+		public ViewModelRelayCommand(IRelayCommandFactory relayFactory) {
+			this.relayFactory = relayFactory;
 		}
 
 		#endregion
@@ -104,7 +105,7 @@ namespace Grisaia.Mvvm {
 		protected IRelayCommand GetCommand(Action execute, Func<bool> canExecute, bool keepTargetAlive = false,
 			[CallerMemberName] string commandName = null)
 		{
-			return GetCommand(() => new RelayInfoCommand(execute, canExecute, keepTargetAlive), commandName);
+			return GetCommand(() => relayFactory.Create(execute, canExecute, keepTargetAlive), commandName);
 		}
 
 		#endregion
@@ -135,7 +136,7 @@ namespace Grisaia.Mvvm {
 		protected IRelayCommand<T> GetCommand<T>(Action<T> execute, Func<T, bool> canExecute,
 			bool keepTargetAlive = false, [CallerMemberName] string commandName = null)
 		{
-			return GetCommand(() => new RelayInfoCommand<T>(execute, canExecute, keepTargetAlive), commandName);
+			return GetCommand(() => relayFactory.Create(execute, canExecute, keepTargetAlive), commandName);
 		}
 
 		#endregion

@@ -81,7 +81,7 @@
       ],
       "game_parts": [
         {
-          "game_ids": [ "yuukan" ],
+          "game_ids": [ "rakuen", "yuukan" ],
           "parts": [
             {
               "name": "Outfit",
@@ -92,13 +92,8 @@
               "ids": [ 2, 3 ]
             },
             {
-              "name": "Effect 1",
-              "id": 5,
-              "enabled": false
-            },
-            {
-              "name": "Effect 2",
-              "id": 6,
+              "name": "Effect",
+              "ids": [ 5, 6 ], // 6 == Pose A,B | 5 == Pose C
               "enabled": false
             },
             {

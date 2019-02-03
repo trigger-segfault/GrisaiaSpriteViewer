@@ -5,10 +5,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Categories.Sprites;
+using Grisaia.Geometry;
 using Grisaia.Rules.Sprites;
 using Grisaia.Utils;
 using Newtonsoft.Json;
@@ -194,81 +196,6 @@ namespace Grisaia.Categories {
 		/// <param name="id">The Id to check for an element with.</param>
 		/// <returns>True if an element exists with the specified Id, otherwise null.</returns>
 		public bool ContainsKey(object id) => list.Find(e => e.Id.Equals(id)) != null;
-
-		#endregion
-
-		#region GetSpriteParts
-
-		/// <summary>
-		///  Gets the sprite parts for the specified sprite selection.
-		/// </summary>
-		/// <param name="selection">The sprite selection to get the parts for.</param>
-		/// <returns>An array of sprite parts. Each value can be null if no part is selected.</returns>
-		/// 
-		/// <exception cref="ArgumentNullException">
-		///  <paramref name="selection"/> is null.
-		/// </exception>
-		public ISpritePart[] GetSpriteParts(IReadOnlySpriteSelection selection, out GameInfo game,
-			out CharacterInfo character)
-		{
-			if (selection == null)
-				throw new ArgumentNullException(nameof(selection));
-
-			game = null;
-			character = null;
-
-			ISpriteCategory category = this;
-			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
-				if (category is ISpriteGame sprGame)
-					game = sprGame.GameInfo;
-				else if (category is ISpriteCharacter sprCharacter)
-					character = sprCharacter.CharacterInfo;
-
-				object id = Categories[i].GetId(selection);
-				if (!category.TryGetValue(id, out category))
-					break;
-			}
-			
-			ISpritePart[] parts = new ISpritePart[SpriteSelection.PartCount];
-
-			if (category?.IsLastCategory ?? false) {
-				ISpritePartGroup[] groups = category.CreateGroups(game, character);
-				for (int i = 0; i < groups.Length; i++) {
-					ISpritePartGroup group = groups[i];
-					int partId = selection.GroupPartIds[i];
-					foreach (int typeId in group.TypeIds) {
-						if (category.TryGetValue(typeId, out ISpritePartList partList))
-							partList.TryGetValue(partId, out parts[typeId]);
-						else
-							parts[typeId] = null;
-					}
-				}
-			}
-
-			foreach (ISpritePart part in parts.Where(p => p != null)) {
-				if (part.Hg3 == null) {
-					if (ViewModelBase.IsInDesignModeStatic) {
-						string json = Embedded.ReadAllText(Embedded.Combine("GrisaiaCategorization.data.dummy", Hg3.GetJsonFileName(part.FileName)));
-						part.Hg3 = JsonConvert.DeserializeObject<Hg3>(json);
-					}
-					else {
-						if (!Directory.Exists(game.CachePath))
-							Directory.CreateDirectory(game.CachePath);
-						// Extract and save the HG-3 if it's not physically cached
-						if (!File.Exists(Hg3.GetJsonFilePath(game.CachePath, part.FileName))) {
-							var kifintEntry = game.Lookups.Image[part.FileName];
-							part.Hg3 = kifintEntry.ExtractHg3AndImages(game.CachePath, false);
-							part.Hg3.SaveJsonToDirectory(game.CachePath);
-						}
-						else {
-							part.Hg3 = Hg3.FromJsonDirectory(game.CachePath, part.FileName);
-						}
-					}
-				}
-			}
-
-			return parts;
-		}
 
 		#endregion
 
@@ -719,39 +646,406 @@ namespace Grisaia.Categories {
 
 		#endregion
 
+		#region GetSpriteParts
+
+		/// <summary>
+		///  Gets the sprite parts for the specified sprite selection.
+		/// </summary>
+		/// <param name="selection">The sprite selection to get the parts for.</param>
+		/// <returns>An array of sprite parts. Each value can be null if no part is selected.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="selection"/> is null.
+		/// </exception>
+		public ISpritePart[] GetSpriteParts(IReadOnlySpriteSelection selection, out GameInfo game,
+			out CharacterInfo character, out int[] frames) {
+			if (selection == null)
+				throw new ArgumentNullException(nameof(selection));
+
+			game = null;
+			character = null;
+
+			ISpriteCategory category = this;
+			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+				if (category is ISpriteGame sprGame)
+					game = sprGame.GameInfo;
+				else if (category is ISpriteCharacter sprCharacter)
+					character = sprCharacter.CharacterInfo;
+
+				object id = Categories[i].GetId(selection);
+				if (!category.TryGetValue(id, out category))
+					break;
+			}
+
+			ISpritePart[] parts = new ISpritePart[SpriteSelection.PartCount];
+			frames = new int[SpriteSelection.PartCount];
+
+			if (category?.IsLastCategory ?? false) {
+				ISpritePartGroup[] groups = category.CreateGroups(game, character);
+				for (int groupIndex = 0; groupIndex < groups.Length; groupIndex++) {
+					ISpritePartGroup group = groups[groupIndex];
+					int partId = selection.GroupPartIds[groupIndex];
+					int frame = selection.GroupPartFrames[groupIndex];
+					foreach (int typeId in group.TypeIds) {
+						if (category.TryGetValue(typeId, out ISpritePartList partList)) {
+							if (partList.TryGetValue(partId, out parts[typeId]))
+								frames[typeId] = frame;
+							else
+								frames[typeId] = 0;
+						}
+						else {
+							parts[typeId] = null;
+							frames[typeId] = 0;
+						}
+					}
+				}
+			}
+
+			foreach (ISpritePart part in parts.Where(p => p != null)) {
+				LoadHg3(part, game);
+			}
+
+			return parts;
+		}
+
+		#endregion
+
 		#region BuildSpite
 
-		/*public Bitmap BuildSprite(IReadOnlySpriteSelection selection) {
-			return BuildSprite(selection, Color.Transparent);
-		}
-		public Bitmap BuildSprite(IReadOnlySpriteSelection selection, Color background) {
-			ISpritePart[] parts = GetSpriteParts(selection, out GameInfo game, out _);
-			var usedParts = parts.Where(p => p != null);
-			var usedHg3s = usedParts.Select(h => h.Hg3.Images[0]);
-			string cachePath = game.CachePath;
+		/// <summary>
+		///  Builds information used to draw a sprite from a sprite selection.
+		/// </summary>
+		/// <param name="selection">The sprite selection information.</param>
+		/// <param name="expand">True if the sprite should be fully expanded.</param>
+		/// <returns>The built sprite draw information.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="selection"/> is null.
+		/// </exception>
+		public SpriteDrawInfo BuildSprite(IReadOnlySpriteSelection selection, bool expand) {
+			ISpritePart[] parts = GetSpriteParts(selection, out var game, out var character, out int[] frames);
+			SpritePartDrawInfo[] drawParts = new SpritePartDrawInfo[SpriteSelection.PartCount];
+
+			/*if (selection == null)
+				throw new ArgumentNullException(nameof(selection));
+
+			GameInfo game = null;
+			CharacterInfo character = null;
+
+			ISpriteCategory category = this;
+			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+				if (category is ISpriteGame sprGame)
+					game = sprGame.GameInfo;
+				else if (category is ISpriteCharacter sprCharacter)
+					character = sprCharacter.CharacterInfo;
+
+				object id = Categories[i].GetId(selection);
+				if (!category.TryGetValue(id, out category))
+					break;
+			}
+
+			ISpritePart[] parts = new ISpritePart[SpriteSelection.PartCount];
+			int[] frames = new int[SpriteSelection.PartCount];
+			//Hg3[] hg3s = new Hg3[SpriteSelection.PartCount];
+			//Hg3Image[] hg3Images = new Hg3Image[SpriteSelection.PartCount];
+
+			if (category?.IsLastCategory ?? false) {
+				ISpritePartGroup[] groups = category.CreateGroups(game, character);
+				for (int groupIndex = 0; groupIndex < groups.Length; groupIndex++) {
+					ISpritePartGroup group = groups[groupIndex];
+					int partId = selection.GroupPartIds[groupIndex];
+					int frame = selection.GroupPartFrames[groupIndex];
+					foreach (int typeId in group.TypeIds) {
+						if (category.TryGetValue(typeId, out ISpritePartList partList)) {
+							partList.TryGetValue(partId, out parts[typeId]);
+							frames[typeId] = frame;
+						}
+						else {
+							parts[typeId] = null;
+							frames[typeId] = 0;
+						}
+					}
+				}
+			}
+
+			// Load HG-3's
+			for (int typeId = 0; typeId < SpriteSelection.PartCount; typeId++) {
+				ISpritePart part = parts[typeId];
+				if (part == null)
+					continue;
+				Hg3 hg3 = LoadHg3(part, game);
+				//hg3s[typeId] = hg3;
+				//hg3Images[typeId] = hg3.Images[partFrames[typeId]];
+			}*/
 			
-			PixelFormat format = PixelFormat.Format32bppArgb;
-			if (background.A == 255)
-				format = PixelFormat.Format24bppRgb;
-			var bitmap = new Bitmap((int) ViewModel.SpriteSize.Width, (int) ViewModel.SpriteSize.Height, format);
+			Thickness2I expandCenter = new Thickness2I();
+			var usedHg3s = parts.Select((p, i) => p?.Hg3.Images[frames[i]]).Where(h => h != null);
+			//var usedHg3s = hg3Images.Where(h => h != null);
+			if (usedHg3s.Any()) {
+				if (expand) {
+					expandCenter = new Thickness2I(
+						usedHg3s.Max(h => h.CenterLeft),
+						usedHg3s.Max(h => h.BaselineTop),
+						usedHg3s.Max(h => h.CenterRight),
+						usedHg3s.Max(h => h.BaselineBottom));
+				}
+				else {
+					expandCenter = new Thickness2I(
+						usedHg3s.Max(h => h.CenterLeft - h.MarginLeft),
+						usedHg3s.Max(h => h.BaselineTop - h.MarginTop),
+						usedHg3s.Max(h => h.CenterRight - h.MarginRight),
+						usedHg3s.Max(h => h.BaselineBottom - h.MarginBottom));
+				}
+			}
+			Point2I origin = new Point2I(expandCenter.Left, expandCenter.Top);
+			Point2I totalSize = new Point2I(expandCenter.Left + expandCenter.Right,
+											expandCenter.Top + expandCenter.Bottom);
+
+			for (int typeId = 0; typeId < SpriteSelection.PartCount; typeId++) {
+				ISpritePart part = parts[typeId];
+				if (part != null) {
+					int frame = frames[typeId];
+					Hg3Image h = part.Hg3.Images[frame];
+					string imagePath = h.GetFrameFilePath(game.CachePath, 0);
+					Thickness2I margin = new Thickness2I(
+						expandCenter.Left   - h.CenterLeft     + h.MarginLeft,
+						expandCenter.Top    - h.BaselineTop    + h.MarginTop,
+						expandCenter.Right  - h.CenterRight    + h.MarginRight,
+						expandCenter.Bottom - h.BaselineBottom + h.MarginBottom);
+					Point2I size = new Point2I(h.Width, h.Height);
+					drawParts[typeId] = new SpritePartDrawInfo(part, typeId, frame, imagePath, margin, size);
+				}
+				else {
+					drawParts[typeId] = SpritePartDrawInfo.None;
+				}
+			}
+
+			return new SpriteDrawInfo(selection, game, character, drawParts, parts, totalSize, origin, expand);
+		}
+
+		private Hg3 LoadHg3(ISpritePart part, GameInfo game) {
+			if (part.Hg3 == null) {
+				if (ViewModelBase.IsInDesignModeStatic) {
+					string json = Embedded.ReadAllText(Embedded.Combine("Grisaia.data.dummy", Hg3.GetJsonFileName(part.FileName)));
+					part.Hg3 = JsonConvert.DeserializeObject<Hg3>(json);
+				}
+				else {
+					if (!Directory.Exists(game.CachePath))
+						Directory.CreateDirectory(game.CachePath);
+					// Extract and save the HG-3 if it's not physically cached
+					if (File.Exists(Hg3.GetJsonFilePath(game.CachePath, part.FileName))) {
+						part.Hg3 = Hg3.FromJsonDirectory(game.CachePath, part.FileName);
+						if (part.Hg3.Version != Hg3.CurrentVersion)
+							part.Hg3 = null; // Reload this
+					}
+					if (part.Hg3 == null) {
+						var kifintEntry = game.Lookups.Image[part.FileName];
+						part.Hg3 = kifintEntry.ExtractHg3AndImages(game.CachePath, false);
+						part.Hg3.SaveJsonToDirectory(game.CachePath);
+					}
+				}
+			}
+			return part.Hg3;
+		}
+
+		#endregion
+
+		#region DrawSprite
+
+		/// <summary>
+		///  Draws the sprite from the specified draw info onto a transparent background.
+		/// </summary>
+		/// <param name="drawInfo">The sprite draw info to use.</param>
+		/// <returns>The newly created bitmap that was drawn to.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="drawInfo"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <see cref="SpriteDrawInfo.IsNone"/> is true.
+		/// </exception>
+		public Bitmap DrawSprite(SpriteDrawInfo drawInfo) {
+			return DrawSprite(drawInfo, Color.Transparent);
+		}
+		/// <summary>
+		///  Draws the sprite from the specified draw info onto the specified background color.
+		/// </summary>
+		/// <param name="drawInfo">The sprite draw info to use.</param>
+		/// <param name="background">The color of the background to draw.</param>
+		/// <returns>The newly created bitmap that was drawn to.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="drawInfo"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <see cref="SpriteDrawInfo.IsNone"/> is true.
+		/// </exception>
+		public Bitmap DrawSprite(SpriteDrawInfo drawInfo, Color background) {
+			if (drawInfo == null)
+				throw new ArgumentNullException(nameof(drawInfo));
+			
+			var bitmap = new Bitmap(drawInfo.TotalSize.X, drawInfo.TotalSize.Y, PixelFormat.Format32bppArgb);
 			try {
 				using (var g = Graphics.FromImage(bitmap)) {
 					g.Clear(background);
-					foreach (var part in usedParts) {
-						string partFile = part.Hg3.GetFrameFilePath(cachePath, 0, 0);
-						using (var partBitmap = Image.FromFile(partFile))
-							g.DrawImageUnscaled(partBitmap,
-								part.Hg3.Images[0].MarginLeft - (int) Math.Round(expandShrink.Left),
-								part.Hg3.Images[0].MarginTop - (int) Math.Round(expandShrink.Top));
+					foreach (var part in drawInfo.UsedDrawParts) {
+						using (var partBitmap = Image.FromFile(part.ImagePath))
+							g.DrawImageUnscaled(partBitmap, part.Margin.Left, part.Margin.Top);
 					}
 				}
 				return bitmap;
-			} catch {
+			}
+			catch {
 				// Only dispose on exception
 				bitmap.Dispose();
 				throw;
 			}
-		}*/
+		}
+		/// <summary>
+		///  Draws the sprite from the specified draw info onto the specified background colors.
+		/// </summary>
+		/// <param name="drawInfo">The sprite draw info to use.</param>
+		/// <param name="backgrounds">The colors of the backgrounds to draw.</param>
+		/// <returns>An array of newly created bitmaps that were drawn to for each background color.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="drawInfo"/> or <paramref name="backgrounds"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <paramref name="backgrounds"/> has a length of zero.-or- <see cref="SpriteDrawInfo.IsNone"/> is true.
+		/// </exception>
+		public DisposableArray<Bitmap> DrawSprite(SpriteDrawInfo drawInfo, params Color[] backgrounds) {
+			if (drawInfo == null)
+				throw new ArgumentNullException(nameof(drawInfo));
+			if (backgrounds == null)
+				throw new ArgumentNullException(nameof(backgrounds));
+			if (backgrounds.Length == 0)
+				throw new ArgumentException($"{nameof(backgrounds)} must have a length greater than zero!",
+					nameof(backgrounds));
+			
+			var bitmaps = new DisposableArray<Bitmap>(backgrounds.Length);
+			var partBitmaps = new DisposableArray<Image>(SpriteSelection.PartCount);
+			try {
+				// Load the bitmap parts once
+				foreach (SpritePartDrawInfo part in drawInfo.UsedDrawParts)
+					partBitmaps[part.TypeId] = Image.FromFile(part.ImagePath);
+
+				// Construct and draw to the bitmaps
+				for (int i = 0; i < backgrounds.Length; i++) {
+					bool opaque = backgrounds[i].A == 255;
+					PixelFormat format = (opaque ? PixelFormat.Format24bppRgb : PixelFormat.Format32bppArgb);
+					bitmaps[i] = new Bitmap(drawInfo.TotalSize.X, drawInfo.TotalSize.Y, format);
+					using (var g = Graphics.FromImage(bitmaps[i])) {
+						g.Clear(backgrounds[i]);
+						foreach (SpritePartDrawInfo part in drawInfo.UsedDrawParts)
+							g.DrawImageUnscaled(partBitmaps[part.TypeId], part.Margin.Left, part.Margin.Top);
+					}
+				}
+				return bitmaps;
+			} catch {
+				// Only dispose on exception
+				bitmaps.Dispose();
+				throw;
+			} finally {
+				// Always dispose of parts
+				partBitmaps.Dispose();
+			}
+		}
+
+		#endregion
+
+		#region DrawSprite+BuildSprite
+
+		/// <summary>
+		///  Draws the sprite from the specified sprite selection onto a transparent background.
+		/// </summary>
+		/// <param name="selection">The sprite selection information.</param>
+		/// <param name="expand">True if the sprite should be fully expanded.</param>
+		/// <returns>The newly created bitmap that was drawn to.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="selection"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <paramref name="selection"/> has no selected parts.
+		/// </exception>
+		public Bitmap DrawSprite(ISpriteSelection selection, bool expand) {
+			return DrawSprite(BuildSprite(selection, expand), Color.Transparent);
+		}
+		/// <summary>
+		///  Draws the sprite from the specified sprite selection onto the specified background color.
+		/// </summary>
+		/// <param name="selection">The sprite selection information.</param>
+		/// <param name="expand">True if the sprite should be fully expanded.</param>
+		/// <param name="background">The color of the background to draw.</param>
+		/// <returns>The newly created bitmap that was drawn to.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="drawInfo"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <paramref name="selection"/> has no selected parts.
+		/// </exception>
+		public Bitmap DrawSprite(ISpriteSelection selection, bool expand, Color background) {
+			return DrawSprite(BuildSprite(selection, expand), background);
+		}
+		/// <summary>
+		///  Draws the sprite from the specified sprite selection onto the specified background colors.
+		/// </summary>
+		/// <param name="selection">The sprite selection information.</param>
+		/// <param name="expand">True if the sprite should be fully expanded.</param>
+		/// <param name="backgrounds">The colors of the backgrounds to draw.</param>
+		/// <returns>An array of newly created bitmaps that were drawn to for each background color.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="selection"/> or <paramref name="backgrounds"/> is null.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		///  <paramref name="backgrounds"/> has a length of zero.-or- <paramref name="selection"/> has no selected
+		///  parts.
+		/// </exception>
+		public DisposableArray<Bitmap> DrawSprite(ISpriteSelection selection, bool expand, params Color[] backgrounds) {
+			return DrawSprite(BuildSprite(selection, expand), backgrounds);
+		}
+
+		#endregion
+
+		#region GetUniqueSpriteId
+
+		public string GetUniqueSpriteId(IReadOnlySpriteSelection selection) {
+			ISpritePart[] parts = GetSpriteParts(selection, out _, out _, out int[] frames);
+			return GetUniqueSpriteId(selection, parts, frames);
+		}
+		public string GetUniqueSpriteId(SpriteDrawInfo drawInfo) {
+			int[] frames = drawInfo.DrawParts.Select(p => p.Frame).ToArray();
+			return GetUniqueSpriteId(drawInfo.Selection, drawInfo.SpriteParts, frames);
+		}
+		private static string GetUniqueSpriteId(IReadOnlySpriteSelection selection, IReadOnlyList<ISpritePart> parts,
+			IReadOnlyList<int> frames)
+		{
+			StringBuilder str = new StringBuilder();
+
+			str.Append(selection.GameId);
+			str.Append("-");
+			str.Append(selection.CharacterId);
+
+			str.Append("_");
+
+			str.Append($"L{(int) selection.Lighting}");
+			str.Append("-");
+			str.Append($"D{(int) selection.Distance}");
+			str.Append("-");
+			str.Append($"P{(int) selection.Pose}");
+			str.Append("-");
+			str.Append($"B{(int) selection.Pose}");
+
+			str.Append("_");
+			
+			var partNames = parts.Select((p, i) => (p != null ? $"{i}p{p.Id:D2}+{frames[i]}" : null));
+			str.Append(string.Join("-", partNames.Where(p => p != null)));
+
+			return str.ToString();
+		}
 
 		#endregion
 	}

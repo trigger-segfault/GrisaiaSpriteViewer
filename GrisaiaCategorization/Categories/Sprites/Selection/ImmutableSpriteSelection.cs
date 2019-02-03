@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
@@ -13,39 +14,47 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the Id for the sprite's Grisaia game.
 		/// </summary>
-		public string GameId { get; } = "";
+		[JsonProperty("game_id")]
+		public string GameId { get; private set; }
 		/// <summary>
 		///  Gets the Id for the sprite's Grisaia character.
 		/// </summary>
-		public string CharacterId { get; } = "";
+		[JsonProperty("character_id")]
+		public string CharacterId { get; private set; }
 
 		// Secondary: 360 Total
 		/// <summary>
 		///  Gets the Id for the sprite's lighting level.
 		/// </summary>
-		public SpriteLighting Lighting { get; }
+		[JsonProperty("lighting")]
+		public SpriteLighting Lighting { get; private set; }
 		/// <summary>
 		///  Gets the Id for the sprite's draw distance.
 		/// </summary>
-		public SpriteDistance Distance { get; }
+		[JsonProperty("distance")]
+		public SpriteDistance Distance { get; private set; }
 		/// <summary>
 		///  Gets the Id for the sprite's character pose.
 		/// </summary>
-		public SpritePose Pose { get; }
+		[JsonProperty("pose")]
+		public SpritePose Pose { get; private set; }
 		/// <summary>
 		///  Gets the Id for the sprite's blush level.
 		/// </summary>
-		public SpriteBlush Blush { get; }
+		[JsonProperty("blush")]
+		public SpriteBlush Blush { get; private set; }
 
 		// Parts:
 		/// <summary>
 		///  Gets the sprite part group part Id selections.
 		/// </summary>
-		public IReadOnlyList<int> GroupPartIds { get; }
+		[JsonProperty("group_part_ids")]
+		public IReadOnlyList<int> GroupPartIds { get; private set; }
 		/// <summary>
 		///  Gets the sprite part group part frame index selections.
 		/// </summary>
-		public IReadOnlyList<int> GroupPartFrames { get; }
+		[JsonProperty("group_part_frames")]
+		public IReadOnlyList<int> GroupPartFrames { get; private set; }
 
 		#endregion
 
@@ -55,6 +64,8 @@ namespace Grisaia.Categories.Sprites {
 		///  Constructs the immutable sprite selection and sets the group part Ids to nothing.
 		/// </summary>
 		public ImmutableSpriteSelection() {
+			GameId = string.Empty;
+			CharacterId = string.Empty;
 			int[] groupPartIds = new int[SpriteSelection.PartCount];
 			for (int i = 0; i < SpriteSelection.PartCount; i++)
 				groupPartIds[i] = SpriteSelection.NoPart;
@@ -87,13 +98,15 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		/// <returns>The mutable copy of the sprite selection.</returns>
 		public SpriteSelection ToMutable() => new SpriteSelection(this);
-		ISpriteSelection IReadOnlySpriteSelection.ToMutable() => ToMutable();
 		/// <summary>
 		///  Creates an immutable clone of the sprite selection.
 		/// </summary>
 		/// <returns>The immutable copy of the sprite selection.</returns>
-		public ImmutableSpriteSelection ToImmutable() => new ImmutableSpriteSelection(this);
-		IReadOnlySpriteSelection IReadOnlySpriteSelection.ToImmutable() => ToImmutable();
+		/// 
+		/// <remarks>
+		///  In this case, we can safely return the same object, because we are already immutable.
+		/// </remarks>
+		public ImmutableSpriteSelection ToImmutable() => this;
 
 		#endregion
 		
@@ -138,15 +151,18 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the <see cref="GameId"/> and <see cref="CharacterId"/> as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int PrimaryHashCode => SpriteSelection.GetPrimaryHashCode(GameId, CharacterId);
 		/// <summary>
 		///  Gets the <see cref="Lighting"/>, <see cref="Distance"/>, <see cref="Pose"/>, <see cref="Blush"/>
 		///  as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int SecondaryHashCode => SpriteSelection.GetSecondaryHashCode(Lighting, Distance, Pose, Blush);
 		/// <summary>
 		///  Gets the <see cref="GroupPartIds"/> and <see cref="GroupPartFrames"/>, as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int GroupPartsHashCode => SpriteSelection.GetGroupPartsHashCode(GroupPartIds, GroupPartFrames);
 
 		#endregion

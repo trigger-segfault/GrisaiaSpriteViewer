@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Grisaia.SpriteViewer.Themes"
-                    xmlns:c="clr-namespace:Grisaia.Mvvm.Commands;assembly=GrisaiaExtractMvvm"
+                    xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+                    xmlns:c="clr-namespace:Grisaia.SpriteViewer.Commands"
                     xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
   <c:RelayInfoCollection x:Key="SpriteSelectionCommands" ViewModelType="{x:Type vm:SpriteSelectionViewModel}">
     <c:RelayInfo Name="ToggleCenterSprite" Text="Toggle Sprite Center" Key="B" Modifiers="Ctrl"/>

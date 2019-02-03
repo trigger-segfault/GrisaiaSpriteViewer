@@ -177,6 +177,7 @@ namespace Grisaia.Geometry {
 		/// <exception cref="ArgumentOutOfRangeException">
 		///  <paramref name="index"/> is not 0 or 1.
 		/// </exception>
+		[JsonIgnore]
 		public int this[int index] {
 			get {
 				switch (index) {
@@ -197,14 +198,17 @@ namespace Grisaia.Geometry {
 		/// <summary>
 		///  Returns true if the point is positioned at (0, 0).
 		/// </summary>
+		[JsonIgnore]
 		public bool IsZero => (X == 0 && Y == 0);
 		/// <summary>
 		///  Returns true if either X or Y is positioned at 0.
 		/// </summary>
+		[JsonIgnore]
 		public bool IsAnyZero => (X == 0 || Y == 0);
 		/// <summary>
 		///  Returns the perpendicular point of (-Y, X)
 		/// </summary>
+		[JsonIgnore]
 		public Point2I Perpendicular => new Point2I(-Y, X);
 
 		#endregion

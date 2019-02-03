@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
-using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Categories;
-using Grisaia.Categories.Sprites;
-using Grisaia.Mvvm;
 using Grisaia.Mvvm.Commands;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
@@ -94,9 +87,11 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		#region Constructors
 
-		public LoadingViewModel(GrisaiaModel grisaiaDb,
+		public LoadingViewModel(IRelayCommandFactory relayFactory,
+								GrisaiaModel grisaiaDb,
 								IGrisaiaDialogService dialogs,
 								UIService ui)
+			: base(relayFactory)
 		{
 			Title = "Grisaia Extract Sprite Viewer";
 			GrisaiaDatabase = grisaiaDb;
@@ -218,7 +213,7 @@ namespace Grisaia.Mvvm.ViewModel {
 						EntriesStatus = NoValueOutOfValue;
 					}
 					string gameName = e.CurrentGame.JPName;
-					if (Settings.GameNamingScheme.UseEnglishName)
+					if (Settings.GameNamingScheme.EnglishName)
 						gameName = e.CurrentGame.ENName;
 					string gameCount = string.Empty;
 					//if (e.GameCount > 1)
@@ -248,7 +243,7 @@ namespace Grisaia.Mvvm.ViewModel {
 					MainStatus = $"Categorizing Sprites: {e.SpriteCount:N0}";
 					EntriesStatus = $"{e.EntryIndex:N0} / {e.EntryCount:N0}";
 					string gameName = e.CurrentGame.JPName;
-					if (Settings.GameNamingScheme.UseEnglishName)
+					if (Settings.GameNamingScheme.EnglishName)
 						gameName = e.CurrentGame.ENName;
 					string gameCount = string.Empty;
 					//if (e.GameCount > 1)

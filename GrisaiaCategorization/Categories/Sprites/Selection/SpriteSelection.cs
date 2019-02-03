@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
@@ -35,40 +36,48 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets or sets the Id for the sprite's Grisaia game.
 		/// </summary>
+		[JsonProperty("game_id")]
 		public string GameId { get; set; }
 		/// <summary>
 		///  Gets or sets the Id for the sprite's Grisaia character.
 		/// </summary>
+		[JsonProperty("character_id")]
 		public string CharacterId { get; set; }
 
 		// Secondary: 360 Total
 		/// <summary>
 		///  Gets or sets the Id for the sprite's lighting level.
 		/// </summary>
+		[JsonProperty("lighting")]
 		public SpriteLighting Lighting { get; set; }
 		/// <summary>
 		///  Gets or sets the Id for the sprite's draw distance.
 		/// </summary>
+		[JsonProperty("distance")]
 		public SpriteDistance Distance { get; set; }
 		/// <summary>
 		///  Gets or sets the Id for the sprite's character pose.
 		/// </summary>
+		[JsonProperty("pose")]
 		public SpritePose Pose { get; set; }
 		/// <summary>
 		///  Gets or sets the Id for the sprite's blush level.
 		/// </summary>
+		[JsonProperty("blush")]
 		public SpriteBlush Blush { get; set; }
 
 		// Parts:
 		/// <summary>
 		///  Gets or sets the sprite part group part Id selections.
 		/// </summary>
+		[JsonProperty("group_part_ids")]
 		public int[] GroupPartIds { get; private set; }
 		IList<int> ISpriteSelection.GroupPartIds => GroupPartIds;
 		IReadOnlyList<int> IReadOnlySpriteSelection.GroupPartIds => GroupPartIds;
 		/// <summary>
 		///  Gets the sprite part group part frame index selections.
 		/// </summary>
+		[JsonProperty("group_part_frames")]
 		public int[] GroupPartFrames { get; }
 		IList<int> ISpriteSelection.GroupPartFrames => GroupPartFrames;
 		IReadOnlyList<int> IReadOnlySpriteSelection.GroupPartFrames => GroupPartFrames;
@@ -81,6 +90,8 @@ namespace Grisaia.Categories.Sprites {
 		///  Constructs the sprite selection and sets the group part Ids to nothing.
 		/// </summary>
 		public SpriteSelection() {
+			GameId = string.Empty;
+			CharacterId = string.Empty;
 			GroupPartIds = new int[SpriteSelection.PartCount];
 			for (int i = 0; i < SpriteSelection.PartCount; i++)
 				GroupPartIds[i] = SpriteSelection.NoPart;
@@ -112,13 +123,11 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		/// <returns>The mutable copy of the sprite selection.</returns>
 		public SpriteSelection ToMutable() => new SpriteSelection(this);
-		ISpriteSelection IReadOnlySpriteSelection.ToMutable() => ToMutable();
 		/// <summary>
 		///  Creates an immutable clone of the sprite selection.
 		/// </summary>
 		/// <returns>The immutable copy of the sprite selection.</returns>
 		public ImmutableSpriteSelection ToImmutable() => new ImmutableSpriteSelection(this);
-		IReadOnlySpriteSelection IReadOnlySpriteSelection.ToImmutable() => ToImmutable();
 
 		#endregion
 
@@ -163,15 +172,18 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the <see cref="GameId"/> and <see cref="CharacterId"/> as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int PrimaryHashCode => GetPrimaryHashCode(GameId, CharacterId);
 		/// <summary>
 		///  Gets the <see cref="Lighting"/>, <see cref="Distance"/>, <see cref="Pose"/>, <see cref="Blush"/>
 		///  as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int SecondaryHashCode => GetSecondaryHashCode(Lighting, Distance, Pose, Blush);
 		/// <summary>
 		///  Gets the <see cref="GroupPartIds"/>, as a single hash code.
 		/// </summary>
+		[JsonIgnore]
 		private int GroupPartsHashCode => GetGroupPartsHashCode(GroupPartIds, GroupPartFrames);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

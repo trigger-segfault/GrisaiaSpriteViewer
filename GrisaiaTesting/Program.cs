@@ -11,7 +11,22 @@ using Newtonsoft.Json;
 
 namespace Grisaia.Testing {
 	class Program {
+		static event EventHandler Event;
+
+		public class EventClass {
+			public void OnEvent(object sender, EventArgs e) {
+				Console.WriteLine("Fire");
+			}
+		}
+
 		static void Main(string[] args) {
+			Event += new EventClass().OnEvent;
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+			Event(null, null);
+			Console.WriteLine(Event.GetInvocationList().Length);
+			Console.ReadLine();
 			GrisaiaDatabase grisaiaDb = new GrisaiaDatabase();
 			grisaiaDb.GameDatabase.LocateGames();
 			Console.WriteLine("Loading Cache...");

@@ -60,24 +60,28 @@ namespace Grisaia.Categories.Sprites {
 		///  Constructs the observable sprite selection and sets the group part Ids to nothing.
 		/// </summary>
 		public ObservableSpriteSelection() {
+			GameId = string.Empty;
+			CharacterId = string.Empty;
 			GroupPartIds = new ObservableArray<int>(SpriteSelection.PartCount);
 			for (int i = 0; i < SpriteSelection.PartCount; i++)
 				GroupPartIds[i] = SpriteSelection.NoPart;
+			GroupPartFrames = new ObservableArray<int>(SpriteSelection.PartCount);
 		}
 		/// <summary>
 		///  Constructs the an observable copy of the sprite selection.
 		/// </summary>
 		/// <param name="spriteSelection">The sprite selection to make a copy of.</param>
 		public ObservableSpriteSelection(IReadOnlySpriteSelection spriteSelection) {
-			GameId       = spriteSelection.GameId;
-			CharacterId  = spriteSelection.CharacterId;
+			GameId      = spriteSelection.GameId;
+			CharacterId = spriteSelection.CharacterId;
 
-			Lighting     = spriteSelection.Lighting;
-			Distance     = spriteSelection.Distance;
-			Pose         = spriteSelection.Pose;
-			Blush        = spriteSelection.Blush;
+			Lighting    = spriteSelection.Lighting;
+			Distance    = spriteSelection.Distance;
+			Pose        = spriteSelection.Pose;
+			Blush       = spriteSelection.Blush;
 
-			GroupPartIds = new ObservableArray<int>(spriteSelection.GroupPartIds);
+			GroupPartIds    = new ObservableArray<int>(spriteSelection.GroupPartIds);
+			GroupPartFrames = new ObservableArray<int>(spriteSelection.GroupPartFrames);
 		}
 
 		#endregion
@@ -139,13 +143,11 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		/// <returns>The mutable copy of the sprite selection.</returns>
 		public SpriteSelection ToMutable() => new SpriteSelection(this);
-		ISpriteSelection IReadOnlySpriteSelection.ToMutable() => ToMutable();
 		/// <summary>
 		///  Creates an immutable clone of the sprite selection.
 		/// </summary>
 		/// <returns>The immutable copy of the sprite selection.</returns>
 		public ImmutableSpriteSelection ToImmutable() => new ImmutableSpriteSelection(this);
-		IReadOnlySpriteSelection IReadOnlySpriteSelection.ToImmutable() => ToImmutable();
 
 		#endregion
 		

@@ -66,14 +66,17 @@
     <Compile Include="Attributes.cs" />
     <Compile Include="Categories\Images\CategorizationInfo.cs" />
     <Compile Include="Categories\Sprites\SpriteDrawInfo.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\IDisposableExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Geometry\Point2I.cs" />
     <Compile Include="Geometry\Thickness2I.cs" />
     <Compile Include="Rules\Images\IImageCategorizationRule.cs" />
-    <Compile Include="GrisaiaSettings.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.MinMax.object.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.Range.object.cs" />
+    <Compile Include="Utils\DisposableArray.cs" />
+    <Compile Include="Utils\DisposableCollection.cs" />
     <Compile Include="Utils\ResourceNotFoundException.cs" />
     <None Include="Categories\Backgrounds\BackgroundInfo.cs" />
     <Compile Include="Categories\CharacterDatabase.cs" />
@@ -92,7 +95,7 @@
     <Compile Include="Categories\Sprites\Selection\ImmutableSpriteSelection.cs" />
     <Compile Include="Categories\Sprites\Selection\IReadOnlySpriteSelection.cs" />
     <Compile Include="Categories\Sprites\Selection\ISpriteSelection.cs" />
-    <Compile Include="Categories\Sprites\Selection\ObservableSpriteSelection.cs" />
+    <None Include="Categories\Sprites\Selection\ObservableSpriteSelection.cs" />
     <Compile Include="Categories\Sprites\Selection\SpriteSelection.cs" />
     <Compile Include="Categories\Sprites\SpriteCategories.cs" />
     <Compile Include="Categories\Sprites\SpriteCategoryInfo.cs" />

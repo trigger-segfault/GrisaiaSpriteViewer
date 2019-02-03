@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Grisaia.Geometry;
 
 namespace Grisaia.Categories.Sprites {
@@ -10,41 +8,108 @@ namespace Grisaia.Categories.Sprites {
 	///  Draw information for a sprite selection.
 	/// </summary>
 	public class SpriteDrawInfo {
-		#region Properties
+		#region Constants
+
+		/// <summary>
+		///  Gets a sprite draw info structure that represents no sprite.
+		/// </summary>
+		public static SpriteDrawInfo None { get; } = new SpriteDrawInfo();
+
+		#endregion
+
+		#region Fields
 
 		/// <summary>
 		///  Gets the selection that created this sprite.
 		/// </summary>
-		public IReadOnlySpriteSelection Selection { get; }
+		public ImmutableSpriteSelection Selection { get; }
 		/// <summary>
-		///  Gets the list of sprite parts in order of type.
+		///  Gets the game the character is being drawn from.
 		/// </summary>
-		public IReadOnlyList<SpritePartDrawInfo> Parts { get; }
+		public GameInfo Game { get; }
+		/// <summary>
+		///  Gets the character being drawn.
+		/// </summary>
+		public CharacterInfo Character { get; }
+		/// <summary>
+		///  Gets the list of sprite draw parts in order of type.
+		/// </summary>
+		public IReadOnlyList<SpritePartDrawInfo> DrawParts { get; }
+		/// <summary>
+		///  Gets the list of actual sprite parts that are used.
+		/// </summary>
+		public IReadOnlyList<ISpritePart> SpriteParts { get; }
 		/// <summary>
 		///  Gets the total size of the sprite.
 		/// </summary>
 		public Point2I TotalSize { get; }
-
 		/// <summary>
-		///  Gets the sprite parts that are actually drawn.
+		///  Gets the draw origin of the sprite.
 		/// </summary>
-		public IEnumerable<SpritePartDrawInfo> UsedParts => Parts.Where(p => !p.IsNone);
+		public Point2I Origin { get; }
+		/// <summary>
+		///  Gets if the sprite is expanded.
+		/// </summary>
+		public bool Expand { get; }
+
+		#endregion
+
+		#region Properties
+		
+		/// <summary>
+		///  Gets the sprite draw parts that are actually drawn.
+		/// </summary>
+		public IEnumerable<SpritePartDrawInfo> UsedDrawParts => DrawParts.Where(p => !p.IsNone);
 		/// <summary>
 		///  Gets if this sprite selection has no parts to draw.
 		/// </summary>
-		public bool IsNone => !Parts.Any(p => !p.IsNone);
+		public bool IsNone => !DrawParts.Any(p => !p.IsNone);
 
 		#endregion
 
 		#region Constructors
 
+		/// <summary>
+		///  Constructs an empty unused sprite draw info.
+		/// </summary>
+		private SpriteDrawInfo() {
+			Selection = new ImmutableSpriteSelection();
+			SpritePartDrawInfo[] drawParts = new SpritePartDrawInfo[SpriteSelection.PartCount];
+			for (int i = 0; i < SpriteSelection.PartCount; i++)
+				drawParts[i] = SpritePartDrawInfo.None;
+			DrawParts = Array.AsReadOnly(drawParts);
+			SpriteParts = Array.AsReadOnly(new ISpritePart[SpriteSelection.PartCount]);
+		}
+
+		/// <summary>
+		///  Constructs the sprite draw info with the specified information.<para/>
+		///  The passed arrays must not be used elsewhere.
+		/// </summary>
+		/// <param name="selection">The sprite selection that created this draw info.</param>
+		/// <param name="game">The game the character is being drawn from.</param>
+		/// <param name="character">The character being drawn.</param>
+		/// <param name="drawParts">The sprite parts draw info.</param>
+		/// <param name="spriteParts">The actual sprite parts used.</param>
+		/// <param name="totalSize">The total size of the sprite.</param>
+		/// <param name="origin">The draw origin of the sprite.</param>
+		/// <param name="expand">True if the sprite was created with the expand setting.</param>
 		internal SpriteDrawInfo(IReadOnlySpriteSelection selection,
-							  IReadOnlyList<SpritePartDrawInfo> parts,
-							  Point2I totalSize)
+								GameInfo game,
+								CharacterInfo character,
+								SpritePartDrawInfo[] drawParts,
+								ISpritePart[] spriteParts,
+								Point2I totalSize,
+								Point2I origin,
+								bool expand)
 		{
 			Selection = selection.ToImmutable();
-			Parts = Array.AsReadOnly(parts.ToArray());
+			Game = game;
+			Character = character;
+			DrawParts = Array.AsReadOnly(drawParts);
+			SpriteParts = Array.AsReadOnly(spriteParts);
 			TotalSize = totalSize;
+			Origin = origin;
+			Expand = expand;
 		}
 
 		#endregion
@@ -62,12 +127,20 @@ namespace Grisaia.Categories.Sprites {
 
 		#endregion
 
-		#region Properties
+		#region Fields
 
+		/// <summary>
+		///  Gets the actual sprite part.
+		/// </summary>
+		public ISpritePart SpritePart { get; }
 		/// <summary>
 		///  Gets the type Id of the sprite part.
 		/// </summary>
 		public int TypeId { get; }
+		/// <summary>
+		///  Gets the frame index of the sprite part.
+		/// </summary>
+		public int Frame { get; }
 		/// <summary>
 		///  Gets the image path for the sprite part.
 		/// </summary>
@@ -80,6 +153,11 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the size of the sprite part.
 		/// </summary>
 		public Point2I Size { get; }
+
+		#endregion
+
+		#region Properties
+
 		/// <summary>
 		///  Gets if the sprite part is no selection.
 		/// </summary>
@@ -89,9 +167,11 @@ namespace Grisaia.Categories.Sprites {
 
 		#region Constructors
 
-		internal SpritePartDrawInfo() { }
+		private SpritePartDrawInfo() { }
 
-		internal SpritePartDrawInfo(int typeId,
+		internal SpritePartDrawInfo(ISpritePart spritePart,
+									int typeId,
+									int frame,
 									string imagePath,
 									Thickness2I margin,
 									Point2I size)

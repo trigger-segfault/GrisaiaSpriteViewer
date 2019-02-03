@@ -46,10 +46,6 @@ namespace Grisaia.SpriteViewer.Windows {
 		///  The last exception. Used to prevent multiple error windows for the same error.
 		/// </summary>
 		private static object lastException;
-		/// <summary>
-		///  True if an exception window is open.
-		/// </summary>
-		private static bool exceptionOpen;
 
 		#endregion
 
@@ -276,13 +272,13 @@ namespace Grisaia.SpriteViewer.Windows {
 			// Ignore these thrown by the debugger
 			if (ex is TaskCanceledException)
 				return;
-			if (ex != lastException && !exceptionOpen) {
+			if (ex != lastException && !IsExceptionOpen) {
 				//TimerEvents.PauseAll();
 				lastException = ex;
-				exceptionOpen = true;
+				IsExceptionOpen = true;
 				if (Show(ex))
 					Environment.Exit(0);
-				exceptionOpen = false;
+				IsExceptionOpen = false;
 				//TimerEvents.ResumeAll();
 			}
 		}
@@ -307,7 +303,7 @@ namespace Grisaia.SpriteViewer.Windows {
 		/// <summary>
 		///  Gets if the exception window is open.
 		/// </summary>
-		public static bool IsExceptionOpen => exceptionOpen;
+		public static bool IsExceptionOpen { get; private set; }
 
 		#endregion
 	}

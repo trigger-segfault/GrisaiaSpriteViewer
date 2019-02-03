@@ -14,7 +14,6 @@ using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.Mvvm.Converters;
 using Grisaia.Mvvm.ViewModel;
 using Grisaia.Utils;
 
@@ -291,7 +290,7 @@ namespace Grisaia.SpriteViewer.Controls {
 			BitmapImage source = new BitmapImage();
 			source.BeginInit();
 			if (ViewModelBase.IsInDesignModeStatic)
-				source.StreamSource = Embedded.Open(typeof(GrisaiaDatabase).Assembly, Embedded.Combine("GrisaiaCategorization.data.dummy", part.Hg3.GetFrameFileName(0, 0)));
+				source.StreamSource = Embedded.Open(typeof(GrisaiaDatabase).Assembly, Embedded.Combine("Grisaia.data.dummy", part.Hg3.GetFrameFileName(0, 0)));
 			else
 				source.UriSource = new Uri(part.Hg3.GetFrameFilePath(cachePath, 0, 0));
 			source.EndInit();
