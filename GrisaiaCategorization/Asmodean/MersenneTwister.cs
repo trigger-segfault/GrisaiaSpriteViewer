@@ -110,12 +110,8 @@ namespace Grisaia.Asmodean {
 
 		#region Static GenRand
 
-		public static uint GenRand(int seed) {
-			return new MersenneTwister(seed).GenRand();
-		}
-		public static uint GenRand(uint seed) {
-			return new MersenneTwister(seed).GenRand();
-		}
+		public static uint GenRand(int seed) => new MersenneTwister(seed).GenRand();
+		public static uint GenRand(uint seed) => new MersenneTwister(seed).GenRand();
 
 		#endregion
 

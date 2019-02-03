@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  An enum for determining how a KIFINT archive's files are used.

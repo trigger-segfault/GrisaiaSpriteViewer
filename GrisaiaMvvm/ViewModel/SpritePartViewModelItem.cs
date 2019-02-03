@@ -31,13 +31,13 @@ namespace Grisaia.Mvvm.ViewModel {
 		/// </summary>
 		public Thickness Margin { get; }
 		/// <summary>
-		///  Gets the width of the sprite part.
+		///  Gets the size of the sprite part.
 		/// </summary>
-		public double Width { get; }
+		public Size Size { get; }
 		/// <summary>
-		///  Gets the height of the sprite part.
+		///  Gets if the sprite part is no selection.
 		/// </summary>
-		public double Height { get; }
+		public bool IsNone => ImageSource == null;
 
 		#endregion
 
@@ -47,13 +47,11 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		public SpritePartViewModelItem(ImageSource imageSource,
 									   Thickness margin,
-									   double width,
-									   double height)
+									   Size size)
 		{
 			ImageSource = imageSource;
-			Width = width;
-			Height = height;
 			Margin = margin;
+			Size = size;
 		}
 
 		#endregion

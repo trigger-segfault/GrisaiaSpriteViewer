@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia.Asmodean {
 	partial class VCode2 {
@@ -53,8 +49,7 @@ namespace Grisaia.Asmodean {
 		[DllImport("kernel32.dll")]
 		private extern static IntPtr LockResource(
 			IntPtr hGlobal);
-
-
+		
 		[DllImport("asmodean.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[return: MarshalAs(UnmanagedType.LPStr)]
 		private extern static void DecryptVCode2(

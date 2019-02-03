@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
 	///  An interface storing an entire selection for a character sprite.
@@ -38,7 +39,11 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the sprite part group part Id selections.
 		/// </summary>
-		new int[] GroupPartIds { get; }
+		new IList<int> GroupPartIds { get; }
+		/// <summary>
+		///  Gets the sprite part group part frame index selections.
+		/// </summary>
+		new IList<int> GroupPartFrames { get; }
 
 		#endregion
 	}

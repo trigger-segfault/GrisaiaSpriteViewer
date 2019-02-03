@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
@@ -15,26 +14,37 @@ namespace Grisaia.Asmodean {
 		private static Hg3 Extract(Stream stream, string fileName, string directory, bool saveFrames, bool expand) {
 			BinaryReader reader = new BinaryReader(stream);
 			HG3HDR hdr = reader.ReadStruct<HG3HDR>();
-
+			
 			if (hdr.Signature != "HG-3")
 				throw new UnexpectedFileTypeException(fileName, "HG-3");
 
-			int backtrack = Marshal.SizeOf<HG3TAG>() - 1;
+			//int backtrack = Marshal.SizeOf<HG3TAG>() - 1;
 			List<KeyValuePair<HG3STDINFO, List<long>>> imageOffsets = new List<KeyValuePair<HG3STDINFO, List<long>>>();
+			
+			for (int i = 0; ; i++) {
 
-			for (int i = 0; true; i++) {
+				// NEW-NEW METHOD: We now know the next offset ahead
+				// of time from the HG3OFFSET we're going to read.
+				// Usually skips 0 bytes, otherwise usually 1-7 bytes.
+				long startPosition = stream.Position;
+				HG3OFFSET offset = reader.ReadStruct<HG3OFFSET>();
+				
 				HG3TAG tag = reader.ReadStruct<HG3TAG>();
-
+				if (!HG3STDINFO.HasTagSignature(tag.Signature))
+					throw new Exception("Expected \"stdinfo\" tag!");
+				
 				// NEW METHOD: Keep searching for the next stdinfo
 				// This way we don't miss any images
+				/*int offset = 0;
 				while (!tag.Signature.StartsWith("stdinfo")) {
 					if (stream.IsEndOfStream())
 						break;
 					stream.Position -= backtrack;
 					tag = reader.ReadStruct<HG3TAG>();
+					offset++;
 				}
 				if (stream.IsEndOfStream())
-					break;
+					break;*/
 
 				// OLD METHOD: Missed entries in a few files
 				//if (!tag.signature.StartsWith(StdInfoSignature))
@@ -47,14 +57,22 @@ namespace Grisaia.Asmodean {
 
 				while (tag.OffsetNext != 0) {
 					tag = reader.ReadStruct<HG3TAG>();
+					
 					string signature = tag.Signature;
 					if (HG3IMG.HasTagSignature(signature)) { // "img####"
-						if (saveFrames)
-							frameOffsets.Add(stream.Position);
+						frameOffsets.Add(stream.Position);
 						// Skip this tag
 						stream.Position += tag.Length;
 					}
-					/*else if (HG3IMG_AL.HasTagSignature(signature)) { // "img_al"
+					/*else if (HG3ATS.HasTagSignature(signature)) { // "ats####"
+						// Skip this tag
+						stream.Position += tag.Length;
+					}
+					else if (HG3CPTYPE.HasTagSignature(signature)) { // "cptype"
+						// Skip this tag
+						stream.Position += tag.Length;
+					}
+					else if (HG3IMG_AL.HasTagSignature(signature)) { // "img_al"
 						// Skip this tag
 						stream.Position += tag.Length;
 					}
@@ -72,13 +90,15 @@ namespace Grisaia.Asmodean {
 					}
 				}
 
-				stream.Position += 8;
+				if (offset.OffsetNext == 0)
+					break; // End of stream
+
+				stream.Position = startPosition + offset.OffsetNext;
 			}
 
 			HG3STDINFO[] stdInfos = imageOffsets.Select(p => p.Key).ToArray();
 			long[][] allFrameOffsets = imageOffsets.Select(p => p.Value.ToArray()).ToArray();
 			Hg3 hg3 = new Hg3(Path.GetFileName(fileName), hdr, stdInfos, allFrameOffsets, saveFrames && expand);
-
 			// Save any frames after we've located them all.
 			// This way we truely know if something is an animation.
 			if (saveFrames) {
@@ -92,22 +112,8 @@ namespace Grisaia.Asmodean {
 						ExtractBitmap(reader, stdInfo, imghdr, expand, pngFile);
 					}
 				}
-				/*int imgIndex = 0;
-				foreach (var pair in imageOffsets) {
-					HG3STDINFO stdInfo = pair.Key;
-					List<long> frameOffsets = pair.Value;
-					int frmIndex = 0;
-					foreach (long offset in frameOffsets) {
-						stream.Position = offset;
-						HG3IMG imghdr = reader.ReadStruct<HG3IMG>();
-						string pngFile = hg3.GetFrameFilePath(directory, imgIndex, frmIndex);
-						ExtractBitmap(reader, stdInfo, imghdr, expand, pngFile);
-						frmIndex++;
-					}
-					imgIndex++;
-				}*/
 			}
-
+			
 			return hg3;
 		}
 

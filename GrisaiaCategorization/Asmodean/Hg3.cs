@@ -11,33 +11,38 @@ namespace Grisaia.Asmodean {
 	/// </summary>
 	[JsonObject]
 	public sealed partial class Hg3 : IReadOnlyCollection<Hg3Image> {
+		#region Constants
+
+		/// <summary>
+		///  The current file version for the HG-3.
+		/// </summary>
+		public const int CurrentVersion = 2;
+
+		#endregion
+
 		#region Fields
+
+		/// <summary>
+		///  Gets the file version of the loaded HG-3.
+		/// </summary>
+		[JsonProperty("version")]
+		public int Version { get; private set; }
 
 		/// <summary>
 		///  Gets the file name of the HG-3 file with the .hg3 extension.
 		/// </summary>
 		[JsonProperty("file_name")]
 		public string FileName { get; private set; }
-		/// <summary>
-		///  Unknown 4-byte value 1.
+		/*/// <summary>
+		///  The size of the HG-3 header.
 		/// </summary>
-		[JsonProperty("unknown_1")]
-		public int Unknown1 { get; private set; }
+		[JsonProperty("header_size")]
+		public int HeaderSize { get; private set; }*/
 		/// <summary>
-		///  Unknown 4-byte value 2.
+		///  Unknown 4-byte value.
 		/// </summary>
-		[JsonProperty("unknown_2")]
-		public int Unknown2 { get; private set; }
-		/// <summary>
-		///  Unknown 4-byte value 3.
-		/// </summary>
-		[JsonProperty("unknown_3")]
-		public int Unknown3 { get; private set; }
-		/// <summary>
-		///  Gets the number of entries in the HG3 structure. This field doesn't seem to be very reliable.
-		/// </summary>
-		[JsonProperty("entry_count")]
-		public int EntryCount { get; private set; }
+		[JsonProperty("unknown")]
+		public int Unknown { get; private set; }
 		/// <summary>
 		///  Gets if the HG-3 frames were saved while expended.
 		/// </summary>
@@ -70,22 +75,18 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Gets if this HG-3 has multiple frames. This also means the file name will have a +###[+###] at the end.
 		/// </summary>
-		[JsonIgnore]
 		public bool IsAnimation => Images.Count != 1 || Images[0].FrameCount != 1;
 		/// <summary>
 		///  Gets the number of HG-3 images in <see cref="Images"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int Count => Images.Count;
 		/// <summary>
 		///  Gets the total number of frames in this HG-3.
 		/// </summary>
-		[JsonIgnore]
 		public int FrameCount => Images.Sum(i => i.FrameCount);
 		/// <summary>
 		///  Gets the name of the file for loading the <see cref="Hg3"/> data.
 		/// </summary>
-		[JsonIgnore]
 		public string JsonFileName => GetJsonFileName(FileName);
 
 		#endregion
@@ -105,11 +106,11 @@ namespace Grisaia.Asmodean {
 		/// <param name="frameOffsets">The frame offsets for each image frame entry in the HG-3 file.</param>
 		/// <param name="expand">True if the images were extracted while <paramref name="expand"/> was true.</param>
 		private Hg3(string fileName, Hg3.HG3HDR hdr, Hg3.HG3STDINFO[] stdInfos, long[][] frameOffsets, bool expand) {
+			Version = CurrentVersion;
 			FileName = fileName;
-			Unknown1 = hdr.Unknown1;
-			Unknown2 = hdr.Unknown2;
-			Unknown3 = hdr.Unknown3;
-			EntryCount = hdr.EntryCount;
+			Unknown = hdr.Unknown;
+			//Unknown3 = hdr.Unknown3;
+			//EntryCount = hdr.EntryCount;
 			Expanded = expand;
 			Hg3Image[] images = new Hg3Image[stdInfos.Length];
 			for (int i = 0; i < images.Length; i++) {

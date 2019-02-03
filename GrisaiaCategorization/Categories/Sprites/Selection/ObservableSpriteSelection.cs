@@ -42,9 +42,15 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the sprite part group part Id selections.
 		/// </summary>
-		public ObservableArray<int> GroupPartIds { get; private set; }
-		int[] ISpriteSelection.GroupPartIds => GroupPartIds.ToArray();
+		public ObservableArray<int> GroupPartIds { get; }
+		IList<int> ISpriteSelection.GroupPartIds => GroupPartIds.ToArray();
 		IReadOnlyList<int> IReadOnlySpriteSelection.GroupPartIds => GroupPartIds;
+		/// <summary>
+		///  Gets the sprite part group part frame index selections.
+		/// </summary>
+		public ObservableArray<int> GroupPartFrames { get; }
+		IList<int> ISpriteSelection.GroupPartFrames => GroupPartFrames;
+		IReadOnlyList<int> IReadOnlySpriteSelection.GroupPartFrames => GroupPartFrames;
 
 		#endregion
 
@@ -173,7 +179,8 @@ namespace Grisaia.Categories.Sprites {
 					Distance == other.Distance &&
 					Pose == other.Pose &&
 					Blush == other.Blush &&
-					GroupPartIds.SequenceEqual(other.GroupPartIds);
+					GroupPartIds.SequenceEqual(other.GroupPartIds) &&
+					GroupPartFrames.SequenceEqual(other.GroupPartFrames);
 		}
 
 		#endregion
@@ -192,7 +199,7 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the <see cref="GroupPartIds"/>, as a single hash code.
 		/// </summary>
-		private int GroupPartsHashCode => SpriteSelection.GetGroupPartsHashCode(GroupPartIds);
+		private int GroupPartsHashCode => SpriteSelection.GetGroupPartsHashCode(GroupPartIds, GroupPartFrames);
 		
 		#endregion
 	}

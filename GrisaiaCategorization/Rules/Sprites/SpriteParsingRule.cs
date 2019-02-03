@@ -60,7 +60,7 @@ namespace Grisaia.Rules.Sprites {
 		/// <summary>
 		///  Gets the sprite should be ignored if matched.
 		/// </summary>
-		public virtual bool IgnoreSprite => false;
+		public virtual bool Ignore => false;
 
 		#endregion
 

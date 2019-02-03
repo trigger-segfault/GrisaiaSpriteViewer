@@ -26,14 +26,14 @@ namespace Grisaia.SpriteViewer {
 	public partial class SpriteSelectionWindow : Window {
 		#region Fields
 		
-		private double scale = 1.0;
-		private bool centered = true;
-		private int currentWidth = 0;
-		private int currentHeight = 0;
-		private Thickness expandShrink;
+		//private double scale = 1.0;
+		//private bool centered = true;
+		//private int currentWidth = 0;
+		//private int currentHeight = 0;
+		//private Thickness expandShrink;
 
-		private double savedScale = 1.0;
-		private Vector savedNormalizedScroll = new Vector(-1, -1);
+		//private double savedScale = 1.0;
+		//private Vector savedNormalizedScroll = new Vector(-1, -1);
 
 		private bool supressEvents = false;
 
@@ -200,9 +200,11 @@ namespace Grisaia.SpriteViewer {
 		}
 
 		private System.Drawing.Bitmap BuildImage() {
-			var usedParts = ViewModel.CurrentParts.Where(p => p != null);
+			return null;
+			// TODO: Move to View Model
+			/*var usedParts = ViewModel.CurrentParts.Where(p => p != null);
 			string dir = Path.Combine(AppContext.BaseDirectory, "cache", ViewModel.CurrentGame.Id);
-			var bitmap = new System.Drawing.Bitmap(currentWidth, currentHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			var bitmap = new System.Drawing.Bitmap((int) ViewModel.SpriteSize.Width, (int) ViewModel.SpriteSize.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			try {
 				using (var g = System.Drawing.Graphics.FromImage(bitmap)) {
 					g.Clear(System.Drawing.Color.Transparent);
@@ -220,7 +222,7 @@ namespace Grisaia.SpriteViewer {
 				// Only dispose on exception
 				bitmap.Dispose();
 				throw;
-			}
+			}*/
 		}
 
 		private string GetSpriteUniqueId() {

@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Games.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -35,6 +31,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj" />
     <ContentWithTargetPath Include="..\Asmodean\bin\Release\zlib1.dll">
       <TargetPath>zlib1.dll</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

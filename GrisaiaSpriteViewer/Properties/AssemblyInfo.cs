@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Grisaia Sprite Viewer")]
+[assembly: AssemblyTitle("Grisaia Extract Sprite Viewer")]
 [assembly: AssemblyDescription("A sprite viewer and saver for the original Grisaia Games")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Trigger's Tools & Games")]
-[assembly: AssemblyProduct("GrisaiaSpriteViewer")]
+[assembly: AssemblyProduct("GrisaiaExtractSpriteViewer")]
 [assembly: AssemblyCopyright("Copyright © Robert Jordan {YEAR}")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

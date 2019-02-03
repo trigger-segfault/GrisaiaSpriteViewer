@@ -121,10 +121,10 @@ namespace Grisaia.Categories {
 			internal set {
 				parent = value ?? throw new ArgumentNullException(nameof(Parent));
 
-				if (FirstName != null) FirstName = value.FirstName;
-				if (LastName != null) LastName = value.LastName;
-				if (Nickname != null) Nickname = value.Nickname;
-				if (Title != null) Title = value.Title;
+				if (FirstName == null) FirstName = value.FirstName;
+				if (LastName == null) LastName = value.LastName;
+				if (Nickname == null) Nickname = value.Nickname;
+				if (Title == null) Title = value.Title;
 			}
 		}
 

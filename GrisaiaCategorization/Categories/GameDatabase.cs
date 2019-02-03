@@ -130,11 +130,6 @@ namespace Grisaia.Categories {
 		/// </summary>
 		[JsonIgnore]
 		private readonly IReadOnlyList<GameInfo> locatedReadonlyList;
-		/*/// <summary>
-		///  The path leading to where cached .intlookup files are stored.
-		/// </summary>
-		[JsonIgnore]
-		private string cachePath = Path.Combine(AppContext.BaseDirectory, "cache");*/
 		/// <summary>
 		///  The naming scheme used for games.
 		/// </summary>
@@ -165,20 +160,6 @@ namespace Grisaia.Categories {
 			get => namingScheme;
 			set => namingScheme = value ?? throw new ArgumentNullException(nameof(NamingScheme));
 		}
-		/*/// <summary>
-		///  Gets or sets the path leading to where cached .intlookup files are stored.
-		/// </summary>
-		[JsonIgnore]
-		public string CachePath {
-			get => cachePath;
-			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(CachePath));
-				if (string.IsNullOrWhiteSpace(value) || !PathUtils.IsValidPath(value))
-					throw new ArgumentException($"{nameof(CachePath)} is invalid!");
-				cachePath = value;
-			}
-		}*/
 		/// <summary>
 		///  Gets the number of total Grisaia games in the database.
 		/// </summary>
@@ -251,19 +232,6 @@ namespace Grisaia.Categories {
 			foreach (GameInfo game in gameList) {
 				if (game.LoadGame(steamLibraries))
 					locatedGameList.Add(game);
-				/*string installDir = null;
-				if (installDir == null && game.SteamId.HasValue && steamLibraries != null) {
-					installDir = SteamLocator.LocateGame(steamLibraries, game.SteamId.Value);
-				}
-				if (installDir == null && game.FrontwingRegistryValue != null) {
-					installDir = FrontwingLocator.LocateGame(game.FrontwingRegistryValue);
-				}
-				// We should still set this to null if we lost the install path
-				game.InstallDir = installDir;
-				game.ImageLookup = null; // We'll want to reload this if something has changed.
-				if (installDir != null) {
-					locatedGameList.Add(game);
-				}*/
 			}
 			return locatedGameList.Count > 0;
 		}
@@ -271,19 +239,7 @@ namespace Grisaia.Categories {
 		#endregion
 
 		#region Accessors
-
-		/*/// <summary>
-		///  Gets the game info at the specified index in the list.
-		/// </summary>
-		/// <param name="index">The index of the game info to get.</param>
-		/// <returns>The game info at the specified index in the list.</returns>
-		/// 
-		/// <exception cref="IndexOutOfRangeException">
-		///  <paramref name="index"/> the index was outside the bounds of the list.
-		/// </exception>
-		public GameInfo At(int index) {
-			return gameList[index];
-		}*/
+		
 		/// <summary>
 		///  Gets the game info with the specified Id.
 		/// </summary>

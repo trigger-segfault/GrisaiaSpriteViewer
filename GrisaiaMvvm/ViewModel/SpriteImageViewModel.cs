@@ -236,8 +236,7 @@ namespace Grisaia.Mvvm.ViewModel {
 					SpriteParts[typeId] = new SpritePartViewModelItem(
 						source,
 						margin,
-						size.Width,
-						size.Height);
+						size);
 				}
 				else {
 					SpriteParts[typeId] = SpritePartViewModelItem.None;

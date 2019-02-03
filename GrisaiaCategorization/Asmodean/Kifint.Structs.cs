@@ -9,6 +9,8 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8, CharSet = CharSet.Ansi)]
 		internal struct KIFHDR {
+			#region Fields
+
 			/// <summary>
 			///  The raw character array signature of the file.
 			/// </summary>
@@ -19,22 +21,34 @@ namespace Grisaia.Asmodean {
 			/// </summary>
 			public int EntryCount;
 
+			#endregion
+
+			#region Properties
+
 			/// <summary>
 			///  Gets the signature of the file.
 			/// </summary>
 			public string Signature => SignatureRaw.ToNullTerminatedString();
+
+			#endregion
 		}
 		/// <summary>
 		///  The entry structure for a KIFINT archive.
 		/// </summary>
 		[StructLayout(LayoutKind.Explicit, Pack = 1, Size = 72, CharSet = CharSet.Ansi)]
 		internal struct KIFENTRY {
+			#region Constants
+
 			/// <summary>
 			///  We use this to preserve the developer naming fuckups such as the full-width 'ｇ' in Meikyuu's
 			///  "bｇ62t.hg3".
 			/// </summary>
 			private static readonly Encoding JapaneseEncoding = Encoding.GetEncoding(932);
 
+			#endregion
+
+			#region Fields
+			
 			/// <summary>
 			///  The raw character array filename of the entry.
 			/// </summary>
@@ -57,10 +71,16 @@ namespace Grisaia.Asmodean {
 			[FieldOffset(68)]
 			public int Length;
 
+			#endregion
+
+			#region Properties
+
 			/// <summary>
 			///  Gets the filename of the entry.
 			/// </summary>
 			public string FileName => FileNameRaw.ToNullTerminatedString(JapaneseEncoding);
+
+			#endregion
 		}
 		/// <summary>
 		///  We don't need to pass the <see cref="KIFENTRY.FileNameRaw"/> during P/Invoke, so we have this info

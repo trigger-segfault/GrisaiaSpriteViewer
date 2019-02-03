@@ -41,6 +41,10 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the sprite part group part Id selections.
 		/// </summary>
 		IReadOnlyList<int> GroupPartIds { get; }
+		/// <summary>
+		///  Gets the sprite part group part frame index selections.
+		/// </summary>
+		IReadOnlyList<int> GroupPartFrames { get; }
 
 		#endregion
 

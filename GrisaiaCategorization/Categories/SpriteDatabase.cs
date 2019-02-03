@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -335,7 +337,7 @@ namespace Grisaia.Categories {
 						foreach (ISpriteParsingRule rule in defaultRules) {
 							if (rule.TryParse(fileName, out SpriteInfo sprite)) {
 								parsed = true;
-								if (rule.IgnoreSprite) {
+								if (rule.Ignore) {
 									ignored = true;
 									break;
 								}
@@ -484,7 +486,7 @@ namespace Grisaia.Categories {
 						foreach (ISpriteParsingRule rule in defaultRules) {
 							if (rule.TryParse(kif.FileName, out SpriteInfo sprite)) {
 								parsed = true;
-								if (rule.IgnoreSprite) {
+								if (rule.Ignore) {
 									ignored = true;
 									break;
 								}
@@ -714,6 +716,42 @@ namespace Grisaia.Categories {
 		/// </summary>
 		/// <returns>The created empty group part.</returns>
 		public ISpritePartGroupPart CreateNoneGroupPart() => SpritePartGroupPart.None;
+
+		#endregion
+
+		#region BuildSpite
+
+		/*public Bitmap BuildSprite(IReadOnlySpriteSelection selection) {
+			return BuildSprite(selection, Color.Transparent);
+		}
+		public Bitmap BuildSprite(IReadOnlySpriteSelection selection, Color background) {
+			ISpritePart[] parts = GetSpriteParts(selection, out GameInfo game, out _);
+			var usedParts = parts.Where(p => p != null);
+			var usedHg3s = usedParts.Select(h => h.Hg3.Images[0]);
+			string cachePath = game.CachePath;
+			
+			PixelFormat format = PixelFormat.Format32bppArgb;
+			if (background.A == 255)
+				format = PixelFormat.Format24bppRgb;
+			var bitmap = new Bitmap((int) ViewModel.SpriteSize.Width, (int) ViewModel.SpriteSize.Height, format);
+			try {
+				using (var g = Graphics.FromImage(bitmap)) {
+					g.Clear(background);
+					foreach (var part in usedParts) {
+						string partFile = part.Hg3.GetFrameFilePath(cachePath, 0, 0);
+						using (var partBitmap = Image.FromFile(partFile))
+							g.DrawImageUnscaled(partBitmap,
+								part.Hg3.Images[0].MarginLeft - (int) Math.Round(expandShrink.Left),
+								part.Hg3.Images[0].MarginTop - (int) Math.Round(expandShrink.Top));
+					}
+				}
+				return bitmap;
+			} catch {
+				// Only dispose on exception
+				bitmap.Dispose();
+				throw;
+			}
+		}*/
 
 		#endregion
 	}

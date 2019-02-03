@@ -23,7 +23,6 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Gets the file name of the image with the .hg3 extension.
 		/// </summary>
-		[JsonIgnore]
 		//public string FileName { get; private set; }
 		public string FileName => Hg3.FileName;
 
@@ -69,6 +68,11 @@ namespace Grisaia.Asmodean {
 		[JsonProperty("frame_count")]
 		public int FrameCount { get; private set; }
 		/// <summary>
+		///  This is likely a boolean value that determines if transparency is used by the image.
+		/// </summary>
+		[JsonProperty("has_transparency")]
+		public int HasTransparency { get; private set; }
+		/// <summary>
 		///  Gets the horizontal center of the image. Used for drawing in the game.
 		/// </summary>
 		[JsonProperty("center")]
@@ -93,81 +97,47 @@ namespace Grisaia.Asmodean {
 		///  Gets the left margin of the image when expanded.<para/>
 		///  This is the same as <see cref="OffsetX"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int MarginLeft => OffsetX;
 		/// <summary>
 		///  Gets the top margin of the image when expanded.<para/>
 		///  This is the same as <see cref="OffsetY"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int MarginTop => OffsetY;
 		/// <summary>
 		///  Gets the right margin of the image when expanded.<para/>
 		///  This is the same as <see cref="TotalWidth"/> - <see cref="Width"/> - <see cref="OffsetX"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int MarginRight => TotalWidth - Width - OffsetX;
 		/// <summary>
 		///  Gets the bottom margin of the image when expanded.<para/>
 		///  This is the same as <see cref="TotalHeight"/> - <see cref="Height"/> - <see cref="OffsetY"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int MarginBottom => TotalHeight - Height - OffsetY;
 
 		/// <summary>
 		///  Gets the distance to the center from the left of the image when expanded.<para/>
 		///  This is the same as <see cref="Center"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int CenterLeft => Center;
 		/// <summary>
 		///  Gets the distance to the baseline from the top of the image when expanded.<para/>
 		///  This is the same as <see cref="Baseline"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int BaselineTop => Baseline;
 		/// <summary>
 		///  Gets the distance to the center from the right of the image when expanded.<para/>
 		///  This is the same as <see cref="TotalWidth"/> - <see cref="Center"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int CenterRight => TotalWidth - Center;
 		/// <summary>
 		///  Gets the distance to the baseline from the bottom of the image when expanded.<para/>
 		///  This is the same as <see cref="TotalHeight"/> - <see cref="Baseline"/>.
 		/// </summary>
-		[JsonIgnore]
 		public int BaselineBottom => TotalHeight - Baseline;
-
-		/*/// <summary>
-		///  Gets the distance to the center from the left of the image when expanded.<para/>
-		///  This is the same as <see cref="Center"/>.
-		/// </summary>
-		[JsonIgnore]
-		public int CenterLeft => Center;
-		/// <summary>
-		///  Gets the distance to the baseline from the top of the image when expanded.<para/>
-		///  This is the same as <see cref="Baseline"/>.
-		/// </summary>
-		[JsonIgnore]
-		public int BaselineTop => Baseline;
-		/// <summary>
-		///  Gets the distance to the center from the right of the image when expanded.<para/>
-		///  This is the same as <see cref="TotalWidth"/> - <see cref="Center"/>.
-		/// </summary>
-		[JsonIgnore]
-		public int CenterRight => TotalWidth - Center;
-		/// <summary>
-		///  Gets the distance to the baseline from the bottom of the image when expanded.<para/>
-		///  This is the same as <see cref="TotalHeight"/> - <see cref="Baseline"/>.
-		/// </summary>
-		[JsonIgnore]
-		public int BaselineBottom => TotalHeight - Baseline;*/
 
 		/// <summary>
 		///  Gets if this HG-3 image has multiple frames. This also means the file name will have a +###+### at the end.
 		/// </summary>
-		[JsonIgnore]
 		public bool IsAnimation => FrameCount != 1;
 
 		#endregion
@@ -190,6 +160,7 @@ namespace Grisaia.Asmodean {
 			Hg3 = hg3;
 			ImageIndex = imageIndex;
 			FrameOffsets = Array.AsReadOnly(frameOffsets);
+			FrameCount = FrameOffsets.Count; // Todo: Eliminate frame offsets
 
 			Width = stdInfo.Width;
 			Height = stdInfo.Height;
@@ -197,7 +168,8 @@ namespace Grisaia.Asmodean {
 			TotalHeight = stdInfo.TotalHeight;
 			OffsetX = stdInfo.OffsetX;
 			OffsetY = stdInfo.OffsetY;
-			FrameCount = stdInfo.FrameCount;
+			DepthBits = stdInfo.DepthBits;
+			HasTransparency = stdInfo.HasTransparency;
 			Center = stdInfo.Center;
 			Baseline = stdInfo.Baseline;
 		}

@@ -158,5 +158,66 @@ namespace Grisaia.Extensions {
 		}
 
 		#endregion
+
+		#region SkipPadding
+
+		/// <summary>
+		///  Advances the position in the stream to conform to a padding amount.
+		/// </summary>
+		/// <param name="stream">The stream to advance.</param>
+		/// <param name="padding">The padding to conform to.</param>
+		/// <returns>The amount of bytes skipped.</returns>
+		/// 
+		/// <exception cref="ArgumentOutOfRangeException">
+		///  <paramref name="padding"/> is less than or equal to zero..
+		/// </exception>
+		/// <exception cref="IOException">
+		///  An I/O error occurred.
+		/// </exception>
+		/// <exception cref="NotSupportedException">
+		///  The stream does not support seeking or reading.
+		/// </exception>
+		/// <exception cref="ObjectDisposedException">
+		///  The stream is closed.
+		/// </exception>
+		public static int SkipPadding(this Stream stream, int padding) {
+			return stream.SkipPadding(padding, 0);
+		}
+		/// <summary>
+		///  Advances the position in the stream to conform to a padding amount with the supplied additional offset.
+		/// </summary>
+		/// <param name="stream">The stream to advance.</param>
+		/// <param name="padding">The padding to conform to.</param>
+		/// <param name="offset">The additional offset before the padding is calculated.</param>
+		/// <returns>The amount of bytes skipped.</returns>
+		/// 
+		/// <exception cref="ArgumentOutOfRangeException">
+		///  <paramref name="padding"/> is less than or equal to zero.-or- <paramref name="offset"/> is less than zero
+		///  or greater than or equal to <paramref name="padding"/>.
+		/// </exception>
+		/// <exception cref="IOException">
+		///  An I/O error occurred.
+		/// </exception>
+		/// <exception cref="NotSupportedException">
+		///  The stream does not support seeking or reading.
+		/// </exception>
+		/// <exception cref="ObjectDisposedException">
+		///  The stream is closed.
+		/// </exception>
+		public static int SkipPadding(this Stream stream, int padding, int offset) {
+			if (padding <= 0)
+				throw ArgumentOutOfRangeUtils.OutsideMin(nameof(padding), padding, 1, false);
+			if (offset < 0 || offset >= padding)
+				throw ArgumentOutOfRangeUtils.OutsideRange(nameof(offset), padding, 0, nameof(padding), padding, true,
+					false);
+			int count = (int) ((stream.Position + (padding - offset)) % padding);
+			if (count != 0) {
+				count = (padding - count);
+				stream.Skip(count);
+			}
+			return 0;
+		}
+
+		#endregion
 	}
 }

@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
-                    xmlns:conv="clr-namespace:Grisaia.Mvvm.Converters;assembly=GrisaiaMvvm"
-                    xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaMvvm">
+                    xmlns:conv="clr-namespace:Grisaia.Mvvm.Converters;assembly=GrisaiaExtractMvvm"
+                    xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
   <Style x:Key="{x:Type local:SpriteCategoryComboBox}" TargetType="{x:Type local:SpriteCategoryComboBox}">
     <Setter Property="Template">
       <Setter.Value>
@@ -103,8 +103,8 @@
                   <Image Visibility="{Binding ImageSource, Converter={conv:CollapsedWhenNull}}"
                          Source="{Binding ImageSource}"
                          Margin="{Binding Margin}"
-                         Width="{Binding Width}"
-                         Height="{Binding Height}"/>
+                         Width="{Binding Size.Width}"
+                         Height="{Binding Size.Height}"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>

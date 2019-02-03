@@ -142,19 +142,7 @@ namespace Grisaia.Categories {
 		#endregion
 
 		#region Accessors
-
-		/*/// <summary>
-		///  Gets the character info at the specified index in the list.
-		/// </summary>
-		/// <param name="index">The index of the character info to get.</param>
-		/// <returns>The character info at the specified index.</returns>
-		/// 
-		/// <exception cref="IndexOutOfRangeException">
-		///  <paramref name="index"/> the index was outside the bounds of the list.
-		/// </exception>
-		public CharacterInfo At(int index) {
-			return characterList[index];
-		}*/
+		
 		/// <summary>
 		///  Gets the character info with the specified Id.
 		/// </summary>

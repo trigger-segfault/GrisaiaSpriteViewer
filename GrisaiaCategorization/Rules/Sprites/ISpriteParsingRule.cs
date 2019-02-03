@@ -11,7 +11,7 @@ namespace Grisaia.Rules.Sprites {
 		/// <summary>
 		///  Gets the sprite should be ignored if matched.
 		/// </summary>
-		bool IgnoreSprite { get; }
+		bool Ignore { get; }
 
 		#endregion
 
