@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using GalaSoft.MvvmLight;
 using Grisaia.Asmodean;
 using Grisaia.Locators;
 using Newtonsoft.Json;
@@ -96,7 +97,7 @@ namespace Grisaia.Categories {
 	///  A game database storing all Grisaia games  along with their information.
 	/// </summary>
 	[JsonObject]
-	public sealed class GameDatabase : IReadOnlyCollection<GameInfo> {
+	public sealed class GameDatabase : ObservableObject, IReadOnlyCollection<GameInfo> {
 		#region Fields
 
 		/// <summary>
@@ -158,7 +159,11 @@ namespace Grisaia.Categories {
 		[JsonIgnore]
 		public GameNamingScheme NamingScheme {
 			get => namingScheme;
-			set => namingScheme = value ?? throw new ArgumentNullException(nameof(NamingScheme));
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(NamingScheme));
+				Set(ref namingScheme, value);
+			}
 		}
 		/// <summary>
 		///  Gets the number of total Grisaia games in the database.
@@ -217,6 +222,8 @@ namespace Grisaia.Categories {
 				if (game.LoadDummyGame())
 					locatedGameList.Add(game);
 			}
+			RaisePropertyChanged(nameof(LocatedGames));
+			RaisePropertyChanged(nameof(LocatedCount));
 			return locatedGameList.Count > 0;
 		}
 		/// <summary>
@@ -233,6 +240,8 @@ namespace Grisaia.Categories {
 				if (game.LoadGame(steamLibraries))
 					locatedGameList.Add(game);
 			}
+			RaisePropertyChanged(nameof(LocatedGames));
+			RaisePropertyChanged(nameof(LocatedCount));
 			return locatedGameList.Count > 0;
 		}
 

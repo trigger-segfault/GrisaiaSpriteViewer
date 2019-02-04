@@ -41,9 +41,7 @@ namespace Grisaia.SpriteViewer.Controls {
 			DependencyProperty.Register(
 				"ShowGridLines",
 				typeof(bool),
-				typeof(SpriteSelectionViewer),
-				new FrameworkPropertyMetadata(
-					OnShowGridLinesChanged));
+				typeof(SpriteSelectionViewer));
 		public static readonly DependencyProperty SpriteSizeProperty =
 			DependencyProperty.Register(
 				"SpriteSize",
@@ -71,11 +69,6 @@ namespace Grisaia.SpriteViewer.Controls {
 			if (!control.IsEmpty)
 				control.UpdatePartChanges();
 			//control.UpdateExpand();
-		}
-		private static void OnShowGridLinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SpriteSelectionViewer control = (SpriteSelectionViewer) d;
-			if (!control.IsEmpty)
-				control.UpdateLines();
 		}
 		private static void OnSpriteSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionViewer control = (SpriteSelectionViewer) d;

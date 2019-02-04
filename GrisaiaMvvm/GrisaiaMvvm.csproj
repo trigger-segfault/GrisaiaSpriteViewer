@@ -66,6 +66,8 @@
     <Compile Include="ViewModelRelayCommand.cs" />
     <Compile Include="ViewModelWindow.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
+    <Compile Include="ViewModel\Messages\OpenLoadingWindowMessage.cs" />
+    <Compile Include="ViewModel\SettingsViewModel.Commands.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SpriteDrawInfoViewModel.cs" />
     <Compile Include="ViewModel\SpritePartDrawInfoViewModel.cs" />

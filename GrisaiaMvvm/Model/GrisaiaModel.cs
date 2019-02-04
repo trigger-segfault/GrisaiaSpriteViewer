@@ -12,7 +12,16 @@ namespace Grisaia.Mvvm.Model {
 	public class GrisaiaModel : GrisaiaDatabase {
 		#region Fields
 
-		public SpriteViewerSettings Settings { get; }
+		private SpriteViewerSettings settings;
+
+		#endregion
+
+		#region Properties
+
+		public SpriteViewerSettings Settings {
+			get => settings;
+			set => Set(ref settings, value);
+		}
 
 		#endregion
 
@@ -23,12 +32,23 @@ namespace Grisaia.Mvvm.Model {
 			try {
 				if (!ViewModelBase.IsInDesignModeStatic) {
 					Settings = JsonConvert.DeserializeObject<SpriteViewerSettings>(File.ReadAllText(configFile));
+					Settings.GrisaiaDatabase = this;
 					return;
 				}
 			} catch { }
 			Settings = new SpriteViewerSettings();
 			if (!ViewModelBase.IsInDesignModeStatic)
 				File.WriteAllText(configFile, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+			Settings.GrisaiaDatabase = this;
+		}
+
+		#endregion
+
+		#region Settings
+
+		public void SaveSettings() {
+			string configFile = Path.Combine(AppContext.BaseDirectory, "config.json");
+			File.WriteAllText(configFile, JsonConvert.SerializeObject(Settings));
 		}
 
 		#endregion

@@ -77,6 +77,7 @@
     <Compile Include="Controls\SpritePartGroupComboBox.cs" />
     <Compile Include="Controls\SpriteSelectionControl.cs" />
     <Compile Include="Controls\SpriteSelectionViewer.cs" />
+    <Compile Include="Converters\EnumToName.cs" />
     <Compile Include="Converters\BooleanWhenEqual.cs" />
     <Compile Include="Converters\CollapsedWhenBoolean.cs" />
     <Compile Include="Converters\CollapsedWhenNull.cs" />
@@ -136,6 +137,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Themes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\ErrorMessageBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -184,6 +189,25 @@
     <PackageReference Include="TriggersTools.Build.CopyrightYear">
       <Version>1.0.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ArrowUp.png" />
+    <Resource Include="Resources\Icons\ArrowDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\DiskBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\DocumentCopy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Equalizer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Gear.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

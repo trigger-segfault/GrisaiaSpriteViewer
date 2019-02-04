@@ -48,5 +48,14 @@ namespace Grisaia.Mvvm {
 		}
 
 		#endregion
+
+		#region Virtual Methods
+
+		/// <summary>
+		///  Called when the window loads the view model.
+		/// </summary>
+		public virtual void Loaded() { }
+
+		#endregion
 	}
 }

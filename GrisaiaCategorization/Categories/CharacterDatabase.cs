@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
@@ -11,7 +12,7 @@ namespace Grisaia.Categories {
 	///  A database for storing all known character infos along with their information.
 	/// </summary>
 	[JsonObject]
-	public sealed class CharacterDatabase : IReadOnlyCollection<CharacterInfo> {
+	public sealed class CharacterDatabase : ObservableObject, IReadOnlyCollection<CharacterInfo> {
 		#region Fields
 
 		/// <summary>
@@ -125,7 +126,11 @@ namespace Grisaia.Categories {
 		[JsonIgnore]
 		public CharacterNamingScheme NamingScheme {
 			get => namingScheme;
-			set => namingScheme = value ?? throw new ArgumentNullException(nameof(NamingScheme));
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(NamingScheme));
+				Set(ref namingScheme, value);
+			}
 		}
 		/// <summary>
 		///  Gets the character info at the specified index in the list.

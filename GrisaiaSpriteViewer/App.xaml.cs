@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using GalaSoft.MvvmLight.Messaging;
+using Grisaia.Mvvm.ViewModel.Messages;
 using Grisaia.SpriteViewer.ViewModel;
 using Grisaia.SpriteViewer.Windows;
 
@@ -54,7 +56,12 @@ namespace Grisaia.SpriteViewer {
 
 		private void OnAppStartup(object sender, StartupEventArgs e) {
 			Locator = (ViewModelLocator) FindResource("Locator");
-			Locator.Loading.LoadEverything.Execute();
+			//Locator.Loading.LoadEverything.Execute();
+			Locator.Messenger.Send(new OpenLoadingWindowMessage {
+				LoadEverything = true,
+				OpenSpriteSelectionWindow = true,
+				ShowDialog = false,
+			});
 		}
 
 		/// <summary>

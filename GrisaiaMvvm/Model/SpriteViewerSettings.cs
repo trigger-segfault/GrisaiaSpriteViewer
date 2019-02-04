@@ -14,7 +14,7 @@ namespace Grisaia.Mvvm.Model {
 	/// <summary>
 	///  The settings class that be serialized and deserialized to json.
 	/// </summary>
-	public sealed class SpriteViewerSettings : ObservableObject {
+	public sealed class SpriteViewerSettings : ViewModelBase {
 		#region Fields
 
 		/// <summary>
@@ -50,6 +50,9 @@ namespace Grisaia.Mvvm.Model {
 			SpriteCategoryPool.Pose,
 			SpriteCategoryPool.Blush,
 		});
+
+		[JsonIgnore]
+		public GrisaiaModel GrisaiaDatabase { get; internal set; }
 
 		#endregion
 
@@ -124,7 +127,8 @@ namespace Grisaia.Mvvm.Model {
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(SpriteCategoryOrder));
-				Set(ref spriteCategoryOrder, value);
+				if (!spriteCategoryOrder.SequenceEqual(value))
+					Set(ref spriteCategoryOrder, value);
 			}
 		}
 

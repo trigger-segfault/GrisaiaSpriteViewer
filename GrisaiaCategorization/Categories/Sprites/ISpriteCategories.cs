@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
@@ -37,6 +38,10 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets if this category is the last category and contains sprite part lists.
 		/// </summary>
 		bool IsLastCategory { get; }
+		/// <summary>
+		///  Gets the display name of the category.
+		/// </summary>
+		string DisplayName { get; }
 
 		#endregion
 
@@ -232,7 +237,7 @@ namespace Grisaia.Categories.Sprites {
 	/// <summary>
 	///  The additional interface for the game <see cref="ISpriteCategory"/>.
 	/// </summary>
-	public interface ISpriteGame {
+	public interface ISpriteGame : INotifyPropertyChanged {
 		/// <summary>
 		///  Gets the index of the game info in the database.
 		/// </summary>
@@ -245,7 +250,7 @@ namespace Grisaia.Categories.Sprites {
 	/// <summary>
 	///  The additional interface for the character <see cref="ISpriteCategory"/>.
 	/// </summary>
-	public interface ISpriteCharacter {
+	public interface ISpriteCharacter : INotifyPropertyChanged {
 		/// <summary>
 		///  Gets the character info associated with this category.
 		/// </summary>

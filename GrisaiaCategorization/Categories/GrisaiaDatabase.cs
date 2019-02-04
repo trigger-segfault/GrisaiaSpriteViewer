@@ -5,7 +5,7 @@ using Grisaia.Utils;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
-	public class GrisaiaDatabase {
+	public class GrisaiaDatabase : ObservableObject {
 		#region Fields
 
 		/// <summary>

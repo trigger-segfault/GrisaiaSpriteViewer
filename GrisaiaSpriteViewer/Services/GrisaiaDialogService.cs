@@ -88,6 +88,13 @@ namespace Grisaia.SpriteViewer.Services {
 		public Window CreateSpriteSelectionWindow() {
 			return new SpriteSelectionWindow();
 		}
+		public Window CreateSettingsDialog() {
+			return new SettingsDialog();
+		}
+		public void ReloadSprites() {
+			Window window = new LoadingWindow();
+			window.ShowDialog();
+		}
 		public Window ShowLoadingWindow() {
 			Window window = new LoadingWindow();
 			window.Show();

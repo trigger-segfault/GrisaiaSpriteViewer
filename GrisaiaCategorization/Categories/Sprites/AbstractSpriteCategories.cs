@@ -101,6 +101,10 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets if this category is the last category and contains sprite part lists.
 		/// </summary>
 		public bool IsLastCategory => List[0] is ISpritePartList;
+		/// <summary>
+		///  Gets the display name of the category.
+		/// </summary>
+		public string DisplayName => ToString();
 
 		#endregion
 

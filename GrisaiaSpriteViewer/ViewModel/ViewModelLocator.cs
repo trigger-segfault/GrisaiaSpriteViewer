@@ -23,6 +23,7 @@ using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.ViewModel;
 using Grisaia.Mvvm.Services;
 using Grisaia.SpriteViewer.Services;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Grisaia.SpriteViewer.ViewModel {
 	/// <summary>
@@ -51,20 +52,21 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			////}
 			
 			SimpleIoc.Default.Register<GrisaiaModel>();
-			//SimpleIoc.Default.Register<SpriteViewerSettings>();
-			//SimpleIoc.Default.Register<SpriteDatabase>(true);
-			//SimpleIoc.Default.Register<MainViewModel>();
-			SimpleIoc.Default.Register<IGrisaiaDialogService, GrisaiaDialogService>();
 			SimpleIoc.Default.Register<UIService>();
-			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
-			SimpleIoc.Default.Register<LoadingViewModel>();
+			SimpleIoc.Default.Register<IGrisaiaDialogService, GrisaiaDialogService>();
 			SimpleIoc.Default.Register<IRelayCommandFactory, RelayInfoCommandFactory>();
 			SimpleIoc.Default.Register<IClipboardService, ClipboardService>();
+
+			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
+			SimpleIoc.Default.Register<SettingsViewModel>();
+			SimpleIoc.Default.Register<LoadingViewModel>(true);
 		}
 
 		//public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 		public SpriteSelectionViewModel SpriteSelection => ServiceLocator.Current.GetInstance<SpriteSelectionViewModel>();
 		public LoadingViewModel Loading => ServiceLocator.Current.GetInstance<LoadingViewModel>();
+		public SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
+		public IMessenger Messenger => GalaSoft.MvvmLight.Messaging.Messenger.Default;
 
 		public static void Cleanup() {
 			// TODO Clear the ViewModels

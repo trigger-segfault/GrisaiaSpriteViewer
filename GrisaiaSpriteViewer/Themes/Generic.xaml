@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
                     xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
+                    xmlns:spr="clr-namespace:Grisaia.Categories.Sprites;assembly=GrisaiaExtractCategorization"
                     xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
   <Style x:Key="{x:Type local:SpriteCategoryComboBox}" TargetType="{x:Type local:SpriteCategoryComboBox}">
     <Setter Property="Focusable" Value="False"/>
@@ -14,9 +15,9 @@
                        VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                        IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
               <ComboBox.ItemTemplate>
-                <ItemContainerTemplate>
-                  <TextBlock Text="{Binding}"/>
-                </ItemContainerTemplate>
+                <DataTemplate DataType="{x:Type spr:ISpriteCategory}">
+                  <TextBlock Text="{Binding DisplayName}"/>
+                </DataTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>
           </StackPanel>
@@ -139,8 +140,8 @@
                 </local:SpriteImage>
 
                 <Grid x:Name="PART_GridLines">
-                  <Rectangle x:Name="PART_GridLineCenter" HorizontalAlignment="Left" Fill="Red" Width="1"/>
-                  <Rectangle x:Name="PART_GridLineBaseline" VerticalAlignment="Top" Fill="Blue" Height="1"/>
+                  <Rectangle x:Name="PART_GridLineCenter" HorizontalAlignment="Left" Fill="Red" Width="1" Visibility="{Binding Path=ShowGridLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                  <Rectangle x:Name="PART_GridLineBaseline" VerticalAlignment="Top" Fill="Blue" Height="1" Visibility="{Binding Path=ShowGridLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
                 </Grid>
               </Grid>
             </Grid>

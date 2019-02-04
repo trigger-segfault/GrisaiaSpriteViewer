@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -71,7 +72,7 @@ namespace Grisaia.Categories {
 	/// <summary>
 	///  A database for cached and categorized Grisaia character sprites.
 	/// </summary>
-	public sealed class SpriteDatabase : ISpriteCategory {
+	public sealed class SpriteDatabase : ObservableObject, ISpriteCategory {
 		#region Static Fields
 
 		/// <summary>
@@ -149,7 +150,38 @@ namespace Grisaia.Categories {
 
 		public SpriteDatabase(GrisaiaDatabase grisaiaDb) {
 			GrisaiaDatabase = grisaiaDb ?? throw new ArgumentNullException(nameof(grisaiaDb));
+			GameDatabase.PropertyChanged += OnGameDatabasePropertyChanged;
+			CharacterDatabase.PropertyChanged += OnCharacterDatabasePropertyChanged;
 		}
+
+		private void OnGameDatabasePropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case nameof(GameDatabase.NamingScheme):
+				foreach (ISpriteCategory category1 in list) {
+					foreach (ISpriteCategory category2 in category1.List) {
+						SpriteGame g = category1 as SpriteGame ?? category2 as SpriteGame;
+						g.RaiseDisplayNameChanged();
+					}
+				}
+				break;
+			}
+		}
+		private void OnCharacterDatabasePropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case nameof(CharacterDatabase.NamingScheme):
+				foreach (ISpriteCategory category1 in list) {
+					foreach (ISpriteCategory category2 in category1.List) {
+						SpriteCharacter c = category1 as SpriteCharacter ?? category2 as SpriteCharacter;
+						c.RaiseDisplayNameChanged();
+					}
+				}
+				break;
+			}
+		}
+
+		#endregion
+
+		#region Event Handlers
 
 		#endregion
 
@@ -337,6 +369,10 @@ namespace Grisaia.Categories {
 			SpriteCount = progress.SpriteCount;
 			progress.CurrentGame = null;
 			progress.GameIndex++;
+			RaisePropertyChanged(nameof(Categories));
+			RaisePropertyChanged(nameof(List));
+			RaisePropertyChanged(nameof(SpriteCount));
+			RaisePropertyChanged(nameof(Count));
 			BuildComplete?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -489,6 +525,10 @@ namespace Grisaia.Categories {
 			SpriteCount = progress.SpriteCount;
 			progress.CurrentGame = null;
 			callback?.Invoke(progress);
+			RaisePropertyChanged(nameof(Categories));
+			RaisePropertyChanged(nameof(List));
+			RaisePropertyChanged(nameof(SpriteCount));
+			RaisePropertyChanged(nameof(Count));
 			BuildComplete?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -618,6 +658,7 @@ namespace Grisaia.Categories {
 			}
 		}
 
+		string ISpriteCategory.DisplayName => string.Empty;
 		object ISpriteElement.Id => 0;
 		SpriteCategoryInfo ISpriteCategory.Category => throw new NotSupportedException();
 		bool ISpriteCategory.IsLastCategory => false;

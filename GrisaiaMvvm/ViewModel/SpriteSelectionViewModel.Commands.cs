@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows;
 using Grisaia.Mvvm.Commands;
 using Microsoft.Win32;
 
@@ -11,13 +12,34 @@ namespace Grisaia.Mvvm.ViewModel {
 		public IRelayCommand ToggleCenterSprite => GetCommand(OnToggleCenterSprite);
 		public IRelayCommand SaveSprite => GetCommand(OnSaveSprite, CanExecuteExportSprite);
 		public IRelayCommand CopySprite => GetCommand(OnCopySprite, CanExecuteExportSprite);
+		public IRelayCommand OpenSettings => GetCommand(OnOpenSettings);
+		public IRelayCommand ToggleGridLines => GetCommand(OnToggleGridLines);
+		public IRelayCommand ToggleExpand => GetCommand(OnToggleExpand);
 
+
+		private bool CanExecuteExportSprite() {
+			return !SpriteDrawInfo.IsNone;
+		}
 
 		private void OnToggleCenterSprite() {
 			Centered = !Centered;
 		}
-		private bool CanExecuteExportSprite() {
-			return !SpriteDrawInfo.IsNone;
+		private void OnToggleGridLines() {
+
+		}
+		private void OnToggleExpand() {
+
+		}
+		private void EmptyDelegate() {
+
+		}
+		private void OnOpenSettings() {
+			Window window = Dialogs.CreateSettingsDialog();
+			window.Owner = WindowOwner;
+			bool? result = window.ShowDialog();
+			/*if (result.HasValue && result.Value) {
+				
+			}*/
 		}
 		private void OnSaveSprite() {
 			if (!SpriteDrawInfo.IsNone) {

@@ -9,21 +9,22 @@
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
         DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
+        cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}"
         Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
-        cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}">
+        >
   <DockPanel>
     <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
       <Menu>
         <MenuItem Header="File">
-          <MenuItem Header="Save Sprite" Command="{Binding SaveSprite}"/>
-          <MenuItem Header="Copy Sprite" Command="{Binding CopySprite}"/>
+          <local:CommandMenuItem Command="{Binding SaveSprite}"/>
+          <local:CommandMenuItem Command="{Binding CopySprite}"/>
         </MenuItem>
         <MenuItem Header="View">
           <MenuItem x:Name="menuItemExpand" Header="Expand" IsChecked="{Binding Expand}" IsCheckable="True"/>
           <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" IsChecked="{Binding ShowGridLines}" IsCheckable="True"/>
         </MenuItem>
-        <MenuItem Header="Options" Visibility="Collapsed">
-          <MenuItem x:Name="menuItemSettings" Header="Settings"/>
+        <MenuItem Header="Options">
+          <local:CommandMenuItem x:Name="menuItemSettings" Command="{Binding OpenSettings}"/>
         </MenuItem>
       </Menu>
     </Border>

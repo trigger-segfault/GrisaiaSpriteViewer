@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel;
+
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
 	///  A sprite category for a specific Grisaia game.
@@ -14,6 +16,21 @@ namespace Grisaia.Categories.Sprites {
 		///  Gets the game info associated with this category.
 		/// </summary>
 		public GameInfo GameInfo { get; set; }
+
+		#endregion
+
+		#region Events
+
+		/// <summary>
+		///  Raised when <see cref="ISpriteCategory.DisplayName"/> is updated.
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+		/// <summary>
+		///  Raises the changed made to <see cref="ISpriteCategory.DisplayName"/>.
+		/// </summary>
+		public void RaiseDisplayNameChanged() {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayName)));
+		}
 
 		#endregion
 
@@ -54,7 +71,22 @@ namespace Grisaia.Categories.Sprites {
 		public CharacterInfo CharacterInfo { get; set; }
 
 		#endregion
-		
+
+		#region Events
+
+		/// <summary>
+		///  Raised when <see cref="ISpriteCategory.DisplayName"/> is updated.
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+		/// <summary>
+		///  Raises the changed made to <see cref="ISpriteCategory.DisplayName"/>.
+		/// </summary>
+		public void RaiseDisplayNameChanged() {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayName)));
+		}
+
+		#endregion
+
 		#region SpriteCategory Overrides
 
 		/// <summary>

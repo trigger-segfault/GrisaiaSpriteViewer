@@ -111,10 +111,10 @@ namespace Grisaia.SpriteViewer.Controls {
 		private static void OnSpriteDatabaseChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionControl control = (SpriteSelectionControl) d;
 
-			if (e.OldValue is SpriteDatabase oldSpriteDb)
+			/*if (e.OldValue is SpriteDatabase oldSpriteDb)
 				oldSpriteDb.BuildComplete -= control.OnSpriteDatabaseBuildComplete;
 			if (e.NewValue is SpriteDatabase newSpriteDb)
-				newSpriteDb.BuildComplete += control.OnSpriteDatabaseBuildComplete;
+				newSpriteDb.BuildComplete += control.OnSpriteDatabaseBuildComplete;*/
 		}
 		private static void OnGroupsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			SpriteSelectionControl control = (SpriteSelectionControl) d;
@@ -157,14 +157,6 @@ namespace Grisaia.SpriteViewer.Controls {
 		static SpriteSelectionControl() {
 			DefaultStyleKeyProperty.AddOwner(typeof(SpriteSelectionControl),
 				new FrameworkPropertyMetadata(typeof(SpriteSelectionControl)));
-		}
-
-		#endregion
-
-		#region Event Handlers
-		
-		private void OnSpriteDatabaseBuildComplete(object sender, EventArgs e) {
-
 		}
 
 		#endregion

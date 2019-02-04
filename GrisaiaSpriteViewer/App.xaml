@@ -9,6 +9,7 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Themes/RelayCommands.xaml"/>
+        <ResourceDictionary Source="Themes/Themes.xaml"/>
       </ResourceDictionary.MergedDictionaries>
       <vm:ViewModelLocator x:Name="locator" x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Grisaia.SpriteViewer.ViewModel"/>
     </ResourceDictionary>

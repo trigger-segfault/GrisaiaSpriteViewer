@@ -294,12 +294,15 @@ namespace Grisaia.Categories {
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public enum CharacterRealNameType {
 		/// <summary>Only the character's first name will be displayed.</summary>
+		[JsonProperty("first")]
 		[Name("First")]
 		First,
 		/// <summary>The character's first then last name will be displayed.</summary>
+		[JsonProperty("first_last")]
 		[Name("First Last")]
 		FirstLast,
 		/// <summary>The character's last then first name will be displayed.</summary>
+		[JsonProperty("last_first")]
 		[Name("Last First")]
 		LastFirst,
 	}
@@ -310,12 +313,15 @@ namespace Grisaia.Categories {
 	public enum CharacterNameType {
 		/// <summary>Character's real name.</summary>
 		[JsonProperty("real_name")]
+		[Name("Real Name")]
 		RealName,
 		/// <summary>Character's nickname.</summary>
 		[JsonProperty("nickname")]
+		[Name("Nickname")]
 		Nickname,
 		/// <summary>Character's title.</summary>
 		[JsonProperty("title")]
+		[Name("Title")]
 		Title,
 	}
 	/// <summary>

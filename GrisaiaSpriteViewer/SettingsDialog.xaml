@@ -9,22 +9,91 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
+        DataContext="{Binding Settings, Source={StaticResource Locator}}"
+        cmd:RelayInfo.Collection="{StaticResource SettingsCommands}"
         UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0"
-        Title="Grisaia Extract Sprite Viewer - Settings" Height="450" Width="800" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Icon="Resources/App.ico">
-  <Grid>
-    <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="254" Height="151">
-      <GroupBox.Header>
-        <CheckBox Content="Character Name"/>
-      </GroupBox.Header>
+        Title="{Binding Title}" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Icon="Resources/App.ico" Closed="OnClosed" WindowStartupLocation="CenterOwner">
+  <i:Interaction.Triggers>
+    <i:EventTrigger EventName="Loaded">
+      <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
+    </i:EventTrigger>
+  </i:Interaction.Triggers>
+  <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="312" Width="494">
+    <GroupBox HorizontalAlignment="Left" Header="Game Naming Scheme" VerticalAlignment="Top" Margin="10,10,0,0" Width="250" Height="85">
+      <!--<GroupBox.Header>
+        <CheckBox Content="Game Naming Scheme" IsChecked="{Binding GameNamingScheme.IdOnly}"/>
+      </GroupBox.Header>-->
       <Grid>
-        <ListBox HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="73" Width="121" Margin="5,0,0,5">
-          <ListBoxItem Content="Nickname"/>
-          <ListBoxItem Content="First Last Name"/>
-          <ListBoxItem Content="Title"/>
-        </ListBox>
-        <CheckBox Content="Last Name First" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-        <CheckBox Content="Last Name First" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <CheckBox Content="Id Only" IsChecked="{Binding GameNamingScheme.IdOnly}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <CheckBox Content="English Name" IsChecked="{Binding GameNamingScheme.EnglishName}" IsEnabled="{Binding GameNamingEnabled}"
+                  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,10,0,0"/>
+        <CheckBox Content="Short Name" IsChecked="{Binding GameNamingScheme.ShortName}" IsEnabled="{Binding GameNamingEnabled}"
+                  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,34,0,0"/>
       </Grid>
     </GroupBox>
+    <GroupBox Header="Character Naming Scheme" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0" Width="250" Height="165">
+      <!--<GroupBox.Header>
+        <CheckBox Content="Character Naming Scheme" IsChecked="{Binding CharacterNamingScheme.IdOnly}"/>
+      </GroupBox.Header>-->
+      <Grid>
+        <CheckBox Content="Id Only" IsChecked="{Binding CharacterNamingScheme.IdOnly}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <CheckBox Content="Append Id" IsChecked="{Binding CharacterNamingScheme.AppendId}" IsEnabled="{Binding CharacterNamingEnabled}"
+                  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,10,0,0"/>
+        <Label Content="Name Type Priority" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,30,0,0"/>
+        <Label Content="Real Name Style" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="135,30,0,0"/>
+
+        <ListBox x:Name="listBoxCharacterNameType" HorizontalAlignment="Left" VerticalAlignment="Top" Height="75" Width="90" Margin="10,59,0,0"
+          ItemsSource="{Binding CharacterNamingScheme.Order}"
+          SelectedIndex="{Binding SelectedCharacterNameTypeIndex}" IsEnabled="{Binding CharacterNamingEnabled}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={conv:EnumToName}, Mode=OneWay}"/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel IsEnabled="{Binding CharacterNamingEnabled}" Margin="105,59,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="75">
+          <local:CommandButton Command="{Binding MoveCharacterNameTypeUp}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusCharacterNameTypeList"/>
+          <local:CommandButton Command="{Binding MoveCharacterNameTypeDown}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusCharacterNameTypeList"/>
+        </StackPanel>
+
+        <StackPanel IsEnabled="{Binding CharacterNamingEnabled}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="140,59,0,0">
+          <RadioButton GroupName="RealName" Content="First" HorizontalAlignment="Left" VerticalAlignment="Top"
+            IsChecked="{Binding CharacterNamingScheme.RealName, ConverterParameter=First, Converter={conv:RadioButtonConverter}}" Margin="0,0,0,8"/>
+          <RadioButton GroupName="RealName" Content="First Last" HorizontalAlignment="Left" VerticalAlignment="Top"
+            IsChecked="{Binding CharacterNamingScheme.RealName, ConverterParameter=FirstLast, Converter={conv:RadioButtonConverter}}" Margin="0,0,0,8"/>
+          <RadioButton GroupName="RealName" Content="Last First" HorizontalAlignment="Left" VerticalAlignment="Top"
+            IsChecked="{Binding CharacterNamingScheme.RealName, ConverterParameter=LastFirst, Converter={conv:RadioButtonConverter}}" Margin="0,0,0,8"/>
+        </StackPanel>
+      </Grid>
+    </GroupBox>
+    <GroupBox Header="Sprite Category Order" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="265,10,0,0" Width="217" Height="255">
+      <!--<GroupBox.Header>
+        <CheckBox Content="Character Naming Scheme" IsChecked="{Binding CharacterNamingScheme.IdOnly}"/>
+      </GroupBox.Header>-->
+      <Grid>
+        <Label Content="Primary Categories" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+
+        <ListBox x:Name="listBoxPrimary" HorizontalAlignment="Left" VerticalAlignment="Top" Height="55" Width="160" Margin="10,36,0,0"
+                 ItemsSource="{Binding SpritePrimaryCategories}"
+                 SelectedIndex="{Binding SelectedSpritePrimaryCategoryIndex}">
+        </ListBox>
+        <StackPanel Margin="175,36,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="61">
+          <local:CommandButton Command="{Binding MoveSpritePrimaryCategoryUp}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusPrimary"/>
+          <local:CommandButton Command="{Binding MoveSpritePrimaryCategoryDown}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusPrimary"/>
+        </StackPanel>
+        <Label Content="Secondary Categories" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,96,0,0"/>
+        <ListBox x:Name="listBoxSecondary" HorizontalAlignment="Left" VerticalAlignment="Top" Height="95" Width="160" Margin="10,122,0,0"
+          ItemsSource="{Binding SpriteSecondaryCategories}"
+          SelectedIndex="{Binding SelectedSpriteSecondaryCategoryIndex}"/>
+        <StackPanel Margin="175,122,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="95">
+          <local:CommandButton Command="{Binding MoveSpriteSecondaryCategoryUp}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusSecondary"/>
+          <local:CommandButton Command="{Binding MoveSpriteSecondaryCategoryDown}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="FocusSecondary"/>
+        </StackPanel>
+      </Grid>
+    </GroupBox>
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
+      <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
+      <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
+    </StackPanel>
   </Grid>
 </Window>

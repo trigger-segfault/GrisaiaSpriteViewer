@@ -8,6 +8,7 @@ using Grisaia.Categories;
 using Grisaia.Mvvm.Commands;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
+using Grisaia.Mvvm.ViewModel.Messages;
 
 namespace Grisaia.Mvvm.ViewModel {
 	public class LoadingViewModel : ViewModelWindow {
@@ -97,6 +98,7 @@ namespace Grisaia.Mvvm.ViewModel {
 			GrisaiaDatabase = grisaiaDb;
 			Dialogs = dialogs;
 			UI = ui;
+			MessengerInstance.Register<OpenLoadingWindowMessage>(this, OnOpenLoadingWindow);
 			if (IsInDesignMode) {
 				Ellapsed = TimeSpan.FromSeconds(21);
 				MainStatus = "Building Image Cache: \"image.int\"";
@@ -117,14 +119,21 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		#region Commands
 
-		public IRelayCommand LoadEverything => GetCommand(OnLoadEverything);
-		public IRelayCommand ReloadSprites => GetCommand(OnReloadSprites);
+		public IRelayCommand<OpenLoadingWindowMessage> LoadEverything => GetCommand<OpenLoadingWindowMessage>(OnLoadEverything);
+		public IRelayCommand<OpenLoadingWindowMessage> ReloadSprites => GetCommand<OpenLoadingWindowMessage>(OnReloadSprites);
 
 		#endregion
 
 		#region Event Handlers
 
-		private void OnLoadEverything() {
+		private void OnOpenLoadingWindow(OpenLoadingWindowMessage msg) {
+			if (msg.LoadEverything)
+				LoadEverything.Execute(msg);
+			else
+				ReloadSprites.Execute(msg);
+		}
+
+		private void OnLoadEverything(OpenLoadingWindowMessage msg) {
 			watch = Stopwatch.StartNew();
 			Ellapsed = TimeSpan.Zero;
 			MainStatus = "Preparing Grisaia Sprite Viewer...";
@@ -135,7 +144,8 @@ namespace Grisaia.Mvvm.ViewModel {
 			timeLabelTimer = UI.StartTimer(TimeSpan.FromSeconds(1), true, OnUpdateTimer);
 
 			Window loadingWindow = Dialogs.CreateLoadingWindow();
-			loadingWindow.Show();
+			if (!msg.ShowDialog)
+				loadingWindow.Show();
 
 			var task = Task.Run(() => {
 				GrisaiaDatabase.GameDatabase.LocateGames();
@@ -147,15 +157,23 @@ namespace Grisaia.Mvvm.ViewModel {
 				UI.Invoke(() => {
 					timeLabelTimer.Stop();
 					watch = null;
-					Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
-					loadingWindow.Close();
-					spriteSelectionWindow.Show();
+					if (msg.OpenSpriteSelectionWindow) {
+						Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
+						loadingWindow.Close();
+						spriteSelectionWindow.Show();
+					}
+					else {
+						loadingWindow.Close();
+					}
 					timeLabelTimer?.Stop();
 					timeLabelTimer = null;
 				});
 			}).ConfigureAwait(false);
+
+			if (msg.ShowDialog)
+				loadingWindow.ShowDialog();
 		}
-		private void OnReloadSprites() {
+		private void OnReloadSprites(OpenLoadingWindowMessage msg) {
 			watch = Stopwatch.StartNew();
 			Ellapsed = TimeSpan.Zero;
 			MainStatus = "Reloading Sprites...";
@@ -166,7 +184,8 @@ namespace Grisaia.Mvvm.ViewModel {
 			timeLabelTimer = UI.StartTimer(TimeSpan.FromSeconds(1), true, OnUpdateTimer);
 
 			Window loadingWindow = Dialogs.CreateLoadingWindow();
-			loadingWindow.Show();
+			if (!msg.ShowDialog)
+				loadingWindow.Show();
 
 			var task = Task.Run(() => {
 				GrisaiaDatabase.SpriteDatabase.LoadSprites(GrisaiaDatabase.Settings.SpriteCategoryOrder, OnLoadSpritesProgress);
@@ -176,13 +195,21 @@ namespace Grisaia.Mvvm.ViewModel {
 				UI.Invoke(() => {
 					timeLabelTimer.Stop();
 					watch = null;
-					Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
-					loadingWindow.Close();
-					spriteSelectionWindow.Show();
+					if (msg.OpenSpriteSelectionWindow) {
+						Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
+						loadingWindow.Close();
+						spriteSelectionWindow.Show();
+					}
+					else {
+						loadingWindow.Close();
+					}
 					timeLabelTimer?.Stop();
 					timeLabelTimer = null;
 				});
 			}).ConfigureAwait(false);
+
+			if (msg.ShowDialog)
+				loadingWindow.ShowDialog();
 		}
 
 		private void OnUpdateTimer() {

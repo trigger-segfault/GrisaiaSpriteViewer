@@ -10,6 +10,7 @@ using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
+using Grisaia.Mvvm.ViewModel.Messages;
 using Grisaia.Utils;
 
 namespace Grisaia.Mvvm.ViewModel {
@@ -205,6 +206,8 @@ namespace Grisaia.Mvvm.ViewModel {
 			UI = ui;
 			SpriteImage = new SpriteDrawInfoViewModel();
 			SpriteImage.PropertyChanged += OnSpriteDrawInfoPropertyChanged;
+			Settings.PropertyChanged += OnSettingsPropertyChanged;
+			SpriteDatabase.BuildComplete += OnSpriteDatabaseBuildComplete;
 
 			Categories.CollectionChanged += OnCategoriesCollectionChanged;
 			GroupParts.CollectionChanged += OnGroupPartsCollectionChanged;
@@ -230,6 +233,44 @@ namespace Grisaia.Mvvm.ViewModel {
 			SpriteSelection = newSelection.ToImmutable();
 			//CurrentParts = Array.AsReadOnly(SpriteDatabase.GetSpriteParts(newSelection, out _, out _));
 			suppressCollectionEvents = false;
+		}
+
+		private void OnSpriteDatabaseBuildComplete(object sender, EventArgs e) {
+			UI.Invoke(() => {
+				//RaisePropertyChanged(nameof(SpriteDatabase));
+				ISpriteSelection newSelection = SpriteSelection.ToMutable();
+				ISpriteCategory category = SpriteDatabase;
+				for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+					category = Categories[i] = (ISpriteCategory) category.List[0];
+					category.Category.SetId(newSelection, category.Id);
+					if (category.IsLastCategory) {
+						UpdateGroups(category, newSelection);
+					}
+				}
+				RaisePropertyChanged(nameof(SpriteDatabase));
+				SpriteDatabase.RaisePropertyChanged(nameof(SpriteDatabase.List));
+				Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
+				SpriteSelection = newSelection.ToImmutable();
+			});
+		}
+
+		private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case nameof(SpriteViewerSettings.SpriteCategoryOrder):
+				MessengerInstance.Send(new OpenLoadingWindowMessage {
+					LoadEverything = false,
+					OpenSpriteSelectionWindow = false,
+					ShowDialog = true,
+				});
+				break;
+			case nameof(SpriteViewerSettings.CharacterNamingScheme):
+				CharacterDatabase.NamingScheme = Settings.CharacterNamingScheme;
+				break;
+			case nameof(SpriteViewerSettings.GameNamingScheme):
+				GameDatabase.NamingScheme = Settings.GameNamingScheme;
+				break;
+
+			}
 		}
 
 		private void OnSpriteDrawInfoPropertyChanged(object sender, PropertyChangedEventArgs e) {
