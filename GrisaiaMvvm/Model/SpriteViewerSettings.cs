@@ -14,7 +14,7 @@ namespace Grisaia.Mvvm.Model {
 	/// <summary>
 	///  The settings class that be serialized and deserialized to json.
 	/// </summary>
-	public sealed class SpriteViewerSettings : ViewModelBase {
+	public sealed class SpriteViewerSettings : ObservableObject {
 		#region Fields
 
 		/// <summary>
