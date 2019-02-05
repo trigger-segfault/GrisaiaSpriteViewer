@@ -12,7 +12,8 @@ namespace Grisaia.Mvvm.Services {
 
 		Window CreateSpriteSelectionWindow();
 
-		Window CreateSettingsDialog();
+		bool? ShowSettingsDialog(Window owner);
+		bool? ShowInstallDirsDialog(Window owner);
 
 		Window ShowLoadingWindow();
 

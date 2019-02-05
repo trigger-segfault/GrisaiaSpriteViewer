@@ -37,9 +37,9 @@ namespace Grisaia.SpriteViewer.Controls {
 				typeof(SpriteSelectionViewer),
 				new FrameworkPropertyMetadata(
 					OnExpandChanged));
-		public static readonly DependencyProperty ShowGridLinesProperty =
+		public static readonly DependencyProperty ShowGuideLinesProperty =
 			DependencyProperty.Register(
-				"ShowGridLines",
+				"ShowGuideLines",
 				typeof(bool),
 				typeof(SpriteSelectionViewer));
 		public static readonly DependencyProperty SpriteSizeProperty =
@@ -101,9 +101,9 @@ namespace Grisaia.SpriteViewer.Controls {
 			get => (bool) GetValue(ExpandProperty);
 			set => SetValue(ExpandProperty, value);
 		}
-		public bool ShowGridLines {
-			get => (bool) GetValue(ShowGridLinesProperty);
-			set => SetValue(ShowGridLinesProperty, value);
+		public bool ShowGuideLines {
+			get => (bool) GetValue(ShowGuideLinesProperty);
+			set => SetValue(ShowGuideLinesProperty, value);
 		}
 		public Size SpriteSize {
 			get => (Size) GetValue(SpriteSizeProperty);
@@ -129,9 +129,9 @@ namespace Grisaia.SpriteViewer.Controls {
 		private Grid PART_SpriteContainer;
 		private SpriteImage PART_SpriteImage;
 		private ScaleTransform PART_ScaleTransform;
-		private Grid PART_GridLines;
-		private Rectangle PART_GridLineCenter;
-		private Rectangle PART_GridLineBaseline;
+		private Grid PART_GuideLines;
+		private Rectangle PART_GuideLineCenter;
+		private Rectangle PART_GuideLineBaseline;
 		/// <summary>
 		///  The last non-empty sprite size. Used for scroll calculations when empty sprite size cannot be used.
 		/// </summary>
@@ -158,14 +158,14 @@ namespace Grisaia.SpriteViewer.Controls {
 
 		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
-			PART_ScrollViewer	  = GetTemplateChild("PART_ScrollViewer") as ScrollViewer;
-			PART_SpriteArea		  = GetTemplateChild("PART_SpriteArea") as Grid;
-			PART_SpriteContainer  = GetTemplateChild("PART_SpriteContainer") as Grid;
-			PART_SpriteImage	  = GetTemplateChild("PART_SpriteImage") as SpriteImage;
-			PART_ScaleTransform   = GetTemplateChild("PART_ScaleTransform") as ScaleTransform;
-			PART_GridLines		  = GetTemplateChild("PART_GridLines") as Grid;
-			PART_GridLineCenter	  = GetTemplateChild("PART_GridLineCenter") as Rectangle;
-			PART_GridLineBaseline = GetTemplateChild("PART_GridLineBaseline") as Rectangle;
+			PART_ScrollViewer	   = GetTemplateChild("PART_ScrollViewer") as ScrollViewer;
+			PART_SpriteArea		   = GetTemplateChild("PART_SpriteArea") as Grid;
+			PART_SpriteContainer   = GetTemplateChild("PART_SpriteContainer") as Grid;
+			PART_SpriteImage	   = GetTemplateChild("PART_SpriteImage") as SpriteImage;
+			PART_ScaleTransform    = GetTemplateChild("PART_ScaleTransform") as ScaleTransform;
+			PART_GuideLines		   = GetTemplateChild("PART_GuideLines") as Grid;
+			PART_GuideLineCenter   = GetTemplateChild("PART_GuideLineCenter") as Rectangle;
+			PART_GuideLineBaseline = GetTemplateChild("PART_GuideLineBaseline") as Rectangle;
 			
 			PART_ScrollViewer.ScrollChanged += OnScrollChanged;
 			PART_SpriteArea.MouseWheel += OnSpriteAreaZoom;
@@ -227,7 +227,7 @@ namespace Grisaia.SpriteViewer.Controls {
 			PART_ScaleTransform.ScaleY = Scale;
 
 			PART_SpriteImage.Margin = CalculateAreaMargins();
-			PART_GridLines.Margin = PART_SpriteImage.Margin;
+			PART_GuideLines.Margin = PART_SpriteImage.Margin;
 
 			Vector newScroll = afterArea - beforeCenter;
 			if (PART_ScrollViewer.ViewportWidth != 0 && PART_ScrollViewer.ViewportHeight != 0) {
@@ -246,7 +246,7 @@ namespace Grisaia.SpriteViewer.Controls {
 			PART_ScrollViewer.Padding = margin;
 			PART_ScrollViewer.Margin = margin;
 			PART_SpriteImage.Margin = CalculateAreaMargins();
-			PART_GridLines.Margin = PART_SpriteImage.Margin;
+			PART_GuideLines.Margin = PART_SpriteImage.Margin;
 			if (Centered)
 				UpdateCentered();
 			UpdateLines();
@@ -281,7 +281,7 @@ namespace Grisaia.SpriteViewer.Controls {
 				PART_ScaleTransform.ScaleX = Scale;
 				PART_ScaleTransform.ScaleY = Scale;
 				PART_SpriteImage.Margin = CalculateAreaMargins();
-				PART_GridLines.Margin = PART_SpriteImage.Margin;
+				PART_GuideLines.Margin = PART_SpriteImage.Margin;
 				if (savedNormalizedScroll.X >= 0 && savedNormalizedScroll.Y >= 0) {
 					Vector areaCenter = CalculateAreaCenter();
 					newScroll.X = savedNormalizedScroll.X * areaCenter.X;
@@ -367,7 +367,7 @@ namespace Grisaia.SpriteViewer.Controls {
 				PART_ScaleTransform.ScaleX = Scale;
 				PART_ScaleTransform.ScaleY = Scale;
 				PART_SpriteImage.Margin = new Thickness();
-				PART_GridLines.Margin = PART_SpriteImage.Margin;
+				PART_GuideLines.Margin = PART_SpriteImage.Margin;
 			}
 			else {
 				Vector areaOffset = CalculateAreaOffset();
@@ -387,7 +387,7 @@ namespace Grisaia.SpriteViewer.Controls {
 				areaOffset.X = (PART_ScrollViewer.ViewportWidth - validSpriteSize.Width * Scale) / 2;
 				areaOffset.Y = (PART_ScrollViewer.ViewportHeight - validSpriteSize.Height * Scale) / 2;
 				PART_SpriteImage.Margin = new Thickness(areaOffset.X, areaOffset.Y, areaOffset.X, areaOffset.Y);
-				PART_GridLines.Margin = PART_SpriteImage.Margin;
+				PART_GuideLines.Margin = PART_SpriteImage.Margin;
 				PART_ScaleTransform.ScaleX = Scale;
 				PART_ScaleTransform.ScaleY = Scale;
 			}
@@ -397,15 +397,15 @@ namespace Grisaia.SpriteViewer.Controls {
 			if (!templateApplied) return;
 			
 			PART_SpriteImage.Margin = CalculateAreaMargins();
-			PART_GridLines.Margin = PART_SpriteImage.Margin;
+			PART_GuideLines.Margin = PART_SpriteImage.Margin;
 			UpdateLines();
 		}
 
 		private void UpdateLines() {
 			if (!templateApplied) return;
 
-			PART_GridLineCenter.Margin = new Thickness(SpriteOrigin.X * Scale, 0, 0, 0);
-			PART_GridLineBaseline.Margin = new Thickness(0, SpriteOrigin.Y * Scale, 0, 0);
+			PART_GuideLineCenter.Margin = new Thickness(SpriteOrigin.X * Scale, 0, 0, 0);
+			PART_GuideLineBaseline.Margin = new Thickness(0, SpriteOrigin.Y * Scale, 0, 0);
 		}
 
 		private void UpdateEmptyChanged() {
@@ -413,12 +413,12 @@ namespace Grisaia.SpriteViewer.Controls {
 			if (IsEmpty) {
 				PART_SpriteImage.Width = 0;
 				PART_SpriteImage.Height = 0;
-				PART_GridLines.Visibility = Visibility.Hidden;
+				PART_GuideLines.Visibility = Visibility.Hidden;
 			}
 			else {
 				PART_SpriteImage.Width = double.NaN;
 				PART_SpriteImage.Height = double.NaN;
-				PART_GridLines.Visibility = Visibility.Visible;
+				PART_GuideLines.Visibility = Visibility.Visible;
 			}
 			if (IsEmpty || Centered) {
 				PART_ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;

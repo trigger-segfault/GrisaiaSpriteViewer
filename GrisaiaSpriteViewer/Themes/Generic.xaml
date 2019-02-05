@@ -139,9 +139,9 @@
                   </local:SpriteImage.LayoutTransform>
                 </local:SpriteImage>
 
-                <Grid x:Name="PART_GridLines">
-                  <Rectangle x:Name="PART_GridLineCenter" HorizontalAlignment="Left" Fill="Red" Width="1" Visibility="{Binding Path=ShowGridLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
-                  <Rectangle x:Name="PART_GridLineBaseline" VerticalAlignment="Top" Fill="Blue" Height="1" Visibility="{Binding Path=ShowGridLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <Grid x:Name="PART_GuideLines">
+                  <Rectangle x:Name="PART_GuideLineCenter" HorizontalAlignment="Left" Fill="Red" Width="1" Visibility="{Binding Path=ShowGuideLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                  <Rectangle x:Name="PART_GuideLineBaseline" VerticalAlignment="Top" Fill="Blue" Height="1" Visibility="{Binding Path=ShowGuideLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
                 </Grid>
               </Grid>
             </Grid>

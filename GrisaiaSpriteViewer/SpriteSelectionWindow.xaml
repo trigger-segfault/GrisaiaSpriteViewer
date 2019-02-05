@@ -18,13 +18,16 @@
         <MenuItem Header="File">
           <local:CommandMenuItem Command="{Binding SaveSprite}"/>
           <local:CommandMenuItem Command="{Binding CopySprite}"/>
+          <Separator Margin="0,4"/>
+          <local:CommandMenuItem Command="{Binding Exit}"/>
         </MenuItem>
         <MenuItem Header="View">
-          <MenuItem x:Name="menuItemExpand" Header="Expand" IsChecked="{Binding Expand}" IsCheckable="True"/>
-          <MenuItem x:Name="menuItemShowGuidelines" Header="Show Guidelines" IsChecked="{Binding ShowGridLines}" IsCheckable="True"/>
+          <local:CommandMenuItem Command="{Binding ToggleExpand}" IsChecked="{Binding Expand, Mode=OneWay}" IsCheckable="True"/>
+          <local:CommandMenuItem Command="{Binding ToggleGuideLines}" IsChecked="{Binding ShowGuideLines, Mode=OneWay}" IsCheckable="True"/>
         </MenuItem>
         <MenuItem Header="Options">
-          <local:CommandMenuItem x:Name="menuItemSettings" Command="{Binding OpenSettings}"/>
+          <local:CommandMenuItem Command="{Binding OpenSettings}"/>
+          <local:CommandMenuItem Command="{Binding OpenInstallDirs}" Visibility="Collapsed"/>
         </MenuItem>
       </Menu>
     </Border>
@@ -63,19 +66,19 @@
       <Border Grid.Column="0" BorderBrush="#FFACACAC" BorderThickness="0,0,1,0" Padding="10,5" Background="White">
         <StackPanel>
           <TextBlock Text="Sprite Parts" FontWeight="Bold" Margin="-2,0,0,5"/>
-          <TextBlock x:Name="labelPartList" Text="{Binding SpritePartList}" FontFamily="Courier New" FontSize="11"/>
+          <TextBlock Text="{Binding SpritePartList}" FontFamily="Courier New" FontSize="11"/>
         </StackPanel>
       </Border>
-      <local:SpriteSelectionViewer Grid.Column="1" x:Name="viewer"
+      <local:SpriteSelectionViewer Grid.Column="1"
                                    DataContext="{Binding}"
                                    Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                    SpriteOrigin="{Binding SpriteOrigin}"
                                    SpriteSize="{Binding SpriteSize}"
                                    Centered="{Binding Centered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                   ShowGridLines="{Binding ShowGridLines}"
+                                   ShowGuideLines="{Binding ShowGuideLines}"
                                    Expand="{Binding Expand}"/>
       <Border Grid.Column="2" BorderBrush="#FFACACAC" BorderThickness="1,0,0,0">
-        <local:SpriteSelectionControl x:Name="spriteSelection" DataContext="{Binding}"
+        <local:SpriteSelectionControl DataContext="{Binding}"
                                       SpriteDatabase="{Binding SpriteDatabase}"
                                       Categories="{Binding Categories}"
                                       Groups="{Binding Groups}"

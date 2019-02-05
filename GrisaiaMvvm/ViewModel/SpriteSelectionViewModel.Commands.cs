@@ -9,37 +9,41 @@ using Microsoft.Win32;
 namespace Grisaia.Mvvm.ViewModel {
 	partial class SpriteSelectionViewModel {
 
-		public IRelayCommand ToggleCenterSprite => GetCommand(OnToggleCenterSprite);
 		public IRelayCommand SaveSprite => GetCommand(OnSaveSprite, CanExecuteExportSprite);
 		public IRelayCommand CopySprite => GetCommand(OnCopySprite, CanExecuteExportSprite);
 		public IRelayCommand OpenSettings => GetCommand(OnOpenSettings);
-		public IRelayCommand ToggleGridLines => GetCommand(OnToggleGridLines);
+		public IRelayCommand OpenInstallDirs => GetCommand(OnOpenInstallDirs);
+		public IRelayCommand ToggleCenterSprite => GetCommand(OnToggleCenterSprite);
+		public IRelayCommand ToggleGuideLines => GetCommand(OnToggleGuideLines);
 		public IRelayCommand ToggleExpand => GetCommand(OnToggleExpand);
+		public IRelayCommand Exit => GetCommand(OnExit);
 
 
 		private bool CanExecuteExportSprite() {
 			return !SpriteDrawInfo.IsNone;
 		}
 
+		private void OnExit() {
+			UI.Shutdown();
+		}
 		private void OnToggleCenterSprite() {
 			Centered = !Centered;
 		}
-		private void OnToggleGridLines() {
-
+		private void OnToggleGuideLines() {
+			ShowGuideLines = !ShowGuideLines;
 		}
 		private void OnToggleExpand() {
-
+			Expand = !Expand;
 		}
-		private void EmptyDelegate() {
-
-		}
+		private void EmptyDelegate() { }
 		private void OnOpenSettings() {
-			Window window = Dialogs.CreateSettingsDialog();
-			window.Owner = WindowOwner;
-			bool? result = window.ShowDialog();
-			/*if (result.HasValue && result.Value) {
-				
-			}*/
+			Dialogs.ShowSettingsDialog(WindowOwner);
+		}
+		private void OnOpenInstallDirs() {
+			Dialogs.ShowInstallDirsDialog(WindowOwner);
+			//Window window = Dialogs.CreateInstallDirsDialog();
+			//window.Owner = WindowOwner;
+			//window.ShowDialog();
 		}
 		private void OnSaveSprite() {
 			if (!SpriteDrawInfo.IsNone) {

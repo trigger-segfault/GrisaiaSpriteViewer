@@ -1,0 +1,17 @@
+﻿<Window x:Class="Grisaia.SpriteViewer.InstallDirsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+        mc:Ignorable="d"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0"
+        Title="Grisaia Extract Sprite Viewer - Installation Directories" Height="282" Width="474" Icon="Resources/App.ico" Closed="OnClosed" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+  <Grid>
+
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
+      <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
+      <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
+    </StackPanel>
+  </Grid>
+</Window>

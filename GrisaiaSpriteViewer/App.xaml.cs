@@ -92,7 +92,7 @@ namespace Grisaia.SpriteViewer {
 		}
 		private bool TryResolveAssembly(string path, AssemblyName assemblyName, out Assembly assembly) {
 			foreach (string ext in assemblyExtensions) {
-				string startPath = Path.Combine(AppContext.BaseDirectory, "libs");
+				string startPath = Path.Combine(AppContext.BaseDirectory, "bin");
 				if (path != null && !Path.IsPathRooted(path))
 					startPath = Path.Combine(startPath, path);
 					

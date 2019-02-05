@@ -11,18 +11,18 @@
         mc:Ignorable="d"
         DataContext="{Binding Settings, Source={StaticResource Locator}}"
         cmd:RelayInfo.Collection="{StaticResource SettingsCommands}"
-        UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFFCFCFC"
         Title="{Binding Title}" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Icon="Resources/App.ico" Closed="OnClosed" WindowStartupLocation="CenterOwner">
   <i:Interaction.Triggers>
     <i:EventTrigger EventName="Loaded">
       <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
     </i:EventTrigger>
   </i:Interaction.Triggers>
-  <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="312" Width="494">
-    <GroupBox HorizontalAlignment="Left" Header="Game Naming Scheme" VerticalAlignment="Top" Margin="10,10,0,0" Width="250" Height="85">
-      <!--<GroupBox.Header>
-        <CheckBox Content="Game Naming Scheme" IsChecked="{Binding GameNamingScheme.IdOnly}"/>
-      </GroupBox.Header>-->
+  <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="318" Width="494">
+    <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="250" Height="85">
+      <GroupBox.Header>
+        <TextBlock Text="Game Naming Scheme" VerticalAlignment="Top" Panel.ZIndex="10" Margin="0" Padding="0,0,0,2"/>
+      </GroupBox.Header>
       <Grid>
         <CheckBox Content="Id Only" IsChecked="{Binding GameNamingScheme.IdOnly}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
         <CheckBox Content="English Name" IsChecked="{Binding GameNamingScheme.EnglishName}" IsEnabled="{Binding GameNamingEnabled}"
@@ -31,10 +31,10 @@
                   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,34,0,0"/>
       </Grid>
     </GroupBox>
-    <GroupBox Header="Character Naming Scheme" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0" Width="250" Height="165">
-      <!--<GroupBox.Header>
-        <CheckBox Content="Character Naming Scheme" IsChecked="{Binding CharacterNamingScheme.IdOnly}"/>
-      </GroupBox.Header>-->
+    <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0" Width="250" Height="165">
+      <GroupBox.Header>
+        <TextBlock Text="Character Category Order" Padding="0,0,0,2"/>
+      </GroupBox.Header>
       <Grid>
         <CheckBox Content="Id Only" IsChecked="{Binding CharacterNamingScheme.IdOnly}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
         <CheckBox Content="Append Id" IsChecked="{Binding CharacterNamingScheme.AppendId}" IsEnabled="{Binding CharacterNamingEnabled}"
@@ -66,10 +66,10 @@
         </StackPanel>
       </Grid>
     </GroupBox>
-    <GroupBox Header="Sprite Category Order" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="265,10,0,0" Width="217" Height="255">
-      <!--<GroupBox.Header>
-        <CheckBox Content="Character Naming Scheme" IsChecked="{Binding CharacterNamingScheme.IdOnly}"/>
-      </GroupBox.Header>-->
+    <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="265,10,0,0" Width="217" Height="255">
+      <GroupBox.Header>
+        <TextBlock Text="Sprite Category Order" Padding="0,0,0,2"/>
+      </GroupBox.Header>
       <Grid>
         <Label Content="Primary Categories" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
 
@@ -91,9 +91,11 @@
         </StackPanel>
       </Grid>
     </GroupBox>
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
-      <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
-      <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
-    </StackPanel>
+    <Border VerticalAlignment="Bottom" Height="45" Background="#FFF0F0F0" BorderThickness="0,1,0,0" BorderBrush="#FFDFDFDF">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
+        <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
+        <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
+      </StackPanel>
+    </Border>
   </Grid>
 </Window>

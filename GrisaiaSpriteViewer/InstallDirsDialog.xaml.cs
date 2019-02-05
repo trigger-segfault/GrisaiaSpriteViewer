@@ -11,32 +11,31 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Grisaia.Mvvm.ViewModel;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
-	///  Interaction logic for SettingsDialog.xaml
+	/// Interaction logic for InstallDirDialog.xaml
 	/// </summary>
-	public partial class SettingsDialog : Window {
+	public partial class InstallDirsDialog : Window {
 		#region Properties
 
-		public SettingsViewModel ViewModel => (SettingsViewModel) DataContext;
+		//public InstallDirViewModel ViewModel => (InstallDirViewModel) DataContext;
 
 		#endregion
 
 		#region Static Constructor
 
-		static SettingsDialog() {
-			DataContextProperty.AddOwner(typeof(SettingsDialog),
-				new FrameworkPropertyMetadata(
-					OnDataContextChanged));
+		static InstallDirsDialog() {
+			//DataContextProperty.AddOwner(typeof(InstallDirDialog),
+			//	new FrameworkPropertyMetadata(
+			//		OnDataContextChanged));
 		}
 
 		#endregion
 
 		#region Constructors
 
-		public SettingsDialog() {
+		public InstallDirsDialog() {
 			InitializeComponent();
 		}
 
@@ -45,26 +44,17 @@ namespace Grisaia.SpriteViewer {
 		#region Event Handlers
 
 		private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			SettingsDialog window = (SettingsDialog) d;
-			window.ViewModel.WindowOwner = window;
+			InstallDirsDialog window = (InstallDirsDialog) d;
+			//window.ViewModel.WindowOwner = window;
 		}
 		private void OnClosed(object sender, EventArgs e) {
-			ViewModel.WindowOwner = null;
+			//ViewModel.WindowOwner = null;
 		}
 		private void OnOK(object sender, RoutedEventArgs e) {
 			DialogResult = true;
 		}
 		private void OnCancel(object sender, RoutedEventArgs e) {
 			Close();
-		}
-		private void FocusCharacterNameTypeList(object sender, RoutedEventArgs e) {
-			listBoxCharacterNameType.Focus();
-		}
-		private void FocusPrimary(object sender, RoutedEventArgs e) {
-			listBoxPrimary.Focus();
-		}
-		private void FocusSecondary(object sender, RoutedEventArgs e) {
-			listBoxSecondary.Focus();
 		}
 
 		#endregion

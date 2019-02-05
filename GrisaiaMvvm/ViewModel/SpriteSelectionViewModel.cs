@@ -40,7 +40,7 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		private bool suppressCollectionEvents = false;
 
-		private bool showGridLines = false;
+		private bool showGuideLines = false;
 
 		private bool centered = true;
 		private double scale = 1.0;
@@ -135,9 +135,9 @@ namespace Grisaia.Mvvm.ViewModel {
 			private set => Set(ref currentParts, value);
 		}*/
 		//public IReadOnlyList<ISpritePart> CurrentParts => SpriteImage.CurrentParts;
-		public bool ShowGridLines {
-			get => showGridLines;
-			set => Set(ref showGridLines, value);
+		public bool ShowGuideLines {
+			get => showGuideLines;
+			set => Set(ref showGuideLines, value);
 		}
 		/// <summary>
 		///  Gets or sets if the image should be expanded to the total size of all sprites combined.

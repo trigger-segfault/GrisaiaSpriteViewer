@@ -88,8 +88,35 @@ namespace Grisaia.SpriteViewer.Services {
 		public Window CreateSpriteSelectionWindow() {
 			return new SpriteSelectionWindow();
 		}
-		public Window CreateSettingsDialog() {
-			return new SettingsDialog();
+		/*public Window CreateSettingsDialog() {
+			return
+		}
+		public bool? ShowLoadingWindow(bool asDialog) {
+			Window window = new LoadingWindow();
+			if (asDialog)
+				return 
+			Window window = new SettingsDialog();
+			if (owner != null)
+				window.Owner = owner;
+			else
+				window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			return window.ShowDialog();
+		}*/
+		public bool? ShowSettingsDialog(Window owner) {
+			Window window = new SettingsDialog();
+			if (owner != null)
+				window.Owner = owner;
+			else
+				window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			return window.ShowDialog();
+		}
+		public bool? ShowInstallDirsDialog(Window owner) {
+			Window window = new InstallDirsDialog();
+			if (owner != null)
+				window.Owner = owner;
+			else
+				window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+			return window.ShowDialog();
 		}
 		public void ReloadSprites() {
 			Window window = new LoadingWindow();
