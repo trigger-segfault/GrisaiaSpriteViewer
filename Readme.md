@@ -10,7 +10,7 @@ A sprite viewer and saver for the original Grisaia Games
 
 Sprite images can be copied or saved in the File Menu. Guidelines can be hidden in the View Menu.
 
-![Window Preview](https://i.imgur.com/bMvVgrM.png)
+![Window Preview](https://i.imgur.com/k6pBIQC.png)
 
 ### Hotkeys
 
@@ -41,7 +41,7 @@ The sprite baseline is where the sprite is *normally* drawn at, from the bottom 
 
 In no particular order.
 
-* UI options menu to customize character name display.
+* **✓** UI options menu to customize character name display.
 * Custom Install Locations via UI options menu.
 * Background/CG selection.
 * Multiple character Sprites on screen.
