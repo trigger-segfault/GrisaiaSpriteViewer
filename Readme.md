@@ -1,4 +1,4 @@
-# Grisaia Sprite Viewer
+# Grisaia Extract Sprite Viewer
 
 [![Latest Release](https://img.shields.io/github/release-pre/trigger-death/GrisaiaSpriteViewer.svg?style=flat&label=version)](https://github.com/trigger-death/GrisaiaSpriteViewer/releases/latest)
 [![Latest Release Date](https://img.shields.io/github/release-date-pre/trigger-death/GrisaiaSpriteViewer.svg?style=flat&label=released)](https://github.com/trigger-death/GrisaiaSpriteViewer/releases/latest)
