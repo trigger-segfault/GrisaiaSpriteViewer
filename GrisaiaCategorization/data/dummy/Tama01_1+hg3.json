@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "file_name": "Tama01_1.hg3",
+  "unknown": 768,
+  "expanded": false,
+  "images": [
+    {
+      "width": 695,
+      "height": 692,
+      "total_width": 1818,
+      "total_height": 2550,
+      "offset_x": 587,
+      "offset_y": 121,
+      "depth_bits": 32,
+      "frame_count": 1,
+      "has_transparency": 1,
+      "center": 901,
+      "baseline": 713,
+      "frame_offsets": [
+        92
+      ]
+    }
+  ]
+}

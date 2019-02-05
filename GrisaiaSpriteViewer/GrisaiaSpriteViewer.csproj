@@ -7,13 +7,15 @@
     <ProjectGuid>{B468146A-F5A7-4999-8414-19A194B8A678}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Grisaia.SpriteViewer</RootNamespace>
-    <AssemblyName>GrisaiaSpriteViewer</AssemblyName>
+    <AssemblyName>GrisaiaExtractSpriteViewer</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -37,10 +39,11 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\App.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -57,20 +60,71 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <None Include="Unused\ImageClipboard3.cs" />
-    <None Include="Unused\ImageClipboard2 - Copy.cs" />
-    <Compile Include="ImageClipboard.cs" />
+    <Compile Include="Commands\IRelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfo.Collection.cs" />
+    <Compile Include="Commands\RelayInfo.cs" />
+    <Compile Include="Commands\RelayInfoCollection.cs" />
+    <Compile Include="Commands\RelayInfoCommand.cs" />
+    <Compile Include="Commands\RelayInfoCommand.Generic.cs" />
+    <Compile Include="Commands\RelayInfoCommandBinding.cs" />
+    <Compile Include="Controls\CommandButton.cs" />
+    <Compile Include="Controls\CommandMenuItem.cs" />
+    <Compile Include="Controls\ImageButton.cs" />
+    <Compile Include="Controls\ImageMenuItem.cs" />
+    <Compile Include="Controls\ProgressBarSmoother.cs" />
+    <Compile Include="Controls\SpriteCategoryComboBox.cs" />
+    <Compile Include="Controls\SpriteImage.cs" />
+    <Compile Include="Controls\SpritePartGroupComboBox.cs" />
+    <Compile Include="Controls\SpriteSelectionControl.cs" />
+    <Compile Include="Controls\SpriteSelectionViewer.cs" />
+    <Compile Include="Converters\EnumToName.cs" />
+    <Compile Include="Converters\BooleanWhenEqual.cs" />
+    <Compile Include="Converters\CollapsedWhenBoolean.cs" />
+    <Compile Include="Converters\CollapsedWhenNull.cs" />
+    <Compile Include="Converters\InverseBoolean.cs" />
+    <Compile Include="Converters\PreserveThickness.cs" />
+    <Compile Include="Converters\RadioButtonConverter.cs" />
+    <Compile Include="Converters\ScaleConverter.cs" />
+    <Compile Include="Converters\TextToHorizontalAlignment.cs" />
+    <Compile Include="Converters\ZeroWhenBoolean.cs" />
+    <Compile Include="Converters\ZeroWhenNull.cs" />
+    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="Input\AnyKeyGesture.cs" />
+    <Compile Include="Input\AnyKeyGestureConverter.cs" />
+    <Compile Include="InstallDirsDialog.xaml.cs">
+      <DependentUpon>InstallDirsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ClipboardService.cs" />
+    <Compile Include="Services\GrisaiaDialogService.cs" />
+    <Compile Include="Services\RelayInfoCommandFactory.cs" />
+    <Compile Include="SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ImageClipboard.cs" />
     <None Include="Unused\ImageClipboard.Glitched.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Windows\ErrorMessageBox.xaml.cs">
+      <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FolderBrowserDialog.cs" />
+    <None Include="Properties\app.manifest" />
     <Compile Include="LoadingWindow.xaml.cs">
       <DependentUpon>LoadingWindow.xaml</DependentUpon>
     </Compile>
     <None Include="Unused\ZoomOnMouseWheel.cs" />
-    <None Include="packages.config" />
+    <Page Include="InstallDirsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoadingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="SettingsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SpriteSelectionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -78,18 +132,31 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="SpriteSelectionWindow.xaml.cs">
+      <DependentUpon>SpriteSelectionWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\RelayCommands.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Themes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ErrorMessageBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\kajitsu-ama__L0-D5-P1-B1__0P01-2P02-3P02.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
@@ -105,12 +172,75 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ContentWithTargetPath>
     <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj">
-      <Project>{767fd43f-e4b7-4346-b4ef-3792178e55aa}</Project>
+      <Project>{1b907c39-eb5d-4f07-b70e-142e2c88e8b5}</Project>
       <Name>GrisaiaCategorization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GrisaiaMvvm\GrisaiaMvvm.csproj">
+      <Project>{3649d829-ee95-4c9f-b56a-7ca6654d22dd}</Project>
+      <Name>GrisaiaMvvm</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MvvmLight">
+      <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="TriggersTools.Build.CopyrightYear">
+      <Version>1.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ArrowUp.png" />
+    <Resource Include="Resources\Icons\ArrowDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\DiskBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\DocumentCopy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Equalizer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GrisaiaIcons\idolmahou.png" />
+    <Resource Include="Resources\GrisaiaIcons\idolmahou1.png" />
+    <Resource Include="Resources\GrisaiaIcons\idolmahou2.png" />
+    <Resource Include="Resources\GrisaiaIcons\kajitsu.png" />
+    <Resource Include="Resources\GrisaiaIcons\meikyuu.png" />
+    <Resource Include="Resources\GrisaiaIcons\rakuen.png" />
+    <Resource Include="Resources\GrisaiaIcons\senritsu.png" />
+    <Resource Include="Resources\GrisaiaIcons\yuukan.png" />
+    <Resource Include="Resources\GrisaiaIcons\zankou.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\BlueApple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ApplicationResizeActual.png" />
+    <Resource Include="Resources\Icons\ApplicationResizeFull.png" />
+    <Resource Include="Resources\Icons\BlueAppleFolder.png" />
+    <Resource Include="Resources\Icons\BoxArrow.png" />
+    <Resource Include="Resources\Icons\Cutter.png" />
+    <Resource Include="Resources\Icons\DoorOpenIn.png" />
+    <Resource Include="Resources\Icons\FolderOpenDocument.png" />
+    <Resource Include="Resources\Icons\Information.png" />
+    <Resource Include="Resources\Icons\Question.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\GuideLines.png" />
+    <Resource Include="Resources\Icons\LayerResize.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

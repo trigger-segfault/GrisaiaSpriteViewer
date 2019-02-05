@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  A random number generation method used by <see cref="Kifint"/>.
 	/// </summary>
-	internal class MersenneTwister {
+	internal sealed class MersenneTwister {
 		#region Constants
 
 		private const int N = 624;
@@ -115,12 +110,8 @@ namespace Grisaia.Asmodean {
 
 		#region Static GenRand
 
-		public static uint GenRand(int seed) {
-			return new MersenneTwister(seed).GenRand();
-		}
-		public static uint GenRand(uint seed) {
-			return new MersenneTwister(seed).GenRand();
-		}
+		public static uint GenRand(int seed) => new MersenneTwister(seed).GenRand();
+		public static uint GenRand(uint seed) => new MersenneTwister(seed).GenRand();
 
 		#endregion
 

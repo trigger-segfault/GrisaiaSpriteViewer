@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
 	///  A frame used in an .anm file and the <see cref="Anm"/> class.
 	/// </summary>
-	public class AnmFrame {
+	public sealed class AnmFrame {
 		#region Fields
 
 		/// <summary>
-		///  Unknown. Seems to an some sort of identifier.
+		///  Unknown. Seems to an some sort of identifier for control frames.
 		/// </summary>
 		[JsonProperty("start")]
 		public int Start { get; private set; }
 		/// <summary>
-		///  Gets the index of the frame.
+		///  Gets the index of the frame image.
 		/// </summary>
 		[JsonProperty("index")]
 		public int Index { get; private set; }
@@ -38,7 +33,14 @@ namespace Grisaia.Asmodean {
 
 		#region Constructors
 
+		/// <summary>
+		///  Constructs an unassigned ANM frame for use with loading via <see cref="Newtonsoft.Json"/>.
+		/// </summary>
 		public AnmFrame() { }
+		/// <summary>
+		///  Constructs an ANM frame with the specified file name and <see cref="Anm.ANMFRM"/>.
+		/// </summary>
+		/// <param name="frame">The ANMFRM struct containing frame information.</param>
 		internal AnmFrame(Anm.ANMFRM frame) {
 			Start = frame.Start;
 			Index = frame.Index;
@@ -50,7 +52,11 @@ namespace Grisaia.Asmodean {
 
 		#region ToString Override
 
-		public override string ToString() => $"Frame: S={Start}, I={Index:D2}, D={Duration:D2}, N={NextFrame:D2}";
+		/// <summary>
+		///  Gets the string representation of the ANM frame.
+		/// </summary>
+		/// <returns>The ANM frame's string representation.</returns>
+		public override string ToString() => $"Frame: S={Start} I={Index:D2} D={Duration:D2} N={NextFrame:D2}";
 
 		#endregion
 	}

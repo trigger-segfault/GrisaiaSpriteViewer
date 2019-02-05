@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia.Extensions {
 	public static class BinaryExtensions {
@@ -52,8 +48,8 @@ namespace Grisaia.Extensions {
 			return new string(reader.ReadChars(length));
 		}
 
-		public static bool IsEndOfStream(this Stream stream) {
+		/*public static bool IsEndOfStream(this Stream stream) {
 			return stream.Position >= stream.Length;
-		}
+		}*/
 	}
 }

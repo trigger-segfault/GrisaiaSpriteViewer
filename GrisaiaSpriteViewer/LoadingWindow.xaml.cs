@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,42 +13,51 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using Grisaia.Asmodean;
+using Grisaia.Categories;
+using Grisaia.Mvvm.Model;
+using Grisaia.Mvvm.ViewModel;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
-	/// Interaction logic for LoadingWindow.xaml
+	///  Interaction logic for LoadingWindow.xaml
 	/// </summary>
 	public partial class LoadingWindow : Window {
+		#region Properties
+		
+		public LoadingViewModel ViewModel => (LoadingViewModel) DataContext;
 
-		private MainWindow mainWindow;
+		#endregion
+
+		#region Static Constructors
+
+		static LoadingWindow() {
+			DataContextProperty.AddOwner(typeof(LoadingWindow),
+				new FrameworkPropertyMetadata(
+					OnDataContextChanged));
+		}
+
+		#endregion
+
+		#region Constructors
 
 		public LoadingWindow() {
 			InitializeComponent();
-			mainWindow = new MainWindow();
 		}
 
-		private void OnLoaded(object sender, RoutedEventArgs e) {
-			var task = Task.Run(() => {
-				mainWindow.Initialize(UpdateProgress);
-				Dispatcher.Invoke(() => {
-					Close();
-					mainWindow.Show();
-				});
-			}).ConfigureAwait(false);
+		#endregion
+
+		#region Event Handlers
+
+		private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+			LoadingWindow window = (LoadingWindow) d;
+			window.ViewModel.WindowOwner = window;
+		}
+		private void OnClosed(object sender, EventArgs e) {
+			ViewModel.WindowOwner = null;
 		}
 
-		private void UpdateProgress(string status, string game, double progress) {
-			Dispatcher.Invoke(() => {
-				labelStatus.Content = status;
-				if (game != null)
-					labelGame.Content = $"Current Game: {game}";
-				else
-					labelGame.Content = string.Empty;
-				progressBar.Value = progress;
-			});
-		}
-
-		private void OnContentRendered(object sender, EventArgs e) {
-		}
+		#endregion
 	}
 }

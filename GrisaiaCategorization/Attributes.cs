@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Grisaia;
 
-namespace GrisaiaExtractor {
+namespace Grisaia {
+	// TODO: This whole file needs a lot of cleanup
+
 	/// <summary>
 	///  An attribute that specifies what codes an enum value can be represented by.
 	/// </summary>
@@ -84,7 +83,7 @@ namespace GrisaiaExtractor {
 
 		public static string[] GetCodes(this FieldInfo field) {
 			CodeAttribute attr = field.GetCustomAttribute<CodeAttribute>();
-			return attr?.Codes ?? throw new CodeNotFoundException(field);
+			return attr?.Codes ?? new string[0];// throw new CodeNotFoundException(field);
 		}
 
 		public static bool HasCode(this FieldInfo field) {
@@ -157,7 +156,7 @@ namespace GrisaiaExtractor {
 		/// <summary>True if a description is specified.</summary>
 		public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 		/// <summary>The longest length of the codes.</summary>
-		public int CodeLength => Codes.Max(c => c.Length);
+		public int CodeLength => (Codes.Any() ? Codes.Max(c => c.Length) : 0);
 
 		/// <summary>The enum's object value.</summary>
 		/*public object EnumValue {
@@ -192,15 +191,19 @@ namespace GrisaiaExtractor {
 		/// <summary>The sorted codes with longer code lengths appearing first.</summary>
 		public List<AttributeInfo> SortedCodes { get; }
 
+		public List<AttributeInfo> AttributeInfos { get; }
+
 		/// <summary>Constructs the enum info from the type.</summary>
 		public EnumInfo(Type type) {
 			Type = type;
 			IsFlags = Type.GetTypeInfo().GetCustomAttribute<FlagsAttribute>() != null;
 			Codes = new Dictionary<string, AttributeInfo>();
 			SortedCodes = new List<AttributeInfo>();
+			AttributeInfos = new List<AttributeInfo>();
 
 			foreach (FieldInfo field in type.GetFields(BindingFlags.Static | BindingFlags.Public)) {
 				AttributeInfo attrInfo = new AttributeInfo(field);
+				AttributeInfos.Add(attrInfo);
 				// Ignore default no-flag values
 				if (attrInfo.IntValue == 0 && IsFlags) {
 					DefaultValue = attrInfo;
@@ -273,11 +276,55 @@ namespace GrisaiaExtractor {
 				return defaultValue;
 			}
 		}
+		/// <summary>Parses the code and returns it as an enum.</summary>
+		public static bool TryParseCode<TEnum>(string code, out TEnum value) where TEnum : Enum {
+			EnumInfo enumInfo = GetEnumInfo<TEnum>();
+			if (enumInfo.IsFlags) {
+				int intValue = 0;
+				bool foundAny = false;
+				foreach (AttributeInfo attrInfo in enumInfo.SortedCodes) {
+					if (code.Length == 0)
+						break;
+					foreach (string attrCode in attrInfo.Codes) {
+						int index = code.IndexOf(attrCode);
+						if (index != -1) {
+							foundAny = true;
+							intValue |= attrInfo.IntValue;
+							code = code.Remove(index, attrCode.Length);
+							break;
+						}
+					}
+				}
+				if (foundAny) {
+					value = (TEnum) Enum.ToObject(typeof(TEnum), intValue);
+					return true;
+				}
+			}
+			else if (enumInfo.Codes.TryGetValue(code, out var attrInfo)) {
+				value = (TEnum) attrInfo.EnumValue;
+				return true;
+			}
+			value = default;
+			return false;
+		}
 
 		public static IEnumerable<AttributeInfo> GetAttributeInfos<TEnum>(TEnum enumValue, bool includeDefault = true) {
 			int intValue = Convert.ToInt32(enumValue);
 			EnumInfo enumInfo = GetEnumInfo<TEnum>();
-			foreach (AttributeInfo attrInfo in enumInfo.Codes.Values) {
+			/*foreach (AttributeInfo attrInfo in enumInfo.Codes.Values) {
+				if (enumInfo.IsFlags) {
+					if ((intValue & attrInfo.IntValue) == intValue) {
+						yield return attrInfo;
+						includeDefault = false;
+					}
+				}
+				else if (intValue == attrInfo.IntValue) {
+					yield return attrInfo;
+					includeDefault = false;
+					break;
+				}
+			}*/
+			foreach (AttributeInfo attrInfo in enumInfo.AttributeInfos) {
 				if (enumInfo.IsFlags) {
 					if ((intValue & attrInfo.IntValue) == intValue) {
 						yield return attrInfo;
@@ -305,7 +352,15 @@ namespace GrisaiaExtractor {
 		public static AttributeInfo GetAttributeInfo<TEnum>(TEnum enumValue, bool includeDefault = true) {
 			int intValue = Convert.ToInt32(enumValue);
 			EnumInfo enumInfo = GetEnumInfo<TEnum>();
-			foreach (AttributeInfo attrInfo in enumInfo.Codes.Values) {
+			/*foreach (AttributeInfo attrInfo in enumInfo.Codes.Values) {
+				if (enumInfo.IsFlags) {
+					if ((intValue & attrInfo.IntValue) == intValue)
+						return attrInfo;
+				}
+				else if (intValue == attrInfo.IntValue)
+					return attrInfo;
+			}*/
+			foreach (AttributeInfo attrInfo in enumInfo.AttributeInfos) {
 				if (enumInfo.IsFlags) {
 					if ((intValue & attrInfo.IntValue) == intValue)
 						return attrInfo;

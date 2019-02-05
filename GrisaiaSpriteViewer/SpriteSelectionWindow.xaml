@@ -1,0 +1,89 @@
+﻿<Window x:Class="Grisaia.SpriteViewer.SpriteSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+        xmlns:cmd="clr-namespace:Grisaia.SpriteViewer.Commands"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        mc:Ignorable="d"
+        DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
+        cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}"
+        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
+        >
+  <DockPanel>
+    <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
+      <Menu>
+        <MenuItem Header="File">
+          <local:CommandMenuItem Command="{Binding SaveSprite}"/>
+          <local:CommandMenuItem Command="{Binding CopySprite}"/>
+          <Separator Margin="0,4"/>
+          <local:CommandMenuItem Command="{Binding Exit}"/>
+        </MenuItem>
+        <MenuItem Header="View">
+          <local:CommandMenuItem Command="{Binding ToggleExpand}" IsChecked="{Binding Expand, Mode=OneWay}" IsCheckable="True"/>
+          <local:CommandMenuItem Command="{Binding ToggleGuideLines}" IsChecked="{Binding ShowGuideLines, Mode=OneWay}" IsCheckable="True"/>
+        </MenuItem>
+        <MenuItem Header="Options">
+          <local:CommandMenuItem Command="{Binding OpenSettings}"/>
+          <local:CommandMenuItem Command="{Binding OpenInstallDirs}" Visibility="Collapsed"/>
+        </MenuItem>
+      </Menu>
+    </Border>
+    <Border DockPanel.Dock="Bottom" BorderBrush="#FFACACAC" BorderThickness="0,1,0,0">
+      <StatusBar HorizontalAlignment="Left">
+        <StatusBarItem>Dimensions:</StatusBarItem>
+        <StatusBarItem>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding SpriteSize.Width}"/>
+            <TextBlock Text="x"/>
+            <TextBlock Text="{Binding SpriteSize.Height}"/>
+          </StackPanel>
+        </StatusBarItem>
+
+        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+
+        <StatusBarItem>Scale:</StatusBarItem>
+        <StatusBarItem>
+          <TextBlock Text="{Binding Scale, StringFormat=P0}"/>
+        </StatusBarItem>
+
+        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+
+        <StatusBarItem>Unique Id:</StatusBarItem>
+        <StatusBarItem>
+          <TextBlock Text="{Binding SpriteUniqueId}"/>
+        </StatusBarItem>
+      </StatusBar>
+    </Border>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="140"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="200"/>
+      </Grid.ColumnDefinitions>
+      <Border Grid.Column="0" BorderBrush="#FFACACAC" BorderThickness="0,0,1,0" Padding="10,5" Background="White">
+        <StackPanel>
+          <TextBlock Text="Sprite Parts" FontWeight="Bold" Margin="-2,0,0,5"/>
+          <TextBlock Text="{Binding SpritePartList}" FontFamily="Courier New" FontSize="11"/>
+        </StackPanel>
+      </Border>
+      <local:SpriteSelectionViewer Grid.Column="1"
+                                   DataContext="{Binding}"
+                                   Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   SpriteOrigin="{Binding SpriteOrigin}"
+                                   SpriteSize="{Binding SpriteSize}"
+                                   Centered="{Binding Centered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   ShowGuideLines="{Binding ShowGuideLines}"
+                                   Expand="{Binding Expand}"/>
+      <Border Grid.Column="2" BorderBrush="#FFACACAC" BorderThickness="1,0,0,0">
+        <local:SpriteSelectionControl DataContext="{Binding}"
+                                      SpriteDatabase="{Binding SpriteDatabase}"
+                                      Categories="{Binding Categories}"
+                                      Groups="{Binding Groups}"
+                                      GroupParts="{Binding GroupParts}"/>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

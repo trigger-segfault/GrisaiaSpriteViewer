@@ -1,37 +1,43 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
-	///  A loaded and cached KIFINT file.
+	///  A loaded and cached KIFINT archive.
 	/// </summary>
-	public partial class Kifint : IEnumerable<KifintEntry> {
+	public sealed partial class Kifint : IReadOnlyCollection<KifintEntry> {
 		#region Fields
 
 		/// <summary>
-		///  Gets the file path to the KIFINT file.
+		///  Gets the file path to the KIFINT archive.
 		/// </summary>
-		public string FilePath { get; internal set; }
+		public string FilePath { get; private set; }
 		/// <summary>
 		///  Gets the file key used for decryption. Null if there is no encryption.
 		/// </summary>
-		public uint? FileKey { get; internal set; }
+		public uint? FileKey { get; private set; }
 		/// <summary>
-		///  Gets the list of entries in the KIFINT file.
+		///  Gets the list of entries in the KIFINT archive.
 		/// </summary>
-		public IReadOnlyList<KifintEntry> Entries { get; internal set; }
+		public IReadOnlyDictionary<string, KifintEntry> Entries { get; private set; }
+		/// <summary>
+		///  Gets the type associated with this archive.
+		/// </summary>
+		public KifintType ArchiveType { get; private set; }
 
 		#endregion
 
 		#region Properties
 
 		/// <summary>
-		///  Gets the number of valid entries in the KIFINT file.
+		///  Gets the file name of the KIFINT archive.
+		/// </summary>
+		public string FileName => Path.GetFileName(FilePath);
+		/// <summary>
+		///  Gets the number of cached entries in the KIFINT archive.
 		/// </summary>
 		public int Count => Entries.Count;
 
@@ -39,50 +45,78 @@ namespace Grisaia.Asmodean {
 
 		#region Constructors
 
-		internal Kifint(string kifintFile) {
-			FilePath = kifintFile;
-		}
-		/*internal Kifint(string intFilePath, Exkifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
-			FilePath = intFilePath;
+		/// <summary>
+		///  Constructs an unassigned KIFINT archive for use with <see cref="Read"/>.
+		/// </summary>
+		private Kifint() { }
+		/// <summary>
+		///  Constructs a cached KIFINT archive with the specified path, entries, and file key.
+		/// </summary>
+		/// <param name="kifintPath">The absolute path to the KIFINT archive.</param>
+		/// <param name="kifEntries">The array of unobfuscated KIFENTRIES inside the KIFINT.</param>
+		/// <param name="decrypt">True if the file key is required.</param>
+		/// <param name="fileKey">The file key when <paramref name="decrypt"/> is true.</param>
+		private Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey, KifintType type) {
+			FilePath = kifintPath;
 			FileKey = (decrypt ? fileKey : (uint?) null);
+			ArchiveType = type;
+			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>(kifEntries.Length);
 			foreach (var kifEntry in kifEntries) {
 				string fileName = kifEntry.FileName;
 				if (fileName != "__key__.dat") {
-					entries.Add(new KifintEntry(fileName, kifEntry, this));
+					entries.Add(fileName, new KifintEntry(fileName, kifEntry, this));
 				}
 			}
-		}*/
-		internal Kifint(string intFilePath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey) {
-			FilePath = intFilePath;
-			FileKey = (decrypt ? fileKey : (uint?) null);
-			List<KifintEntry> entries = new List<KifintEntry>();
-			foreach (var kifEntry in kifEntries) {
-				string fileName = kifEntry.FileName;
-				if (fileName != "__key__.dat") {
-					entries.Add(new KifintEntry(fileName, kifEntry, this));
-				}
-			}
-			Entries = Array.AsReadOnly(entries.ToArray());
+			Entries = new ReadOnlyDictionary<string, KifintEntry>(entries);
 		}
-		private Kifint(BinaryReader reader, int version, string installDir) {
-			FilePath = Path.Combine(installDir, reader.ReadString());
 
-			bool decrypt = reader.ReadBoolean();
-			FileKey = reader.ReadUInt32();
-			if (!decrypt) FileKey = null;
+		#endregion
 
-			int count = reader.ReadInt32();
-			KifintEntry[] entries = new KifintEntry[count];
-			for (int i = 0; i < count; i++) {
-				entries[i] = KifintEntry.Read(reader, version, this);
-			}
-			Entries = Array.AsReadOnly(entries);
-		}
+		#region Accessors
+
+		/// <summary>
+		///  Gets the KIFINT entry with the specified key.
+		/// </summary>
+		/// <param name="key">The key of the entry to get.</param>
+		/// <returns>The located entry.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  The entry with the <paramref name="key"/> was not found.
+		/// </exception>
+		public KifintEntry Get(string key) => Entries[key];
+		/// <summary>
+		///  Tries to get the KIFINT entry with the specified key and returns true on success.
+		/// </summary>
+		/// <param name="key">The key of the entry to get.</param>
+		/// <param name="value">The output entry if the key was found.</param>
+		/// <returns>True if the key was found, otherwise false.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
+		public bool TryGetValue(string key, out KifintEntry value) => Entries.TryGetValue(key, out value);
+		/// <summary>
+		///  Returns true if a KIFINT entry with the specified key exists.
+		/// </summary>
+		/// <param name="key">The key to look for.</param>
+		/// <returns>True if the key was found, otherwise false.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="key"/> is null.
+		/// </exception>
+		public bool ContainsKey(string key) => Entries.ContainsKey(key);
 
 		#endregion
 
 		#region I/O
 
+		/// <summary>
+		///  Writes the cached KIFINT archive to the stream. For use with <see cref="KifintLookup"/>.
+		/// </summary>
+		/// <param name="writer">The writer for the current stream.</param>
 		internal void Write(BinaryWriter writer) {
 			writer.Write(Path.GetFileName(FilePath));
 
@@ -90,20 +124,56 @@ namespace Grisaia.Asmodean {
 			writer.Write(FileKey ?? 0);
 
 			writer.Write(Entries.Count);
-			foreach (KifintEntry entry in Entries) {
+			foreach (KifintEntry entry in Entries.Values) {
 				entry.Write(writer);
 			}
 		}
-		internal static Kifint Read(BinaryReader reader, int version, string installDir) {
-			return new Kifint(reader, version, installDir);
+		/// <summary>
+		///  Reads the KIFINT archive from the stream. For use with <see cref="KifintLookup"/>.
+		/// </summary>
+		/// <param name="reader">The reader for the current stream.</param>
+		/// <param name="version">The current version being read.</param>
+		/// <param name="installDir">The installation directory where the archive is located.</param>
+		/// <returns>The loaded cached KIFINT archive.</returns>
+		internal static Kifint Read(BinaryReader reader, int version, string installDir, KifintType type) {
+			Kifint kifint = new Kifint {
+				FilePath = Path.Combine(installDir, reader.ReadString()),
+				ArchiveType = type,
+			};
+			bool decrypt = reader.ReadBoolean();
+			kifint.FileKey = reader.ReadUInt32();
+			if (!decrypt) kifint.FileKey = null;
+
+			int count = reader.ReadInt32();
+			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>(count);
+			for (int i = 0; i < count; i++) {
+				KifintEntry entry = KifintEntry.Read(reader, version, kifint);
+				entries.Add(entry.FileName, entry);
+			}
+			kifint.Entries = new ReadOnlyDictionary<string, KifintEntry>(entries);
+			return kifint;
 		}
+
+		#endregion
+
+		#region ToString Override
+
+		/// <summary>
+		///  Gets the string representation of the KIFINT archive.
+		/// </summary>
+		/// <returns>The string representation of the KIFINT archive.</returns>
+		public override string ToString() => $"Kifint: \"{FileName}\" Type={ArchiveType} Count={Count}";
 
 		#endregion
 
 		#region IEnumerable Implementation
 
-		public IEnumerator<KifintEntry> GetEnumerator() => Entries.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => Entries.GetEnumerator();
+		/// <summary>
+		///  Gets the enumerator for the cached KIFINT archive's entries.
+		/// </summary>
+		/// <returns>The KIFINT archive's entry enumerator.</returns>
+		public IEnumerator<KifintEntry> GetEnumerator() => Entries.Values.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		
 		#endregion
 	}

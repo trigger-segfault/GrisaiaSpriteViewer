@@ -1,0 +1,903 @@
+{
+  "default_parts": [
+    {
+      "name": "Outfit",
+      "id": 0
+    },
+    {
+      "name": "Face",
+      "ids": [ 2, 3 ]
+    }
+  ],
+  "characters": [
+    {
+      "id": "ama",
+      "first_name": "Amane",
+      "last_name": "Suou"
+    },
+    {
+      "id": "amm",
+      "parent_id": "ama", // Amane Suou
+      "label": "Middle School Glasses"
+    },
+    {
+      "id": "amp",
+      "parent_id": "ama", // Amane Suou
+      "label": "Middle School"
+    },
+    {
+      "id": "mak",
+      "first_name": "Makina",
+      "last_name": "Irisu",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Sunglasses",
+              "id": 4,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mic",
+      "first_name": "Michiru",
+      "last_name": "Matsushima",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Nyan Body",
+          "id": 4,
+          "enabled": false
+        },
+        {
+          "name": "Nyan Face",
+          "id": 5,
+          "enabled": false
+        },
+        {
+          "name": "Effect",
+          "id": 6,
+          "enabled": false
+        }
+      ],
+      "game_parts": [
+        {
+          "game_ids": [ "rakuen", "yuukan" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Effect",
+              "ids": [ 5, 6 ], // 6 == Pose A,B | 5 == Pose C
+              "enabled": false
+            },
+            {
+              // Behold! One sprite Id for a chin! What's the point?
+              "name": "Chin",
+              "id": 4
+            }
+          ]
+        },
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Nyan Body",
+              "id": 5,
+              "enabled": false
+            },
+            {
+              "name": "Nyan Face",
+              "id": 6,
+              "enabled": false
+            },
+            {
+              "name": "Effect",
+              "id": 7,
+              "enabled": false
+            },
+            {
+              "name": "Wand",
+              "id": 8,
+              "enabled": false
+            },
+            {
+              // Behold! One sprite Id for a chin! What's the point?
+              "name": "Chin",
+              "id": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mib",
+      "parent_id": "mic", // Michiru Matsushima
+      "label": "Black Hair",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Effect",
+          "id": 6,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "id": "micfly",
+      "parent_id": "mic", // Michiru Matsushima
+      "label": "Flying",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "id": 1
+        }
+      ],
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "id": 1
+            },
+            {
+              "name": "Nyan",
+              "id": 2,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mickv",
+      "parent_id": "mic", // Michiru Matsushima
+      "label": "Transform",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Magic",
+          "id": 1
+        }
+      ]
+    },
+    {
+      "id": "sac",
+      "first_name": "Sachi",
+      "last_name": "Komine"
+    },
+    {
+      "id": "sas",
+      "parent_id": "sac", // Sachi Komine
+      "label": "Battle",
+      "game_parts": [
+        {
+          "game_ids": [ "rakuen", "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "id": 1
+            }
+          ]
+        }
+      ]
+      // Outfit 8, Meikyuu/Rakuen, no face (Gas Mask)
+    },
+    {
+      "id": "yum",
+      "first_name": "Yumiko",
+      "last_name": "Sakaki",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Dazs",
+              "id": 4,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yummoz",
+      "parent_id": "yum", // Yumiko Sakaki
+      "label": "Mosiac",
+      "parts": [
+        {
+          "name": "Mosiac",
+          "id": 0
+        }
+      ]
+    },
+    {
+      "id": "kap",
+      "first_name": "Kazuki",
+      "last_name": "Kazami",
+      "label": null
+    },
+    {
+      "id": "kar",
+      "parent_id": "kap", // Kazuki Kazami
+      "label": "Child"
+    },
+    {
+      "id": "kaz",
+      "parent_id": "kap", // Kazuki Kazami
+      "label": "Magical Girl",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Than Body",
+              "id": 5,
+              "enabled": false
+            },
+            {
+              "name": "Than Mouth",
+              "id": 6,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kazfly",
+      "parent_id": "kap", // Kazuki Kazami
+      "label": "Flying",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Than",
+          "id": 1
+        }
+      ]
+    },
+    {
+      "id": "kapkv",
+      "parent_id": "kap", // Kazuki Kazami
+      "label": "Transform",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Than",
+          "id": 1
+        }
+      ]
+    },
+    {
+      "id": "chi",
+      "first_name": "Chizuru",
+      "last_name": "Tachibana",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Microphone",
+              "id": 5,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jb",
+      "nickname": "JB",
+      "alias": "Julia Bardera",
+      "first_name": "Yuria",
+      "last_name": "Harudera",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Sunglasses",
+              "id": 4,
+              "enabled": false
+            },
+            {
+              "name": "Hat",
+              "id": 5,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jbs",
+      "parent_id": "jb",
+      "label": "Past"
+    },
+    {
+      "id": "asa",
+      "first_name": "Asako",
+      "last_name": "Kusakabe"
+    },
+    {
+      "id": "kia",
+      "first_name": "Chiara",
+      "last_name": "Farrell"
+    },
+    {
+      "id": "yuj",
+      "first_name": "Yuuji",
+      "last_name": "Kazami",
+      "label": "Child"
+    },
+
+    // RELATIVES & FRIENDS
+    {
+      "id": "saf",
+      "relation_id": "sac",
+      "title": "$RELATION:NAME$'s Father"
+    },
+    {
+      "id": "sam",
+      "relation_id": "sac",
+      "title": "$RELATION:NAME$'s Mother"
+    },
+    {
+      "id": "yuf",
+      "relation_id": "yum",
+      "first_name": "Michiaki",
+      "last_name": "Sakaki",
+      "title": "$RELATION:NAME$'s Father"
+    },
+    {
+      "id": "mif",
+      "relation_id": "mic",
+      "title": "$RELATION:NAME$'s Friend",
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Blush",
+              "id": 1,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kiy",
+      "relation_id": "mak",
+      "first_name": "Kiyoka",
+      "last_name": "Irisu",
+      "title": "$RELATION:NAME$'s Mother"
+    },
+    {
+      "id": "yjf",
+      "relation_id": "yuj",
+      "first_name": "Ryouji",
+      "last_name": "Kazami",
+      "title": "$RELATION:NAME$'s Father"
+    },
+    {
+      "id": "yjm",
+      "relation_id": "yuj",
+      "first_name": "Satoko",
+      "last_name": "Kazami",
+      "title": "$RELATION:NAME$'s Mother"
+    },
+
+    // MEIKYUU
+    {
+      "id": "dan",
+      "first_name": "Daniel",
+      "last_name": "Bone"
+    },
+    {
+      "id": "edi",
+      "first_name": "Edward",
+      "last_name": "Walker"
+    },
+    {
+      "id": "gar",
+      "first_name": "Agnes",
+      "last_name": "Garrett"
+    },
+    {
+      "id": "jei",
+      "first_name": "Justin",
+      "last_name": "Mikemeyer"
+    },
+    {
+      "id": "mir",
+      "first_name": "Milliela",
+      "last_name": "Stanfield",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Effect",
+          "id": 6,
+          "enabled": false
+        }
+      ],
+      "game_parts": [
+        {
+          "game_ids": [ "rakuen" ],
+          "parts": [
+            {
+              "name": "Outfit",
+              "id": 0
+            },
+            {
+              "name": "Face",
+              "ids": [ 2, 3 ]
+            },
+            {
+              "name": "Helmet",
+              "id": 4,
+              "enabled": false
+            },
+            {
+              "name": "Effect",
+              "id": 6,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      // TODO: Determine difference between "osl" and "osr"
+      "id": "osl",
+      "first_name": "Heath",
+      "last_name": "Oslo"
+    },
+    {
+      // No existing sprites, probably CG only
+      "id": "osr",
+      "parent_id": "osl"
+    },
+    {
+      "id": "rob",
+      "first_name": "Robert",
+      "last_name": "Wallson"
+    },
+
+    // RAKUEN
+    {
+      "id": "adm",
+      "first_name": "Adam",
+      "last_name": "Black"
+    },
+    {
+      "id": "rby",
+      "relation_id": "rob",
+      "first_name": "Zoey",
+      "last_name": "Graham",
+      "title": "$RELATION:NAME$'s Wife"
+    },
+    {
+      "id": "tpo",
+      "title": "Typhoon"
+    },
+    {
+      "id": "tra",
+      "first_name": "Travis",
+      "last_name": null
+    },
+    {
+      "id": "yam",
+      "first_name": "Yamamoto",
+      "last_name": null
+    },
+
+    // AMANE ROUTE
+    {
+      "id": "hir",
+      "relation_id": "ama",
+      "first_name": "Hiroka",
+      "last_name": "Tamaki" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "ibu",
+      "relation_id": "ama",
+      "first_name": "Haruna",
+      "last_name": "Ibuki" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "kan",
+      "relation_id": "ama",
+      "first_name": "Saaya",
+      "last_name": "Kaneda" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "koi",
+      "relation_id": "ama",
+      "first_name": "Ritsu",
+      "last_name": "Koide" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "kom",
+      "relation_id": "ama",
+      "first_name": "Megumi",
+      "last_name": "Komori" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "och",
+      "relation_id": "ama",
+      "first_name": "Yoshihiko",
+      "last_name": "Ochi" /*,
+      "label": "Amane's Teacher"*/
+    },
+    {
+      "id": "sak",
+      "relation_id": "ama",
+      "first_name": "Chiaki",
+      "last_name": "Sakashita" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "skm",
+      "relation_id": "ama",
+      "first_name": "Minori",
+      "last_name": "Sakuma" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "skr",
+      "relation_id": "ama",
+      "first_name": "Mifuyu",
+      "last_name": "Sakurai" /*,
+      "label": "Amane's Classmate"*/
+    },
+    {
+      "id": "tas",
+      "relation_id": "sak",
+      "first_name": "Keiji",
+      "last_name": "Sakashita",
+      "title": "$RELATION:NAME$'s Father"
+    },
+
+    // OTHER
+    {
+      // No existing sprites
+      // TODO: Determine difference between "dav" and "dave"
+      "id": "dav",
+      "title": "Professor Dave"
+    },
+    {
+      // No existing sprites
+      // TODO: Determine difference between "dav" and "dave"
+      "id": "dave",
+      "title": "Professor Dave"
+    },
+    {
+      "id": "meg",
+      "title": "Goddess"
+    },
+    {
+      "id": "str",
+      "title": "Stranger"
+    },
+    {
+      "id": "kam",
+      "title": "Kami-sama" // Title: God (?)
+      // Surprisingly uses normal part setup
+    },
+    {
+      // Unused
+      "id": "nan",
+      "first_name": "Nanano",
+      "last_name": "Suou"
+    },
+    {
+      // Unused
+      "id": "ren",
+      "first_name": "Renge",
+      "last_name": "Yamabuki"
+    },
+
+    // INHUMAN
+    {
+      "id": "cha",
+      "title": "Chaos",
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        }
+      ]
+    },
+    {
+      "id": "gho",
+      "title": "Ghost",
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        }
+      ]
+    },
+    {
+      "id": "joh",
+      "relation_id": "yuj",
+      "first_name": "John",
+      "last_name": null,
+      "title": "$RELATION:NAME$'s Dog",
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        },
+        {
+          "name": "Nothing",
+          "id": 2,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "id": "mar",
+      "first_name": "Marin",
+      "last_name": null,
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        }
+      ]
+    },
+    {
+      "id": "nya",
+      "first_name": "Nyanmel",
+      "last_name": null,
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "id": 2
+        }
+      ],
+      "game_parts": [
+        {
+          "game_ids": [ "idolmahou", "idolmahou1", "idolmahou2" ],
+          "parts": [
+            {
+              "name": "Body",
+              "id": 2
+            },
+            {
+              "name": "Face",
+              "ids": [ 3, 4 ]
+            },
+            {
+              "name": "Bubble",
+              "id": 0
+            },
+            {
+              "name": "Effect",
+              "id": 1,
+              "enabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tan",
+      "first_name": "Thanatochu",
+      "last_name": null,
+      "parts": [
+        {
+          "name": "Body",
+          "id": 2
+        },
+        {
+          "name": "Face",
+          "id": 3
+        },
+        {
+          "name": "Bubble",
+          "id": 0
+        }
+      ]
+    },
+    {
+      "id": "mag",
+      "first_name": "Tunafish Man",
+      "last_name": null,
+      "title": "Tunafish Man",
+      "parts": [
+        {
+          "name": "Body",
+          "id": 0
+        },
+        {
+          "name": "Unknown",
+          "id": 2
+        }
+      ]
+    },
+
+    // SENRITSU
+    {
+      "id": "iza",
+      "first_name": "Isabella",
+      "last_name": "Fitzgerald",
+      "title": "Major %FULLNAME%",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Blush",
+          "id": 1,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "id": "mro",
+      "first_name": "Marion",
+      "last_name": "Garland",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Blush",
+          "id": 1,
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "id": "nob",
+      "first_name": "Ramon",
+      "last_name": "Noboa",
+      "parts": [
+        {
+          "name": "Outfit",
+          "id": 0
+        },
+        {
+          "name": "Face",
+          "ids": [ 2, 3 ]
+        },
+        {
+          "name": "Sunglasses",
+          "id": 4,
+          "enabled": false
+        }
+      ]
+    }
+  ]
+}

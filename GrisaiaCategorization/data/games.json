@@ -1,0 +1,103 @@
+{
+  "games": [
+    {
+      "id": "kajitsu",
+      "jp_short": "Kajitsu",
+      "en_short": "Fruit",
+      "jp_name": "Grisaia no Kajitsu",
+      "en_name": "The Fruit of Grisaia",
+      "steam_id": 345610,
+      "vndb_id": 5154,
+      "registry": "fruit",
+      "exe": "Grisaia.exe"
+    },
+    {
+      "id": "meikyuu",
+      "jp_short": "Meikyuu",
+      "en_short": "Labyrintha",
+      "jp_name": "Grisaia no Meikyuu",
+      "en_name": "The Labyrintha of Grisaia",
+      "steam_id": 345620,
+      "vndb_id": 7723,
+      "registry": "labyrinth",
+      "exe": "Grisaia2.exe"
+    },
+    {
+      "id": "rakuen",
+      "jp_short": "Rakuen",
+      "en_short": "Eden",
+      "jp_name": "Grisaia no Rakuen",
+      "en_name": "The Eden of Grisaia",
+      "steam_id": 345630,
+      "vndb_id": 7724,
+      "registry": "eden",
+      "exe": "Grisaia3.exe"
+    },
+    {
+      "id": "yuukan",
+      "jp_short": "Yuukan",
+      "en_short": "Leisure",
+      "jp_name": "Grisaia no Yuukan",
+      "en_name": "The Leisure of Grisaia",
+      "steam_id": 460160,
+      "vndb_id": 18830,
+      "registry": "leisure",
+      "exe": "GrisaiaAno1.exe"
+    },
+    {
+      "id": "zankou",
+      "jp_short": "Zankou",
+      "en_short": "Afterglow",
+      "jp_name": "Grisaia no Zankou",
+      "en_name": "The Afterglow of Grisaia",
+      "steam_id": 464490,
+      "vndb_id": 18831,
+      "registry": "afterglow",
+      "exe": "GrisaiaAno2.exe"
+    },
+    {
+      "id": "senritsu",
+      "jp_short": "Senritsu",
+      "en_short": "Melody",
+      "jp_name": "Grisaia no Senritsu",
+      "en_name": "The Melody of Grisaia",
+      "steam_id": 464500,
+      "vndb_id": 19072,
+      "registry": "melody",
+      "exe": "GrisaiaAno3.exe"
+    },
+    {
+      "id": "idolmahou",
+      "jp_short": "Idol Mahou Shoujo",
+      "en_short": "Idol Magical Girl",
+      "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru",
+      "en_name": "Idol Magical Girl Chiru Chiru Michiru",
+      "steam_id": null,
+      "vndb_id": 14973,
+      "registry": null,
+      "exe": "GrisaiaEx.exe"
+    },
+    {
+      "id": "idolmahou1",
+      "jp_short": "Idol Mahou Shoujo (Part 1)",
+      "en_short": "Idol Magical Girl (Part 1)",
+      "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru (Part 1)",
+      "en_name": "Idol Magical Girl Chiru Chiru Michiru (Part 1)",
+      "steam_id": 377710,
+      "vndb_id": 14973,
+      "registry": null,
+      "exe": "GrisaiaEx.exe"
+    },
+    {
+      "id": "idolmahou2",
+      "jp_short": "Idol Mahou Shoujo (Part 2)",
+      "en_short": "Idol Magical Girl (Part 2)",
+      "jp_name": "Idol Mahou Shoujo Chiruchiru Michiru (Part 2)",
+      "en_name": "Idol Magical Girl Chiru Chiru Michiru (Part 2)",
+      "steam_id": 377720,
+      "vndb_id": 14973,
+      "registry": null,
+      "exe": "GrisaiaEx.exe"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+                    xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
+                    xmlns:spr="clr-namespace:Grisaia.Categories.Sprites;assembly=GrisaiaExtractCategorization"
+                    xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
+  <Style x:Key="{x:Type local:SpriteCategoryComboBox}" TargetType="{x:Type local:SpriteCategoryComboBox}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:SpriteCategoryComboBox}">
+          <StackPanel>
+            <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=SelectedItem.Category.Name, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3"/>
+            <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource.List, RelativeSource={RelativeSource TemplatedParent}}"
+                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                       IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type spr:ISpriteCategory}">
+                  <TextBlock Text="{Binding DisplayName}"/>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type local:SpritePartGroupComboBox}" TargetType="{x:Type local:SpritePartGroupComboBox}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:SpritePartGroupComboBox}">
+          <StackPanel>
+            <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=ItemsSource.Name, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3"/>
+            <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource.GroupParts, RelativeSource={RelativeSource TemplatedParent}}"
+                       VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                       IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
+              <ComboBox.ItemTemplate>
+                <ItemContainerTemplate>
+                  <TextBlock Text="{Binding}"/>
+                </ItemContainerTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="{x:Type local:SpriteSelectionControl}" TargetType="{x:Type local:SpriteSelectionControl}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Padding" Value="10,2,10,5"/>
+    <Setter Property="BorderBrush" Value="#FFACACAC"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:SpriteSelectionControl}">
+          <StackPanel Margin="{TemplateBinding Padding}">
+            <StackPanel x:Name="PART_Section1"/>
+
+            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1"
+                       Margin="{TemplateBinding Padding,
+                                Converter={conv:PreserveThickness},
+                                ConverterParameter='-*,6,-*,0'}"/>
+
+            <StackPanel x:Name="PART_Section2"/>
+
+            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1"
+                       Margin="{TemplateBinding Padding,
+                                Converter={conv:PreserveThickness},
+                                ConverterParameter='-*,6,-*,0'}"/>
+
+            <StackPanel x:Name="PART_Section3"/>
+
+            <!--<Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+            </Grid>-->
+          </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="{x:Type local:SpriteImage}" TargetType="{x:Type local:SpriteImage}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="IsTabStop" Value="False"/>
+    <!--<Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="VerticalAlignment" Value="Top"/>
+    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    <Setter Property="VerticalContentAlignment" Value="Top"/>-->
+    <Setter Property="RenderOptions.BitmapScalingMode" Value="Fant"/>
+    <Setter Property="Background" Value="{x:Null}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:SpriteImage}">
+          <Grid x:Name="PART_Container" Background="{TemplateBinding Background}">
+            <ItemsControl ItemsSource="{Binding SpriteParts}" IsTabStop="False" Focusable="False">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <Grid IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:SpritePartDrawInfoViewModel}">
+                  <Image Visibility="{Binding IsNone, Converter={conv:CollapsedWhenTrue}}"
+                         Source="{Binding Source}"
+                         Margin="{Binding Margin}"
+                         Width="{Binding Width}"
+                         Height="{Binding Height}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type local:SpriteSelectionViewer}" TargetType="{x:Type local:SpriteSelectionViewer}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="IsTabStop" Value="False"/>
+    <Setter Property="Background" Value="{x:Null}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:SpriteSelectionViewer}">
+          <ScrollViewer x:Name="PART_ScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,1,1" Margin="0,0,1,1">
+            <Grid x:Name="PART_SpriteArea" Background="#FFCFCFCF">
+              <Grid x:Name="PART_SpriteContainer">
+                <Grid.Effect>
+                  <DropShadowEffect ShadowDepth="0" Direction="0" BlurRadius="3" />
+                </Grid.Effect>
+                <local:SpriteImage x:Name="PART_SpriteImage"
+                               DataContext="{Binding SpriteImage}"
+                               RenderOptions.BitmapScalingMode="Fant" Background="White">
+                  <local:SpriteImage.LayoutTransform>
+                    <ScaleTransform x:Name="PART_ScaleTransform"/>
+                  </local:SpriteImage.LayoutTransform>
+                </local:SpriteImage>
+
+                <Grid x:Name="PART_GuideLines">
+                  <Rectangle x:Name="PART_GuideLineCenter" HorizontalAlignment="Left" Fill="Red" Width="1" Visibility="{Binding Path=ShowGuideLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                  <Rectangle x:Name="PART_GuideLineBaseline" VerticalAlignment="Top" Fill="Blue" Height="1" Visibility="{Binding Path=ShowGuideLines, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"/>
+                </Grid>
+              </Grid>
+            </Grid>
+          </ScrollViewer>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+</ResourceDictionary>

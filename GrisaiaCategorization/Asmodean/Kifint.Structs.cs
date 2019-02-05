@@ -1,42 +1,54 @@
-﻿using Grisaia.Extensions;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
+using Grisaia.Extensions;
 
 namespace Grisaia.Asmodean {
 	partial class Kifint {
+		/// <summary>
+		///  The header structure for a KIFINT archive.
+		/// </summary>
 		[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8, CharSet = CharSet.Ansi)]
 		internal struct KIFHDR {
+			#region Fields
+
 			/// <summary>
 			///  The raw character array signature of the file.
 			/// </summary>
 			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 4)]
-			public char[] SignatureRaw;
+			public char[] SignatureRaw; // "KIF\0"
 			/// <summary>
 			///  The number of <see cref="KIFENTRY"/>s in the KIFINT archive.
 			/// </summary>
 			public int EntryCount;
 
+			#endregion
+
+			#region Properties
+
 			/// <summary>
 			///  Gets the signature of the file.
 			/// </summary>
 			public string Signature => SignatureRaw.ToNullTerminatedString();
-		}
 
+			#endregion
+		}
+		/// <summary>
+		///  The entry structure for a KIFINT archive.
+		/// </summary>
 		[StructLayout(LayoutKind.Explicit, Pack = 1, Size = 72, CharSet = CharSet.Ansi)]
 		internal struct KIFENTRY {
+			#region Constants
+
 			/// <summary>
 			///  We use this to preserve the developer naming fuckups such as the full-width 'ｇ' in Meikyuu's
 			///  "bｇ62t.hg3".
 			/// </summary>
 			private static readonly Encoding JapaneseEncoding = Encoding.GetEncoding(932);
 
+			#endregion
+
+			#region Fields
+			
 			/// <summary>
 			///  The raw character array filename of the entry.
 			/// </summary>
@@ -59,10 +71,16 @@ namespace Grisaia.Asmodean {
 			[FieldOffset(68)]
 			public int Length;
 
+			#endregion
+
+			#region Properties
+
 			/// <summary>
 			///  Gets the filename of the entry.
 			/// </summary>
 			public string FileName => FileNameRaw.ToNullTerminatedString(JapaneseEncoding);
+
+			#endregion
 		}
 		/// <summary>
 		///  We don't need to pass the <see cref="KIFENTRY.FileNameRaw"/> during P/Invoke, so we have this info
