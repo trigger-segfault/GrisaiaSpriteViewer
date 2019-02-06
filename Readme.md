@@ -35,14 +35,14 @@ The sprite baseline is where the sprite is *normally* drawn at, from the bottom 
 * **✓** Abstract categorization (allows for reordering the categories to help find uncommonly occuring sprite parts).
 * **✓** Display character names using real names.
 * **✓** Switch to MVVM implementation.
-* Custom Install Locations via json settings file.
+* **✓** Custom Install Locations via json settings file.
 
 ### Future Todo
 
 In no particular order.
 
 * **✓** UI options menu to customize character name display.
-* Custom Install Locations via UI options menu.
+* **✓** Custom Install Locations via UI options menu.
 * Background/CG selection.
 * Multiple character Sprites on screen.
 * Character Face Sprite in bottom left corner.
