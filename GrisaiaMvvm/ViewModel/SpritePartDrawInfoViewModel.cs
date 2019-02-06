@@ -5,7 +5,7 @@ namespace Grisaia.Mvvm.ViewModel {
 	/// <summary>
 	///  An immutable view model for the draw settings of a sprite part.
 	/// </summary>
-	public class SpritePartDrawInfoViewModel {
+	public sealed class SpritePartDrawInfoViewModel {
 		#region Constants
 
 		/// <summary>

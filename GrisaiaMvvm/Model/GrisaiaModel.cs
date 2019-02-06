@@ -48,7 +48,7 @@ namespace Grisaia.Mvvm.Model {
 
 		public void SaveSettings() {
 			string configFile = Path.Combine(AppContext.BaseDirectory, "config.json");
-			File.WriteAllText(configFile, JsonConvert.SerializeObject(Settings));
+			File.WriteAllText(configFile, JsonConvert.SerializeObject(Settings, Formatting.Indented));
 		}
 
 		#endregion

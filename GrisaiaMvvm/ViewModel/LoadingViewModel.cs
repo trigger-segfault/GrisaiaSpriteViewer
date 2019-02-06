@@ -11,7 +11,7 @@ using Grisaia.Mvvm.Services;
 using Grisaia.Mvvm.ViewModel.Messages;
 
 namespace Grisaia.Mvvm.ViewModel {
-	public class LoadingViewModel : ViewModelWindow {
+	public sealed class LoadingViewModel : ViewModelWindow {
 		#region Constants
 
 		private const string NoValue = "--";
@@ -117,23 +117,9 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		#endregion
 
-		#region Commands
-
-		public IRelayCommand<OpenLoadingWindowMessage> LoadEverything => GetCommand<OpenLoadingWindowMessage>(OnLoadEverything);
-		public IRelayCommand<OpenLoadingWindowMessage> ReloadSprites => GetCommand<OpenLoadingWindowMessage>(OnReloadSprites);
-
-		#endregion
-
 		#region Event Handlers
 
 		private void OnOpenLoadingWindow(OpenLoadingWindowMessage msg) {
-			if (msg.LoadEverything)
-				LoadEverything.Execute(msg);
-			else
-				ReloadSprites.Execute(msg);
-		}
-
-		private void OnLoadEverything(OpenLoadingWindowMessage msg) {
 			watch = Stopwatch.StartNew();
 			Ellapsed = TimeSpan.Zero;
 			MainStatus = "Preparing Grisaia Sprite Viewer...";
@@ -144,71 +130,40 @@ namespace Grisaia.Mvvm.ViewModel {
 			timeLabelTimer = UI.StartTimer(TimeSpan.FromSeconds(1), true, OnUpdateTimer);
 
 			Window loadingWindow = Dialogs.CreateLoadingWindow();
-			if (!msg.ShowDialog)
+
+			if (msg.Action == OpenLoadingWindowAction.Startup)
 				loadingWindow.Show();
 
-			var task = Task.Run(() => {
-				GrisaiaDatabase.GameDatabase.LocateGames();
-				GrisaiaDatabase.GameDatabase.LoadCache(GrisaiaDatabase.Settings.LoadUpdateArchives, OnLoadCacheProgress);
-				GrisaiaDatabase.SpriteDatabase.LoadSprites(GrisaiaDatabase.Settings.SpriteCategoryOrder, OnLoadSpritesProgress);
+			var task = Task.Run(async () => {
+				if (msg.Action != OpenLoadingWindowAction.Startup)
+					await Task.Delay(50);
+				switch (msg.Action) {
+				case OpenLoadingWindowAction.Startup:
+					GameDatabase.LocateGames(Settings.CustomGameInstalls);
+					GameDatabase.LoadCache(Settings.LoadUpdateArchives, OnLoadCacheProgress);
+					goto case OpenLoadingWindowAction.ReloadSprites;
+				case OpenLoadingWindowAction.ReloadGames:
+					GameDatabase.ReloadCache(Settings.LoadUpdateArchives, OnLoadCacheProgress);
+					goto case OpenLoadingWindowAction.ReloadSprites;
+				case OpenLoadingWindowAction.ReloadSprites:
+					SpriteDatabase.LoadSprites(Settings.SpriteCategoryOrder, OnLoadSpritesProgress);
+					break;
+				}
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
 				GC.Collect();
 				UI.Invoke(() => {
 					timeLabelTimer.Stop();
 					watch = null;
-					if (msg.OpenSpriteSelectionWindow) {
-						Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
-						loadingWindow.Close();
-						spriteSelectionWindow.Show();
-					}
-					else {
-						loadingWindow.Close();
-					}
+					if (msg.Action == OpenLoadingWindowAction.Startup)
+						Dialogs.ShowSpriteSelectionWindow();
+					WindowOwner.Close();
 					timeLabelTimer?.Stop();
 					timeLabelTimer = null;
 				});
 			}).ConfigureAwait(false);
 
-			if (msg.ShowDialog)
-				loadingWindow.ShowDialog();
-		}
-		private void OnReloadSprites(OpenLoadingWindowMessage msg) {
-			watch = Stopwatch.StartNew();
-			Ellapsed = TimeSpan.Zero;
-			MainStatus = "Reloading Sprites...";
-			EntriesStatus = NoValueOutOfValue;
-			GameStatus = NoValue;
-			MinorProgress = 0d;
-			MajorProgress = 0d;
-			timeLabelTimer = UI.StartTimer(TimeSpan.FromSeconds(1), true, OnUpdateTimer);
-
-			Window loadingWindow = Dialogs.CreateLoadingWindow();
-			if (!msg.ShowDialog)
-				loadingWindow.Show();
-
-			var task = Task.Run(() => {
-				GrisaiaDatabase.SpriteDatabase.LoadSprites(GrisaiaDatabase.Settings.SpriteCategoryOrder, OnLoadSpritesProgress);
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				GC.Collect();
-				UI.Invoke(() => {
-					timeLabelTimer.Stop();
-					watch = null;
-					if (msg.OpenSpriteSelectionWindow) {
-						Window spriteSelectionWindow = Dialogs.CreateSpriteSelectionWindow();
-						loadingWindow.Close();
-						spriteSelectionWindow.Show();
-					}
-					else {
-						loadingWindow.Close();
-					}
-					timeLabelTimer?.Stop();
-					timeLabelTimer = null;
-				});
-			}).ConfigureAwait(false);
-
-			if (msg.ShowDialog)
+			if (msg.Action != OpenLoadingWindowAction.Startup)
 				loadingWindow.ShowDialog();
 		}
 

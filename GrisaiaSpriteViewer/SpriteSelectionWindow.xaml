@@ -27,7 +27,7 @@
         </MenuItem>
         <MenuItem Header="Options">
           <local:CommandMenuItem Command="{Binding OpenSettings}"/>
-          <local:CommandMenuItem Command="{Binding OpenInstallDirs}" Visibility="Collapsed"/>
+          <local:CommandMenuItem Command="{Binding OpenInstallDirs}"/>
         </MenuItem>
       </Menu>
     </Border>

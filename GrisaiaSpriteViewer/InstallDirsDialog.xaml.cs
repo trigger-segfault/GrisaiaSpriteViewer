@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Grisaia.Mvvm.ViewModel;
 
 namespace Grisaia.SpriteViewer {
 	/// <summary>
@@ -19,16 +20,16 @@ namespace Grisaia.SpriteViewer {
 	public partial class InstallDirsDialog : Window {
 		#region Properties
 
-		//public InstallDirViewModel ViewModel => (InstallDirViewModel) DataContext;
+		public InstallDirsViewModel ViewModel => (InstallDirsViewModel) DataContext;
 
 		#endregion
 
 		#region Static Constructor
 
 		static InstallDirsDialog() {
-			//DataContextProperty.AddOwner(typeof(InstallDirDialog),
-			//	new FrameworkPropertyMetadata(
-			//		OnDataContextChanged));
+			DataContextProperty.AddOwner(typeof(InstallDirsDialog),
+				new FrameworkPropertyMetadata(
+					OnDataContextChanged));
 		}
 
 		#endregion
@@ -45,10 +46,10 @@ namespace Grisaia.SpriteViewer {
 
 		private static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			InstallDirsDialog window = (InstallDirsDialog) d;
-			//window.ViewModel.WindowOwner = window;
+			window.ViewModel.WindowOwner = window;
 		}
 		private void OnClosed(object sender, EventArgs e) {
-			//ViewModel.WindowOwner = null;
+			ViewModel.WindowOwner = null;
 		}
 		private void OnOK(object sender, RoutedEventArgs e) {
 			DialogResult = true;

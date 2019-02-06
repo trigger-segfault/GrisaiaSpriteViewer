@@ -56,11 +56,8 @@ namespace Grisaia.SpriteViewer {
 
 		private void OnAppStartup(object sender, StartupEventArgs e) {
 			Locator = (ViewModelLocator) FindResource("Locator");
-			//Locator.Loading.LoadEverything.Execute();
 			Locator.Messenger.Send(new OpenLoadingWindowMessage {
-				LoadEverything = true,
-				OpenSpriteSelectionWindow = true,
-				ShowDialog = false,
+				Action = OpenLoadingWindowAction.Startup,
 			});
 		}
 

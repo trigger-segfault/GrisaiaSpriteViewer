@@ -3,7 +3,8 @@
                     xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
                     xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
                     xmlns:spr="clr-namespace:Grisaia.Categories.Sprites;assembly=GrisaiaExtractCategorization"
-                    xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
+                    xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm"
+                    xmlns:cmd="clr-namespace:Grisaia.SpriteViewer.Commands">
   <Style x:Key="{x:Type local:SpriteCategoryComboBox}" TargetType="{x:Type local:SpriteCategoryComboBox}">
     <Setter Property="Focusable" Value="False"/>
     <Setter Property="Template">
@@ -11,12 +12,17 @@
         <ControlTemplate TargetType="{x:Type local:SpriteCategoryComboBox}">
           <StackPanel>
             <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=SelectedItem.Category.Name, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,3"/>
-            <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource.List, RelativeSource={RelativeSource TemplatedParent}}"
+            <ComboBox  x:Name="PART_ComboBox"  ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource TemplatedParent}}"
                        VerticalAlignment="Top" SelectedItem="{Binding Path=SelectedItemInternal, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                        IsEnabled="{Binding Path=ItemsSource.Count, Converter={conv:FalseWhenEqual}, ConverterParameter=1, RelativeSource={RelativeSource TemplatedParent}}">
               <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type spr:ISpriteCategory}">
-                  <TextBlock Text="{Binding DisplayName}"/>
+                  <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Converter={conv:SpriteGameToIcon}}" Width="14" Height="14" Opacity="0.8"
+                           Visibility="{Binding Path=Source, RelativeSource={RelativeSource Self}, Converter={conv:CollapsedWhenNull}}"
+                           Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding DisplayName}"/>
+                  </StackPanel>
                 </DataTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>
@@ -41,6 +47,59 @@
                 </ItemContainerTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>
+          </StackPanel>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="{x:Type local:GameInstallControl}" TargetType="{x:Type local:GameInstallControl}">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type local:GameInstallControl}">
+          <StackPanel>
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <Image Margin="0,0,6,0" Source="{Binding GameInfo.Id, RelativeSource={RelativeSource TemplatedParent}, Converter={conv:GameIdToIcon}}" Width="16" Height="16" Opacity="0.9"/>
+                <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=GameInfo.FormattedFullName, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,4" FontSize="14" FontWeight="Medium"/>
+              </StackPanel>
+                <!--<Grid>
+                <Grid.Col
+              </Grid>
+                  <local:CommandButton Command="{Binding ValidateCustomLocation}" Width=""</local:CommandButton>-->
+            </Grid>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="20"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="4"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="20"/>
+              </Grid.RowDefinitions>
+              <TextBlock Text="Custom Location" HorizontalAlignment="Right" Grid.Row="0" VerticalAlignment="Center"/>
+              <TextBlock Text="Custom Exe" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center"/>
+              <TextBlock Text="Known Location" HorizontalAlignment="Right" Grid.Row="4" VerticalAlignment="Center"/>
+
+              <TextBox x:Name="PART_CustomLocation" Grid.Row="0" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomInstallDir}"/>
+              <TextBox x:Name="PART_CustomExecutable" Grid.Row="2" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomExecutable}"/>
+              <TextBox x:Name="PART_Located" Grid.Row="4" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LocatedInstallDir, Mode=OneWay}"/>
+
+              <local:CommandButton Grid.Row="0" Grid.Column="4" Command="{Binding OpenCustomLocation}"/>
+              <local:CommandButton Grid.Row="2" Grid.Column="4" Command="{Binding OpenCustomExecutable}"/>
+              <local:CommandButton Grid.Row="4" Grid.Column="4" Command="{Binding RelocateGame}"/>
+
+              <local:CommandButton Grid.Row="0" Grid.Column="6" Command="{Binding RemoveCustomLocation}"/>
+              <local:CommandButton Grid.Row="2" Grid.Column="6" Command="{Binding RemoveCustomExecutable}"/>
+            </Grid>
           </StackPanel>
         </ControlTemplate>
       </Setter.Value>

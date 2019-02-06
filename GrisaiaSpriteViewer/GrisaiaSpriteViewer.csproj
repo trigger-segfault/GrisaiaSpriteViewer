@@ -69,6 +69,7 @@
     <Compile Include="Commands\RelayInfoCommandBinding.cs" />
     <Compile Include="Controls\CommandButton.cs" />
     <Compile Include="Controls\CommandMenuItem.cs" />
+    <Compile Include="Controls\GameInstallControl.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\ImageMenuItem.cs" />
     <Compile Include="Controls\ProgressBarSmoother.cs" />
@@ -81,7 +82,10 @@
     <Compile Include="Converters\BooleanWhenEqual.cs" />
     <Compile Include="Converters\CollapsedWhenBoolean.cs" />
     <Compile Include="Converters\CollapsedWhenNull.cs" />
+    <Compile Include="Converters\GameIdToIcon.cs" />
     <Compile Include="Converters\InverseBoolean.cs" />
+    <Compile Include="Converters\ThicknessWhenNull.cs" />
+    <Compile Include="Converters\ThicknessWhenBoolean.cs" />
     <Compile Include="Converters\PreserveThickness.cs" />
     <Compile Include="Converters\RadioButtonConverter.cs" />
     <Compile Include="Converters\ScaleConverter.cs" />
@@ -137,6 +141,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,6 +249,24 @@
   <ItemGroup>
     <Resource Include="Resources\Icons\GuideLines.png" />
     <Resource Include="Resources\Icons\LayerResize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Check.png" />
+    <Resource Include="Resources\Icons\Cross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\FolderHorizontalOpen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\BlueAppleArrow.png" />
+    <Resource Include="Resources\Icons\BlueAppleCheck.png" />
+    <Resource Include="Resources\Icons\BlueAppleCross.png" />
+    <Resource Include="Resources\Icons\BlueAppleExclamation.png" />
+    <Resource Include="Resources\Icons\BlueAppleFlag.png" />
+    <Resource Include="Resources\Icons\Eraser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ArrowCircle315.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

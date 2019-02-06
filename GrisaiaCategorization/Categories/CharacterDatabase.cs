@@ -40,7 +40,7 @@ namespace Grisaia.Categories {
 		///  Gets the default character parts layout when one is not specified.
 		/// </summary>
 		[JsonProperty("default_parts")]
-		public CharacterSpritePartGroupInfo[] DefaultParts { get; private set; }
+		public IReadOnlyList<CharacterSpritePartGroupInfo> DefaultParts { get; private set; }
 		/// <summary>
 		///  The naming scheme used for characters.
 		/// </summary>
@@ -143,12 +143,33 @@ namespace Grisaia.Categories {
 		/// </exception>
 		[JsonIgnore]
 		public CharacterInfo this[int index] => characterList[index];
+		/// <summary>
+		///  Gets the character info with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id of the character.</param>
+		/// <returns>The character info for the character with the specified Id.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  The character with the <paramref name="id"/> was not found.
+		/// </exception>
+		[JsonIgnore]
+		public CharacterInfo this[string id] {
+			get {
+				if (id == null)
+					throw new ArgumentNullException(nameof(id));
+				CharacterInfo character = characterList.Find(e => e.Id.Equals(id));
+				return character ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+			}
+		}
 
 		#endregion
 
 		#region Accessors
-		
-		/// <summary>
+
+		/*/// <summary>
 		///  Gets the character info with the specified Id.
 		/// </summary>
 		/// <param name="id">The Id of the character info to get.</param>
@@ -167,10 +188,28 @@ namespace Grisaia.Categories {
 				characterList.Add(characterInfo);
 			}
 			return characterInfo;
-		}
+		}*/
 
+		/// <summary>
+		///  Tries to get the character info with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the character info to get.</param>
+		/// <param name="value">The output character info if one was found, otherwise null.</param>
+		/// <returns>True if an character info with the Id was found, otherwise null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
 		public bool TryGetValue(string id, out CharacterInfo character) => characterMap.TryGetValue(id, out character);
-
+		/// <summary>
+		///  Gets if the category contains an character info with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id to check for an character info with.</param>
+		/// <returns>True if an character info exists with the specified Id, otherwise null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
 		public bool ContainsKey(string id) => characterMap.ContainsKey(id);
 		/// <summary>
 		///  Searches for the index of the character info in the list.
@@ -198,7 +237,7 @@ namespace Grisaia.Categories {
 		public int IndexOf(string id) {
 			if (id == null)
 				throw new ArgumentNullException(nameof(id));
-			return characterList.FindIndex(c => c.ContainsId(id));
+			return characterList.FindIndex(c => c.Id == id);
 		}
 		/// <summary>
 		///  Gets the part groups for a specified character from a specified game.

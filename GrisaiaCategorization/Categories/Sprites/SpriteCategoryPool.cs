@@ -17,7 +17,7 @@ namespace Grisaia.Categories.Sprites {
 			IsPrimary = true,
 			Create = (spr, g, c) => new SpriteGame {
 				Id = spr.GameId,
-				GameInfo = g.Get(spr.GameId),
+				GameInfo = g[spr.GameId],
 				GameIndex = g.IndexOf(spr.GameId),
 			},
 			GetInfoId = (spr) => spr.GameId,
@@ -32,7 +32,7 @@ namespace Grisaia.Categories.Sprites {
 			IsPrimary = true,
 			Create = (spr, g, c) => new SpriteCharacter {
 				Id = spr.CharacterId,
-				CharacterInfo = c.Get(spr.CharacterId),
+				CharacterInfo = c[spr.CharacterId],
 			},
 			GetInfoId = (spr) => spr.CharacterId,
 			GetSelectionId = (sel) => sel.CharacterId,
@@ -124,7 +124,7 @@ namespace Grisaia.Categories.Sprites {
 		/// <exception cref="KeyNotFoundException">
 		///  The sprite category info with the <paramref name="id"/> was not found.
 		/// </exception>
-		public static SpriteCategoryInfo Get(string id) => entries[id];
+		public static SpriteCategoryInfo GetCategory(string id) => entries[id];
 
 		#endregion
 	}

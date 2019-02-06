@@ -11,7 +11,7 @@ using Grisaia.Mvvm.Services;
 using Grisaia.Utils;
 
 namespace Grisaia.Mvvm.ViewModel {
-	public partial class SettingsViewModel : ViewModelWindow {
+	public sealed partial class SettingsViewModel : ViewModelWindow {
 		#region Fields
 
 		private CharacterNamingScheme characterNamingScheme;

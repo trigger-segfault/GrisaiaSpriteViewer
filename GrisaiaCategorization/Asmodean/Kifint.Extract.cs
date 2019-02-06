@@ -103,12 +103,12 @@ namespace Grisaia.Asmodean {
 		}
 		private static string[] IdentifyFileTypes(Stream stream, string kifintPath, string vcode2) {
 			BinaryReader reader = new BinaryReader(stream);
-			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
+			KIFHDR hdr = reader.ReadUnmanaged<KIFHDR>();
 
 			if (hdr.Signature != "KIF") // It's really a KIF INT file
 				throw new UnexpectedFileTypeException(kifintPath, "KIF");
 
-			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
+			KIFENTRY[] entries = reader.ReadUnmanagedArray<KIFENTRY>(hdr.EntryCount);
 
 			uint tocSeed = GenTocSeed(vcode2);
 			uint fileKey = 0;

@@ -80,7 +80,7 @@ namespace Grisaia.SpriteViewer.Utils {
 			bmi.biSizeImage = imageData.Length;*/
 
 			BinaryWriter writer = new BinaryWriter(stream);
-			writer.WriteStruct(bmi);
+			writer.WriteUnmanaged(bmi);
 			/*writer.Write(0x000001E0);
 			writer.Write(0x000001E0);
 			writer.Write(0x00FF0000);
@@ -122,7 +122,7 @@ namespace Grisaia.SpriteViewer.Utils {
 			bmi.bV5Intent = 4;*/
 
 			BinaryWriter writer = new BinaryWriter(stream);
-			writer.WriteStruct(bmi);
+			writer.WriteUnmanaged(bmi);
 			/*writer.Write(0x000001E0);
 			writer.Write(0x000001E0);
 			writer.Write(0x00FF0000);*/

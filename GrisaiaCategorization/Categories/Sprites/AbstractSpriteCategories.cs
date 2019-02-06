@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -110,14 +111,33 @@ namespace Grisaia.Categories.Sprites {
 
 		#region Element Accessors
 
-		/// <summary>
+		/*/// <summary>
 		///  Gets the element at the specified index in the category.
 		/// </summary>
 		/// <param name="index">The index of the element to get.</param>
 		/// <returns>The element at the specified index.</returns>
-		public ISpriteElement this[int index] => List[index];
-
+		public ISpriteElement this[int index] => List[index];*/
 		/// <summary>
+		///  Gets the element with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the element to get.</param>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  The element with the <paramref name="id"/> was not found.
+		/// </exception>
+		public ISpriteElement this[object id] {
+			get {
+				if (id == null)
+					throw new ArgumentNullException(nameof(id));
+				ISpriteElement element = List.Find(e => e.Id.Equals(id));
+				return element ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+			}
+		}
+
+		/*/// <summary>
 		///  Gets the element with the specified Id in the category.
 		/// </summary>
 		/// <param name="id">The Id of the element to get.</param>
@@ -125,14 +145,20 @@ namespace Grisaia.Categories.Sprites {
 		public ISpriteElement Get(object id) {
 			ISpriteElement element = List.Find(e => e.Id.Equals(id));
 			return element ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
-		}
+		}*/
 		/// <summary>
 		///  Tries to get the element with the specified Id in the category.
 		/// </summary>
 		/// <param name="id">The Id of the element to get.</param>
 		/// <param name="value">The output element if one was found, otherwise null.</param>
 		/// <returns>True if an element with the Id was found, otherwise null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
 		public bool TryGetValue(object id, out ISpriteElement value) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
 			value = List.Find(e => e.Id.Equals(id));
 			return value != null;
 		}
@@ -142,7 +168,13 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="id">The Id of the category to get.</param>
 		/// <param name="value">The output category if one was found, otherwise null.</param>
 		/// <returns>True if a category with the Id was found, otherwise null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
 		public bool TryGetValue(object id, out ISpriteCategory value) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
 			value = (ISpriteCategory) List.Find(e => e.Id.Equals(id));
 			return value != null;
 		}
@@ -161,7 +193,15 @@ namespace Grisaia.Categories.Sprites {
 		/// </summary>
 		/// <param name="id">The Id to check for an element with.</param>
 		/// <returns>True if an element exists with the specified Id, otherwise null.</returns>
-		public bool ContainsKey(object id) => List.Find(e => e.Id.Equals(id)) != null;
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		public bool ContainsKey(object id) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
+			return List.Find(e => e.Id.Equals(id)) != null;
+		}
 
 		#endregion
 
@@ -301,6 +341,10 @@ namespace Grisaia.Categories.Sprites {
 		/// <param name="game">The game info associated with this sprite category.</param>
 		/// <param name="character">The character info associated with this sprite category.</param>
 		/// <returns>An array of sprite part groups for use in sprite part selection.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="game"/> or <paramref name="character"/> is null.
+		/// </exception>
 		public ISpritePartGroup[] CreateGroups(GameInfo game, CharacterInfo character) {
 			CharacterSpritePartGroupInfo[] groupInfos = character.Database.GetPartGroups(game, character);
 			ISpritePartGroup[] groups = new ISpritePartGroup[groupInfos.Length];
@@ -335,11 +379,11 @@ namespace Grisaia.Categories.Sprites {
 			}
 			return groups;
 		}
-		/// <summary>
+		/*/// <summary>
 		///  Creates a group part representing no selection.
 		/// </summary>
 		/// <returns>The created empty group part.</returns>
-		public ISpritePartGroupPart CreateNoneGroupPart() => SpritePartGroupPart.None;
+		public ISpritePartGroupPart CreateNoneGroupPart() => SpritePartGroupPart.None;*/
 
 		#endregion
 
@@ -354,6 +398,12 @@ namespace Grisaia.Categories.Sprites {
 		///  Performs sorting of the list after it has finished being populated.
 		/// </summary>
 		public void Sort() => List.Sort();
+
+		#endregion
+
+		#region IEnumerable Implementation
+
+		IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
 
 		#endregion
 	}

@@ -4,14 +4,56 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+        xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
+        xmlns:cmd="clr-namespace:Grisaia.SpriteViewer.Commands"
+        xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
-        UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0"
-        Title="Grisaia Extract Sprite Viewer - Installation Directories" Height="282" Width="474" Icon="Resources/App.ico" Closed="OnClosed" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
-  <Grid>
+        DataContext="{Binding InstallDirs, Source={StaticResource Locator}}"
+                                      cmd:RelayInfo.Collection="{StaticResource InstallDirsCommands}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFFCFCFC"
+        Title="{Binding Title}" Icon="Resources/App.ico" Closed="OnClosed" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+  <i:Interaction.Triggers>
+    <i:EventTrigger EventName="Loaded">
+      <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
+    </i:EventTrigger>
+  </i:Interaction.Triggers>
+  <Grid Height="510" Width="420">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <Border Grid.Row="0" VerticalAlignment="Bottom" Background="#FFF0F0F0" BorderThickness="0,0,0,1" BorderBrush="#FFDFDFDF">
+      <TextBlock Text="If a Grisaia game installation was not located automatically, you can use this window to manually add its location to the list.&#xA;Please note that Phantom Trigger is not supported." TextWrapping="WrapWithOverflow" Margin="10,10,10,8"/>
+    </Border>
+    <ScrollViewer Grid.Row="1">
+      <ItemsControl Grid.Row="1" ItemsSource="{Binding Games}" IsTabStop="False" Focusable="False" Margin="10,0,10,10">
+        <!--<ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Sta Orientation="Vertical" IsItemsHost="True"/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>-->
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type vm:InstallDirsGameViewModel}">
+            <local:GameInstallControl DataContext="{Binding}"
+                                      cmd:RelayInfo.Collection="{StaticResource InstallDirsGameCommands}"
+                                      GameInfo="{Binding GameInfo}"
+                                      LocatedInstallDir="{Binding LocatedInstallDir}"
+                                      CustomInstallDir="{Binding CustomInstallDir}"
+                                      CustomExecutable="{Binding CustomExecutable}"
+                                      IsCustomInstallValidated="{Binding IsCustomInstallValidated}"/>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
 
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
-      <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
-      <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
-    </StackPanel>
+      </ItemsControl>
+    </ScrollViewer>
+    <Border Grid.Row="2" VerticalAlignment="Bottom" Height="45" Background="#FFF0F0F0" BorderThickness="0,1,0,0" BorderBrush="#FFDFDFDF">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
+        <local:CommandButton Content="OK" Command="{Binding OK}" Height="22" Width="80" Margin="10,0,0,0" IsDefault="True" Click="OnOK"/>
+        <local:CommandButton Content="Cancel" Command="{Binding Cancel}" Height="22" Width="80" Margin="10,0,0,0" IsCancel="True" Click="OnCancel"/>
+      </StackPanel>
+    </Border>
   </Grid>
 </Window>

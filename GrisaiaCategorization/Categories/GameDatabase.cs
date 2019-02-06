@@ -207,6 +207,27 @@ namespace Grisaia.Categories {
 		/// </exception>
 		[JsonIgnore]
 		public GameInfo this[int index] => gameList[index];
+		/// <summary>
+		///  Gets the game info with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id of the game.</param>
+		/// <returns>The game info for the game with the specified Id.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  The game with the <paramref name="id"/> was not found.
+		/// </exception>
+		[JsonIgnore]
+		public GameInfo this[string id] {
+			get {
+				if (id == null)
+					throw new ArgumentNullException(nameof(id));
+				GameInfo game = gameList.Find(e => e.Id.Equals(id));
+				return game ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+			}
+		}
 
 		#endregion
 
@@ -229,15 +250,18 @@ namespace Grisaia.Categories {
 		/// <summary>
 		///  Looks for all known Grisaia games' installation directories.
 		/// </summary>
+		/// <param name="customInstalls">The collection of custom install locations by game Id.</param>
 		/// <returns>True if any Grisaia games were found.</returns>
-		public bool LocateGames() {
+		public bool LocateGames(IReadOnlyDictionary<string, GameInstallInfo> customInstalls) {
 			locatedGameList.Clear();
 			SteamLibraryFolders steamLibraries = null;
 			try {
 				steamLibraries = SteamLocator.FindLibrariesFromRegistry();
 			} catch (SteamException) { }
 			foreach (GameInfo game in gameList) {
-				if (game.LoadGame(steamLibraries))
+				GameInstallInfo customInstall = GameInstallInfo.None;
+				customInstalls?.TryGetValue(game.Id, out customInstall);
+				if (game.LoadGame(steamLibraries, customInstall))
 					locatedGameList.Add(game);
 			}
 			RaisePropertyChanged(nameof(LocatedGames));
@@ -245,24 +269,56 @@ namespace Grisaia.Categories {
 			return locatedGameList.Count > 0;
 		}
 
+		public bool RelocateGames(IReadOnlyDictionary<string, GameInstallInfo> customInstalls) {
+			var oldLocatedGames = locatedGameList.ToList();
+			locatedGameList.Clear();
+			SteamLibraryFolders steamLibraries = null;
+			bool anyCacheNeedsReload = false;
+			try {
+				steamLibraries = SteamLocator.FindLibrariesFromRegistry();
+			} catch (SteamException) { }
+			foreach (GameInfo game in gameList) {
+				GameInstallInfo customInstall = GameInstallInfo.None;
+				customInstalls?.TryGetValue(game.Id, out customInstall);
+				if (game.ReloadGame(steamLibraries, customInstall, out bool cacheNeedsReload)) {
+					locatedGameList.Add(game);
+					if (cacheNeedsReload && !oldLocatedGames.Contains(game))
+						anyCacheNeedsReload = true;
+				}
+				else if (oldLocatedGames.Contains(game)) {
+					anyCacheNeedsReload = true;
+				}
+			}
+			RaisePropertyChanged(nameof(LocatedGames));
+			RaisePropertyChanged(nameof(LocatedCount));
+			return anyCacheNeedsReload;
+		}
+
 		#endregion
 
 		#region Accessors
-		
+
 		/// <summary>
-		///  Gets the game info with the specified Id.
+		///  Tries to get the game info with the specified Id in the category.
 		/// </summary>
-		/// <param name="id">The Id of the game.</param>
-		/// <returns>The game info for the game with the specified Id.</returns>
+		/// <param name="id">The Id of the game info to get.</param>
+		/// <param name="value">The output game info if one was found, otherwise null.</param>
+		/// <returns>True if an game info with the Id was found, otherwise null.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="id"/> is null.
 		/// </exception>
+		public bool TryGetValue(string id, out GameInfo game) => gameMap.TryGetValue(id, out game);
+		/// <summary>
+		///  Gets if the category contains an game info with the specified Id.
+		/// </summary>
+		/// <param name="id">The Id to check for an game info with.</param>
+		/// <returns>True if an game info exists with the specified Id, otherwise null.</returns>
 		/// 
-		/// <exception cref="KeyNotFoundException">
-		///  The game with the <paramref name="id"/> was not found.
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
 		/// </exception>
-		public GameInfo Get(string id) => gameMap[id];
+		public bool ContainsKey(string id) => gameMap.ContainsKey(id);
 		/// <summary>
 		///  Searches for the index of the game info in the list.
 		/// </summary>
@@ -311,6 +367,29 @@ namespace Grisaia.Categories {
 			LoadCache(loadUpdateArchives, callback);
 		}
 
+		public void ReloadCache(bool loadUpdateArchives = true, LoadCacheProgressCallback callback = null) {
+			string cachePath = GrisaiaDatabase.CachePath;
+			if (!Directory.Exists(cachePath))
+				Directory.CreateDirectory(cachePath);
+
+			LoadCacheProgressArgs progress = new LoadCacheProgressArgs {
+				GameIndex = 0,
+				GameCount = LocatedCount,
+			};
+
+			foreach (GameInfo game in locatedGameList) {
+				progress.CurrentGame = game;
+				if (game.Lookups.Count == 0) {
+					if (loadUpdateArchives)
+						game.LoadLookup(KifintType.Update, progress, callback);
+					game.LoadLookup(KifintType.Image, progress, callback);
+				}
+				progress.GameIndex++;
+			}
+			progress.CurrentGame = null;
+			progress.Kifint = default;
+			callback?.Invoke(progress);
+		}
 		public void LoadCache(bool loadUpdateArchives = true, LoadCacheProgressCallback callback = null) {
 			string cachePath = GrisaiaDatabase.CachePath;
 			if (!Directory.Exists(cachePath))

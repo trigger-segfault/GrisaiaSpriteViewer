@@ -28,11 +28,11 @@ namespace Grisaia.Mvvm.Model {
 		[JsonIgnore]
 		private GameNamingScheme gameNamingScheme = new GameNamingScheme();
 		/// <summary>
-		///  Gets the overrides for game installation directories.
+		///  Gets or sets the overrides for game installation directories.
 		/// </summary>
-		[JsonProperty("installdir_overrides")]
-		public Dictionary<string, string> GameInstallDirOverrides { get; private set; }
-			= new Dictionary<string, string>();
+		[JsonIgnore]
+		private IReadOnlyDictionary<string, GameInstallInfo> customGameInstalls =
+			new ReadOnlyDictionary<string, GameInstallInfo>(new Dictionary<string, GameInstallInfo>());
 		/// <summary>
 		///  Gets or sets if update archives are loaded when caching.
 		/// </summary>
@@ -57,7 +57,19 @@ namespace Grisaia.Mvvm.Model {
 		#endregion
 
 		#region Private Properties
-		
+
+		/// <summary>
+		///  Gets or sets the overrides for game installation directories.
+		/// </summary>
+		[JsonProperty("custom_game_installs")]
+		public IReadOnlyDictionary<string, GameInstallInfo> CustomGameInstalls {
+			get => customGameInstalls;
+			set {
+				if (value == null)
+					throw new ArgumentNullException(nameof(CustomGameInstalls));
+				Set(ref customGameInstalls, value);
+			}
+		}
 		/// <summary>
 		///  The assignable sprite category order by Id.
 		/// </summary>
@@ -76,7 +88,7 @@ namespace Grisaia.Mvvm.Model {
 					string categoryId = value[i];
 					if (!categoryIdSet.Add(categoryId))
 						throw new ArgumentException($"Category \"{categoryId}\" is already contained in array!");
-					categoryInfos[i] = SpriteCategoryPool.Get(categoryId);
+					categoryInfos[i] = SpriteCategoryPool.GetCategory(categoryId);
 				}
 				SpriteCategoryOrder = Array.AsReadOnly(categoryInfos);
 			}

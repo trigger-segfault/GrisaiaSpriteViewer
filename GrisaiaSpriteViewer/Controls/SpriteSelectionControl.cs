@@ -168,8 +168,6 @@ namespace Grisaia.SpriteViewer.Controls {
 			PART_Section1 = GetTemplateChild("PART_Section1") as StackPanel;
 			PART_Section2 = GetTemplateChild("PART_Section2") as StackPanel;
 			PART_Section3 = GetTemplateChild("PART_Section3") as StackPanel;
-			//PART_Separator1 = GetTemplateChild("PART_Separator1") as Rectangle;
-			//PART_Separator2 = GetTemplateChild("PART_Separator2") as Rectangle;
 			
 			Grid[] grids = AddGrids(PART_Section2, SpriteCategoryPool.Count - 2);
 			for (int i = 0; i < SpriteCategoryPool.Count; i++) {

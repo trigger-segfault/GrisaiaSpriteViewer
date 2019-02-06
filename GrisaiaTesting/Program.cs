@@ -28,7 +28,7 @@ namespace Grisaia.Testing {
 			Console.WriteLine(Event.GetInvocationList().Length);
 			Console.ReadLine();
 			GrisaiaDatabase grisaiaDb = new GrisaiaDatabase();
-			grisaiaDb.GameDatabase.LocateGames();
+			grisaiaDb.GameDatabase.LocateGames(null);
 			Console.WriteLine("Loading Cache...");
 			HashSet<string> builtGames = new HashSet<string>();
 			grisaiaDb.GameDatabase.LoadCache(callback: e => {

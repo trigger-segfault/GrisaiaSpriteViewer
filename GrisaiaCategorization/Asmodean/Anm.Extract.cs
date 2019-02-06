@@ -37,14 +37,14 @@ namespace Grisaia.Asmodean {
 				throw new ArgumentNullException(nameof(fileName));
 			BinaryReader reader = new BinaryReader(stream);
 
-			ANMHDR hdr = reader.ReadStruct<ANMHDR>();
+			ANMHDR hdr = reader.ReadUnmanaged<ANMHDR>();
 			if (hdr.Signature != "ANM")
 				throw new UnexpectedFileTypeException(fileName, "ANM");
 			reader.ReadBytes(20); // Unused (?)
 
 			ANMFRM[] frames = new ANMFRM[hdr.FrameCount];
 			for (int i = 0; i < hdr.FrameCount; i++) {
-				frames[i] = reader.ReadStruct<ANMFRM>();
+				frames[i] = reader.ReadUnmanaged<ANMFRM>();
 				reader.ReadInt32(); // Padding (Probably)
 			}
 

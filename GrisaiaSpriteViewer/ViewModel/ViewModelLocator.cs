@@ -58,6 +58,7 @@ namespace Grisaia.SpriteViewer.ViewModel {
 			SimpleIoc.Default.Register<IClipboardService, ClipboardService>();
 
 			SimpleIoc.Default.Register<SpriteSelectionViewModel>();
+			SimpleIoc.Default.Register<InstallDirsViewModel>();
 			SimpleIoc.Default.Register<SettingsViewModel>();
 			SimpleIoc.Default.Register<LoadingViewModel>(true);
 		}
@@ -66,6 +67,7 @@ namespace Grisaia.SpriteViewer.ViewModel {
 		public SpriteSelectionViewModel SpriteSelection => ServiceLocator.Current.GetInstance<SpriteSelectionViewModel>();
 		public LoadingViewModel Loading => ServiceLocator.Current.GetInstance<LoadingViewModel>();
 		public SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
+		public InstallDirsViewModel InstallDirs => ServiceLocator.Current.GetInstance<InstallDirsViewModel>();
 		public IMessenger Messenger => GalaSoft.MvvmLight.Messaging.Messenger.Default;
 
 		public static void Cleanup() {

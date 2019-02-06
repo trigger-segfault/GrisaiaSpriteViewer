@@ -10,15 +10,28 @@
     <c:RelayInfo Name="SaveSprite" Text="Save Sprite" Key="S" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DiskBlack.png"/>
     <c:RelayInfo Name="CopySprite" Text="Copy Sprite" Key="C" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DocumentCopy.png"/>
     <c:RelayInfo Name="OpenSettings" Text="Settings..." Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Gear.png"/>
-    <c:RelayInfo Name="OpenInstallDirs" Text="Install Directories..." Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/BlueAppleFolder.png"/>
+    <c:RelayInfo Name="OpenInstallDirs" Text="Game Locations..." Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/BlueAppleFolder.png"/>
     <c:RelayInfo Name="Exit" Text="Exit" Key="W" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DoorOpenIn.png"/>
   </c:RelayInfoCollection>
   <c:RelayInfoCollection x:Key="SettingsCommands" ViewModelType="{x:Type vm:SettingsViewModel}">
+    <c:RelayInfo Name="OK" Text="Save Changes"/>
+    <c:RelayInfo Name="Cancel" Text="Cancel Changes"/>
     <c:RelayInfo Name="MoveCharacterNameTypeUp" Text="Move Up" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowUp.png"/>
     <c:RelayInfo Name="MoveCharacterNameTypeDown" Text="Move Down" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowDown.png"/>
     <c:RelayInfo Name="MoveSpritePrimaryCategoryUp" Text="Move Up" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowUp.png"/>
     <c:RelayInfo Name="MoveSpritePrimaryCategoryDown" Text="Move Down" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowDown.png"/>
     <c:RelayInfo Name="MoveSpriteSecondaryCategoryUp" Text="Move Up" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowUp.png"/>
     <c:RelayInfo Name="MoveSpriteSecondaryCategoryDown" Text="Move Down" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowDown.png"/>
+  </c:RelayInfoCollection>
+  <c:RelayInfoCollection x:Key="InstallDirsCommands" ViewModelType="{x:Type vm:InstallDirsViewModel}">
+    <c:RelayInfo Name="OK" Text="Save Changes"/>
+    <c:RelayInfo Name="Cancel" Text="Cancel Changes"/>
+  </c:RelayInfoCollection>
+  <c:RelayInfoCollection x:Key="InstallDirsGameCommands" ViewModelType="{x:Type vm:InstallDirsGameViewModel}">
+    <c:RelayInfo Name="OpenCustomLocation" Text="Select Custom Location" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/FolderHorizontalOpen.png"/>
+    <c:RelayInfo Name="RemoveCustomLocation" Text="Remove Custom Location" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Eraser.png"/>
+    <c:RelayInfo Name="OpenCustomExecutable" Text="Select Custom Executable" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/FolderHorizontalOpen.png"/>
+    <c:RelayInfo Name="RemoveCustomExecutable" Text="Remove Custom Executable" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Eraser.png"/>
+    <c:RelayInfo Name="RelocateGame" Text="Relocate Game" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/ArrowCircle315.png"/>
   </c:RelayInfoCollection>
 </ResourceDictionary>

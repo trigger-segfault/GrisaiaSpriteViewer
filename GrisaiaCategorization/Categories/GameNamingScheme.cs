@@ -85,6 +85,40 @@ namespace Grisaia.Categories {
 					return game.JPName;
 			}
 		}
+		/// <summary>
+		///  Formats the full name of the specified game info using the naming scheme language settings.
+		/// </summary>
+		/// <param name="game">The game with the name to format.</param>
+		/// <returns>The game's name with the naming scheme applied.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="game"/> is null.
+		/// </exception>
+		public string GetFullName(GameInfo game) {
+			if (game == null)
+				throw new ArgumentNullException(nameof(game));
+			if (EnglishName)
+				return game.ENName;
+			else
+				return game.JPName;
+		}
+		/// <summary>
+		///  Formats the short name of the specified game info using the naming scheme language settings.
+		/// </summary>
+		/// <param name="game">The game with the name to format.</param>
+		/// <returns>The game's name with the naming scheme applied.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="game"/> is null.
+		/// </exception>
+		public string GetShortName(GameInfo game) {
+			if (game == null)
+				throw new ArgumentNullException(nameof(game));
+			if (EnglishName)
+				return game.ENShortName;
+			else
+				return game.JPShortName;
+		}
 
 		#endregion
 

@@ -8,7 +8,7 @@ using Grisaia.Categories.Sprites;
 using Grisaia.Utils;
 
 namespace Grisaia.Mvvm.ViewModel {
-	public class SpriteDrawInfoViewModel : ObservableObject {
+	public sealed class SpriteDrawInfoViewModel : ObservableObject {
 		#region Fields
 
 		/// <summary>

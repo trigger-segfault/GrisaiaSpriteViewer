@@ -130,7 +130,7 @@ namespace Grisaia.Categories {
 
 		#endregion
 
-		#region Accessors
+		/*#region Accessors
 
 		/// <summary>
 		///  Returns true if this character info contains has the specified Id.
@@ -143,12 +143,12 @@ namespace Grisaia.Categories {
 		/// </exception>
 		public bool ContainsId(string id) {
 			return Id == id;
-			/*if (id == null)
-				throw new ArgumentNullException(nameof(id));
-			return Array.IndexOf(Ids, id) != -1;*/
+			//if (id == null)
+			//	throw new ArgumentNullException(nameof(id));
+			//return Array.IndexOf(Ids, id) != -1;
 		}
 
-		#endregion
+		#endregion*/
 
 		#region ToString Override
 

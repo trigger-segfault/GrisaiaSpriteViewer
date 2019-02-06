@@ -13,7 +13,7 @@ namespace Grisaia.Asmodean {
 		
 		private static Hg3 Extract(Stream stream, string fileName, string directory, bool saveFrames, bool expand) {
 			BinaryReader reader = new BinaryReader(stream);
-			HG3HDR hdr = reader.ReadStruct<HG3HDR>();
+			HG3HDR hdr = reader.ReadUnmanaged<HG3HDR>();
 			
 			if (hdr.Signature != "HG-3")
 				throw new UnexpectedFileTypeException(fileName, "HG-3");
@@ -27,9 +27,9 @@ namespace Grisaia.Asmodean {
 				// of time from the HG3OFFSET we're going to read.
 				// Usually skips 0 bytes, otherwise usually 1-7 bytes.
 				long startPosition = stream.Position;
-				HG3OFFSET offset = reader.ReadStruct<HG3OFFSET>();
+				HG3OFFSET offset = reader.ReadUnmanaged<HG3OFFSET>();
 				
-				HG3TAG tag = reader.ReadStruct<HG3TAG>();
+				HG3TAG tag = reader.ReadUnmanaged<HG3TAG>();
 				if (!HG3STDINFO.HasTagSignature(tag.Signature))
 					throw new Exception("Expected \"stdinfo\" tag!");
 				
@@ -50,13 +50,13 @@ namespace Grisaia.Asmodean {
 				//if (!tag.signature.StartsWith(StdInfoSignature))
 				//	break;
 
-				HG3STDINFO stdInfo = reader.ReadStruct<HG3STDINFO>();
+				HG3STDINFO stdInfo = reader.ReadUnmanaged<HG3STDINFO>();
 
 				List<long> frameOffsets = new List<long>();
 				imageOffsets.Add(new KeyValuePair<HG3STDINFO, List<long>>(stdInfo, frameOffsets));
 
 				while (tag.OffsetNext != 0) {
-					tag = reader.ReadStruct<HG3TAG>();
+					tag = reader.ReadUnmanaged<HG3TAG>();
 					
 					string signature = tag.Signature;
 					if (HG3IMG.HasTagSignature(signature)) { // "img####"
@@ -107,7 +107,7 @@ namespace Grisaia.Asmodean {
 					Hg3Image hg3Image = hg3.Images[imgIndex];
 					for (int frmIndex = 0; frmIndex < hg3Image.FrameCount; frmIndex++) {
 						stream.Position = hg3Image.FrameOffsets[frmIndex];
-						HG3IMG imghdr = reader.ReadStruct<HG3IMG>();
+						HG3IMG imghdr = reader.ReadUnmanaged<HG3IMG>();
 						string pngFile = hg3.GetFrameFilePath(directory, imgIndex, frmIndex);
 						ExtractBitmap(reader, stdInfo, imghdr, expand, pngFile);
 					}

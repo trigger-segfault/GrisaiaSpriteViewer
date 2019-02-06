@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -72,7 +74,7 @@ namespace Grisaia.Categories {
 	/// <summary>
 	///  A database for cached and categorized Grisaia character sprites.
 	/// </summary>
-	public sealed class SpriteDatabase : ObservableObject, ISpriteCategory {
+	public sealed class SpriteDatabase : ObservableObject, ISpriteCategory, INotifyCollectionChanged {
 		#region Static Fields
 
 		/// <summary>
@@ -190,20 +192,39 @@ namespace Grisaia.Categories {
 		/// <summary>
 		///  Gets the number of elements in the category.
 		/// </summary>
-		public int Count { get; }
+		public int Count => list.Count;
 
 		#endregion
 
 		#region First Category Accessors
 
-		/// <summary>
+		/*/// <summary>
 		///  Gets the element at the specified index in the category.
 		/// </summary>
 		/// <param name="index">The index of the element to get.</param>
 		/// <returns>The element at the specified index.</returns>
-		public ISpriteCategory this[int index] => List[index];
-
+		public ISpriteCategory this[int index] => List[index];*/
 		/// <summary>
+		///  Gets the element with the specified Id in the category.
+		/// </summary>
+		/// <param name="id">The Id of the element to get.</param>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		/// <exception cref="KeyNotFoundException">
+		///  The element with the <paramref name="id"/> was not found.
+		/// </exception>
+		public ISpriteCategory this[object id] {
+			get {
+				if (id == null)
+					throw new ArgumentNullException(nameof(id));
+				ISpriteCategory category = list.Find(e => e.Id.Equals(id));
+				return category ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+			}
+		}
+
+		/*/// <summary>
 		///  Gets the element with the specified Id in the category.
 		/// </summary>
 		/// <param name="id">The Id of the element to get.</param>
@@ -211,14 +232,20 @@ namespace Grisaia.Categories {
 		public ISpriteCategory Get(object id) {
 			ISpriteCategory element = list.Find(e => e.Id.Equals(id));
 			return element ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
-		}
+		}*/
 		/// <summary>
-		///  Tries to get the element with the specified Id in the category.
+		///  Tries to get the category with the specified Id in the category.
 		/// </summary>
-		/// <param name="id">The Id of the element to get.</param>
-		/// <param name="value">The output element if one was found, otherwise null.</param>
-		/// <returns>True if an element with the Id was found, otherwise null.</returns>
+		/// <param name="id">The Id of the category to get.</param>
+		/// <param name="value">The output category if one was found, otherwise null.</param>
+		/// <returns>True if a category with the Id was found, otherwise null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
 		public bool TryGetValue(object id, out ISpriteCategory value) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
 			value = list.Find(e => e.Id.Equals(id));
 			return value != null;
 		}
@@ -227,7 +254,15 @@ namespace Grisaia.Categories {
 		/// </summary>
 		/// <param name="id">The Id to check for an element with.</param>
 		/// <returns>True if an element exists with the specified Id, otherwise null.</returns>
-		public bool ContainsKey(object id) => list.Find(e => e.Id.Equals(id)) != null;
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="id"/> is null.
+		/// </exception>
+		public bool ContainsKey(object id) {
+			if (id == null)
+				throw new ArgumentNullException(nameof(id));
+			return list.Find(e => e.Id.Equals(id)) != null;
+		}
 
 		#endregion
 
@@ -266,7 +301,8 @@ namespace Grisaia.Categories {
 					throw new ArgumentException($"Sprite Category {categoryInfo} cannot be put in the primary list!");
 			}
 
-			list.Clear();
+			//list.Clear();
+			list = new List<ISpriteCategoryBuilder>();
 			SpriteCount = 0;
 			const int ProgressThreshold = 5000;
 
@@ -306,7 +342,7 @@ namespace Grisaia.Categories {
 									if (!TryGetValue(sprite.CharacterId, out ISpriteCategory icharCategory)) {
 										charCategory = new SpriteCharacter {
 											Id = sprite.CharacterId,
-											CharacterInfo = CharacterDatabase.Get(sprite.CharacterId),
+											CharacterInfo = CharacterDatabase[sprite.CharacterId],
 										};
 										list.Add(charCategory);
 									}
@@ -330,7 +366,7 @@ namespace Grisaia.Categories {
 									if (!gameCategory.TryGetValue(sprite.CharacterId, out ISpriteCategory icharCategory)) {
 										charCategory = new SpriteCharacter {
 											Id = sprite.CharacterId,
-											CharacterInfo = CharacterDatabase.Get(sprite.CharacterId),
+											CharacterInfo = CharacterDatabase[sprite.CharacterId],
 										};
 										gameCategory.Add(charCategory);
 										currentCategory = charCategory;
@@ -369,10 +405,10 @@ namespace Grisaia.Categories {
 			SpriteCount = progress.SpriteCount;
 			progress.CurrentGame = null;
 			progress.GameIndex++;
-			RaisePropertyChanged(nameof(Categories));
+			/*RaisePropertyChanged(nameof(Categories));
 			RaisePropertyChanged(nameof(List));
 			RaisePropertyChanged(nameof(SpriteCount));
-			RaisePropertyChanged(nameof(Count));
+			RaisePropertyChanged(nameof(Count));*/
 			BuildComplete?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -459,7 +495,7 @@ namespace Grisaia.Categories {
 									if (!TryGetValue(sprite.CharacterId, out ISpriteCategory icharCategory)) {
 										charCategory = new SpriteCharacter {
 											Id = sprite.CharacterId,
-											CharacterInfo = CharacterDatabase.Get(sprite.CharacterId),
+											CharacterInfo = CharacterDatabase[sprite.CharacterId],
 										};
 										list.Add(charCategory);
 									}
@@ -483,7 +519,7 @@ namespace Grisaia.Categories {
 									if (!gameCategory.TryGetValue(sprite.CharacterId, out ISpriteCategory icharCategory)) {
 										charCategory = new SpriteCharacter {
 											Id = sprite.CharacterId,
-											CharacterInfo = CharacterDatabase.Get(sprite.CharacterId),
+											CharacterInfo = CharacterDatabase[sprite.CharacterId],
 										};
 										gameCategory.Add(charCategory);
 										currentCategory = charCategory;
@@ -658,14 +694,18 @@ namespace Grisaia.Categories {
 			}
 		}
 
+		public void RaiseCollectionReset() {
+			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+		}
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
 		string ISpriteCategory.DisplayName => string.Empty;
 		object ISpriteElement.Id => 0;
 		SpriteCategoryInfo ISpriteCategory.Category => throw new NotSupportedException();
 		bool ISpriteCategory.IsLastCategory => false;
+		IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
 
-		ISpriteElement ISpriteCategory.this[int index] => this[index];
-
-		ISpriteElement ISpriteCategory.Get(object id) => Get(id);
+		ISpriteElement ISpriteCategory.this[object id] => this[id];
+		
 		bool ISpriteCategory.TryGetValue(object id, out ISpriteElement value) {
 			if (TryGetValue(id, out ISpriteCategory category)) {
 				value = category;
@@ -699,7 +739,8 @@ namespace Grisaia.Categories {
 		///  <paramref name="selection"/> is null.
 		/// </exception>
 		public ISpritePart[] GetSpriteParts(IReadOnlySpriteSelection selection, out GameInfo game,
-			out CharacterInfo character, out int[] frames) {
+			out CharacterInfo character, out int[] frames)
+		{
 			if (selection == null)
 				throw new ArgumentNullException(nameof(selection));
 

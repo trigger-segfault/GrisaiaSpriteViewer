@@ -46,13 +46,13 @@ namespace Grisaia.Categories.Sprites {
 
 		#region Part Group Part Accessors
 
-		/// <summary>
+		/*/// <summary>
 		///  Gets the sprite part group part at the specified index in the group.
 		/// </summary>
 		/// <param name="index">The index of the sprite part group part to get.</param>
 		/// <returns>The sprite part group part at the specified index.</returns>
 		public SpritePartGroupPart this[int index] => GroupParts[index];
-		ISpritePartGroupPart ISpritePartGroup.this[int index] => this[index];
+		ISpritePartGroupPart ISpritePartGroup.this[int index] => this[index];*/
 
 		/// <summary>
 		///  Gets the sprite part group part with the specified Id in the category.
@@ -63,11 +63,13 @@ namespace Grisaia.Categories.Sprites {
 		/// <exception cref="KeyNotFoundException">
 		///  The element with the <paramref name="id"/> was not found.
 		/// </exception>
-		public SpritePartGroupPart Get(int id) {
-			SpritePartGroupPart element = GroupParts.Find(gp => gp.Id == id);
-			return element ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+		public SpritePartGroupPart this[int id] {
+			get {
+				SpritePartGroupPart element = GroupParts.Find(gp => gp.Id == id);
+				return element ?? throw new KeyNotFoundException($"Could not find the key \"{id}\"!");
+			}
 		}
-		ISpritePartGroupPart ISpritePartGroup.Get(int id) => Get(id);
+		ISpritePartGroupPart ISpritePartGroup.this[int id] => this[id];
 		/// <summary>
 		///  Tries to get the sprite part group part with the specified Id in the category.
 		/// </summary>

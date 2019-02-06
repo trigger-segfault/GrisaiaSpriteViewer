@@ -65,6 +65,10 @@
     <Compile Include="Services\UIService.cs" />
     <Compile Include="ViewModelRelayCommand.cs" />
     <Compile Include="ViewModelWindow.cs" />
+    <Compile Include="ViewModel\InstallDirsGameViewModel.Commands.cs" />
+    <Compile Include="ViewModel\InstallDirsGameViewModel.cs" />
+    <Compile Include="ViewModel\InstallDirsViewModel.Commands.cs" />
+    <Compile Include="ViewModel\InstallDirsViewModel.cs" />
     <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\Messages\OpenLoadingWindowMessage.cs" />
     <Compile Include="ViewModel\SettingsViewModel.Commands.cs" />

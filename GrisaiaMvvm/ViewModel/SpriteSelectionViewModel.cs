@@ -14,7 +14,7 @@ using Grisaia.Mvvm.ViewModel.Messages;
 using Grisaia.Utils;
 
 namespace Grisaia.Mvvm.ViewModel {
-	public partial class SpriteSelectionViewModel : ViewModelWindow {
+	public sealed partial class SpriteSelectionViewModel : ViewModelWindow {
 		#region Constants
 
 		/// <summary>
@@ -127,14 +127,6 @@ namespace Grisaia.Mvvm.ViewModel {
 				return null;
 			}
 		}
-		/// <summary>
-		///  Gets the currently selected sprite parts.
-		/// </summary>
-		/*public IReadOnlyList<ISpritePart> CurrentParts {
-			get => currentParts;
-			private set => Set(ref currentParts, value);
-		}*/
-		//public IReadOnlyList<ISpritePart> CurrentParts => SpriteImage.CurrentParts;
 		public bool ShowGuideLines {
 			get => showGuideLines;
 			set => Set(ref showGuideLines, value);
@@ -207,7 +199,6 @@ namespace Grisaia.Mvvm.ViewModel {
 			SpriteImage = new SpriteDrawInfoViewModel();
 			SpriteImage.PropertyChanged += OnSpriteDrawInfoPropertyChanged;
 			Settings.PropertyChanged += OnSettingsPropertyChanged;
-			SpriteDatabase.BuildComplete += OnSpriteDatabaseBuildComplete;
 
 			Categories.CollectionChanged += OnCategoriesCollectionChanged;
 			GroupParts.CollectionChanged += OnGroupPartsCollectionChanged;
@@ -220,6 +211,7 @@ namespace Grisaia.Mvvm.ViewModel {
 				GameDatabase.LocateDummyGames();
 				SpriteDatabase.LoadSpritesDummy(Settings.SpriteCategoryOrder);
 			}
+			SpriteDatabase.BuildComplete += OnSpriteDatabaseBuildComplete;
 			ISpriteSelection newSelection = SpriteSelection.ToMutable();
 			ISpriteCategory category = SpriteDatabase;
 			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
@@ -231,14 +223,13 @@ namespace Grisaia.Mvvm.ViewModel {
 			}
 			Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
 			SpriteSelection = newSelection.ToImmutable();
-			//CurrentParts = Array.AsReadOnly(SpriteDatabase.GetSpriteParts(newSelection, out _, out _));
 			suppressCollectionEvents = false;
 		}
 
 		private void OnSpriteDatabaseBuildComplete(object sender, EventArgs e) {
 			UI.Invoke(() => {
-				//RaisePropertyChanged(nameof(SpriteDatabase));
 				ISpriteSelection newSelection = SpriteSelection.ToMutable();
+				suppressCollectionEvents = true;
 				ISpriteCategory category = SpriteDatabase;
 				for (int i = 0; i < SpriteCategoryPool.Count; i++) {
 					category = Categories[i] = (ISpriteCategory) category.List[0];
@@ -248,9 +239,10 @@ namespace Grisaia.Mvvm.ViewModel {
 					}
 				}
 				RaisePropertyChanged(nameof(SpriteDatabase));
-				SpriteDatabase.RaisePropertyChanged(nameof(SpriteDatabase.List));
+				SpriteDatabase.RaiseCollectionReset();
 				Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
 				SpriteSelection = newSelection.ToImmutable();
+				suppressCollectionEvents = false;
 			});
 		}
 
@@ -258,9 +250,7 @@ namespace Grisaia.Mvvm.ViewModel {
 			switch (e.PropertyName) {
 			case nameof(SpriteViewerSettings.SpriteCategoryOrder):
 				MessengerInstance.Send(new OpenLoadingWindowMessage {
-					LoadEverything = false,
-					OpenSpriteSelectionWindow = false,
-					ShowDialog = true,
+					Action = OpenLoadingWindowAction.ReloadSprites,
 				});
 				break;
 			case nameof(SpriteViewerSettings.CharacterNamingScheme):
@@ -269,7 +259,13 @@ namespace Grisaia.Mvvm.ViewModel {
 			case nameof(SpriteViewerSettings.GameNamingScheme):
 				GameDatabase.NamingScheme = Settings.GameNamingScheme;
 				break;
-
+			case nameof(SpriteViewerSettings.CustomGameInstalls):
+				if (GameDatabase.RelocateGames(Settings.CustomGameInstalls)) {
+					MessengerInstance.Send(new OpenLoadingWindowMessage {
+						Action = OpenLoadingWindowAction.ReloadGames,
+					});
+				}
+				break;
 			}
 		}
 
@@ -312,7 +308,6 @@ namespace Grisaia.Mvvm.ViewModel {
 					Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
 					// Trigger update after we've raised the restriction against updates
 					SpriteSelection = newSelection.ToImmutable();
-					//CurrentParts = Array.AsReadOnly(SpriteDatabase.GetSpriteParts(newSelection, out _, out _));
 
 					suppressCollectionEvents = false;
 				}
@@ -335,7 +330,6 @@ namespace Grisaia.Mvvm.ViewModel {
 			Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
 			// Trigger update after we've raised the restriction against updates
 			SpriteSelection = newSelection.ToImmutable();
-			//CurrentParts = Array.AsReadOnly(SpriteDatabase.GetSpriteParts(newSelection, out _, out _));
 
 			suppressCollectionEvents = false;
 		}

@@ -64,11 +64,17 @@
     <Compile Include="Asmodean\VCode2.cs" />
     <Compile Include="Asmodean\VCode2.PInvoke.cs" />
     <Compile Include="Attributes.cs" />
+    <Compile Include="Categories\GameInstallInfo.cs" />
     <Compile Include="Categories\Images\CategorizationInfo.cs" />
     <Compile Include="Categories\Sprites\SpriteDrawInfo.cs" />
+    <Compile Include="Extensions\BinaryReaderExtensions.cs" />
+    <Compile Include="Extensions\BinaryWriterExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IDisposableExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.NullTerminate.cs" />
+    <Compile Include="Extensions\StringExtensions.Quote.cs" />
+    <Compile Include="Extensions\StringExtensions.Surround.cs" />
     <Compile Include="Geometry\Point2I.cs" />
     <Compile Include="Geometry\Thickness2I.cs" />
     <Compile Include="Rules\Images\IImageCategorizationRule.cs" />
@@ -106,10 +112,7 @@
     <None Include="ConfigSettings.cs" />
     <Compile Include="DummyCategorizationContext.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Extensions\BinaryExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.Surround.cs" />
     <EmbeddedResource Include="data\characters.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -118,13 +121,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="data\dummy\Tama01_001+hg3.json" />
     <EmbeddedResource Include="data\dummy\Tama01_1+hg3.json" />
-    <None Include="Unused\Ini\IniDocument.cs" />
-    <None Include="Unused\Ini\IniEnums.cs" />
-    <None Include="Unused\Ini\IniProperty.cs" />
-    <None Include="Unused\Ini\IniReflectionSettings.cs" />
-    <None Include="Unused\Ini\IniSection.cs" />
-    <None Include="Unused\Ini\ReflectionHelper.cs" />
-    <None Include="Unused\Ini\TypeHelper.cs" />
     <None Include="Unused\Json\JsonSpriteCategoryInfoConverter.cs" />
     <Compile Include="Json\JsonStringEnumConverter.cs" />
     <Compile Include="Locators\FrontwingLocator.cs" />
@@ -137,14 +133,6 @@
     <Compile Include="Rules\Sprites\ISpriteParsingRule.cs" />
     <Compile Include="Rules\Sprites\MosiacSpriteParsingRule.cs" />
     <Compile Include="Rules\Sprites\SpriteParsingRule.cs" />
-    <None Include="Unused\Exkifint.cs" />
-    <None Include="Unused\Exkifint.MersenneTwister.cs" />
-    <None Include="Unused\Exkifint.PInvoke.cs" />
-    <None Include="Unused\Exkifint.Structs.cs" />
-    <None Include="Unused\Extracting.cs" />
-    <None Include="Unused\Hgx2png.cs" />
-    <None Include="Unused\Hgx2png.PInvoke.cs" />
-    <None Include="Unused\Hgx2png.Structs.cs" />
     <None Include="Unused\Identifying\Character.cs" />
     <None Include="Unused\Identifying\Old\Backgrounds.cs" />
     <None Include="Unused\Identifying\Old\Character.cs" />
@@ -160,15 +148,7 @@
     <None Include="Unused\Identifying\Old\Unidentified.cs" />
     <None Include="Unused\Identifying\Old\UserInterface.cs" />
     <None Include="Unused\Identifying\Sprite.cs" />
-    <None Include="Unused\IKey.cs" />
-    <None Include="Unused\ISpriteCategory.cs" />
     <None Include="Unused\Json\JsonCodeEnumConverter.cs" />
-    <None Include="Unused\Json\JsonStringEnumConverter.cs" />
-    <None Include="Unused\Program.cs" />
-    <None Include="Unused\SpriteCategoryDatabase.cs" />
-    <None Include="Unused\SpriteCharacter.cs" />
-    <None Include="Unused\SpriteDatabase.cs" />
-    <None Include="Unused\SpriteGame.cs" />
     <None Include="UserSettings.cs" />
     <Compile Include="Utils\ArrayCollection.cs" />
     <Compile Include="Utils\BitUtils.cs" />

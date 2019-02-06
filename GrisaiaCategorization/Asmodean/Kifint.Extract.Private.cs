@@ -31,29 +31,14 @@ namespace Grisaia.Asmodean {
 				throw new ArgumentNullException(nameof(kifintPath));
 			if (vcode2 == null)
 				throw new ArgumentNullException(nameof(vcode2));
-			/*string vCode2;
-			try {
-				vCode2 = VCode2.Find(exePath);
-			} catch {
-				string binPath = Path.ChangeExtension(exePath, ".bin");
-				if (File.Exists(binPath)) {
-					try {
-						vCode2 = VCode2.Find(binPath);
-					} catch {
-						throw;
-					}
-				}
-				else
-					throw;
-			}*/
 
 			BinaryReader reader = new BinaryReader(stream);
-			KIFHDR hdr = reader.ReadStruct<KIFHDR>();
+			KIFHDR hdr = reader.ReadUnmanaged<KIFHDR>();
 
 			if (hdr.Signature != "KIF") // It's really a KIF INT file
 				throw new UnexpectedFileTypeException(kifintPath, "KIF");
 
-			KIFENTRY[] entries = reader.ReadStructArray<KIFENTRY>(hdr.EntryCount);
+			KIFENTRY[] entries = reader.ReadUnmanagedArray<KIFENTRY>(hdr.EntryCount);
 
 			progress.EntryIndex = 0;
 			progress.EntryCount = entries.Length;
@@ -174,71 +159,6 @@ namespace Grisaia.Asmodean {
 
 			return seed;
 		}
-		/*/// <summary>
-		///  Locates the V_CODE2 in the executable file, which is used to decrypt the KIFINT archive.
-		/// </summary>
-		/// <param name="exeFile">The file path to the executable or bin file.</param>
-		/// <returns>The descrypted V_CODE2 string resource.</returns>
-		/// 
-		/// <exception cref="GrisaiaLoadModuleException">
-		///  Failed to load <paramref name="exeFile"/> as a library module.
-		/// </exception>
-		/// <exception cref="GrisaiaResourceException">
-		///  An error occurred while trying to copy the KEY_CODE or V_CODE2 resource.
-		/// </exception>
-		public static string FindVCode2(string exeFile) {
-			IntPtr h = LoadLibraryEx(exeFile, IntPtr.Zero, LoadLibraryExFlags.LoadLibraryAsImageResource);
-			if (h == IntPtr.Zero)
-				throw new GrisaiaLoadModuleException(exeFile);
-			try {
-
-				CopyResource(h, "KEY", "KEY_CODE", out byte[] key, out int keyLength);
-
-				for (int i = 0; i < key.Length; i++)
-					key[i] ^= 0xCD;
-
-				CopyResource(h, "DATA", "V_CODE2", out byte[] vcode2, out int vcode2Length);
-
-				//Blowfish bf = new Blowfish();
-				//fixed (byte* key_buff_ptr = keyBuffer)
-				//	bf.Set_Key(key_buff_ptr, keyLength);
-				//bf.Decrypt(vcode2, (vcode2Length + 7) & ~7);
-
-				DecryptVCode2(key, keyLength, vcode2, vcode2Length);
-
-				string result = vcode2.ToNullTerminatedString(Encoding.ASCII);
-
-				return result;
-			} finally {
-				FreeLibrary(h);
-			}
-		}
-		/// <summary>
-		///  Copies the resource with the specified name and type into output buffer.
-		/// </summary>
-		/// <param name="h">The handle to the library module of the Grisaia executable.</param>
-		/// <param name="name">The name of the resource to load.</param>
-		/// <param name="type">The type of the resource to load.</param>
-		/// <param name="buffer">The output data for the resource.</param>
-		/// <param name="length">The output length of the resource data.</param>
-		private static void CopyResource(IntPtr h, string name, string type, out byte[] buffer, out int length) {
-			IntPtr r = FindResource(h, name, type);
-			if (r == IntPtr.Zero)
-				throw new GrisaiaResourceException(name, type, "find");
-
-			IntPtr g = LoadResource(h, r);
-			if (g == IntPtr.Zero)
-				throw new GrisaiaResourceException(name, type, "load");
-
-			length = SizeofResource(h, r);
-			buffer = new byte[(length + 7) & ~7];
-
-			IntPtr lockPtr = LockResource(g);
-			if (lockPtr == IntPtr.Zero)
-				throw new GrisaiaResourceException(name, type, "lock");
-
-			Marshal.Copy(lockPtr, buffer, 0, length);
-		}*/
 
 		#endregion
 	}
