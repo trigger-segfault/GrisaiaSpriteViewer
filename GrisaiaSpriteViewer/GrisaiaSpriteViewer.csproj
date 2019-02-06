@@ -16,6 +16,9 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <!-- Used to ensure a build time exists -->
+    <!--<BuildTime>$([System.DateTime]::UtcNow.ToString("o"))</BuildTime>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>-->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -107,6 +110,12 @@
     <Compile Include="Utils\ImageClipboard.cs" />
     <None Include="Unused\ImageClipboard.Glitched.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\CreditsWindow.xaml.cs">
+      <DependentUpon>CreditsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ErrorMessageBox.xaml.cs">
       <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
     </Compile>
@@ -153,6 +162,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Themes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\CreditsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -268,5 +285,49 @@
   <ItemGroup>
     <Resource Include="Resources\Icons\ArrowCircle315.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Keyboards.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\App112.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AppError.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\CardAddress.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\RulerDocument.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\DocumentList.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\PaintDotNetCursorXY.png" />
+    <Resource Include="Resources\Icons\PaintDotNetImageSize.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BuildTimestamp" BeforeTargets="BeforeBuild" Outputs="@(TimeStampFile)">
+    <!--<PropertyGroup>
+      <BuildTime>$([System.DateTime]::UtcNow.ToString("o"))</BuildTime>
+    </PropertyGroup>-->
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\BuildTimeStamp.txt" />
+      <TimeStampFile Include="Resources\BuildTimeStamp.txt" />
+    </ItemGroup>
+    <Message Text="Building timestamp..." Importance="high" />
+    <Touch AlwaysCreate="true" Files="@(TimeStampFile)" />
+    <WriteLinesToFile File="@(TimeStampFile)" Lines="$([System.DateTime]::UtcNow.ToString(&quot;o&quot;))" Overwrite="true" />
+  </Target>
+  <Target Name="RemoveTimeStamp" BeforeTargets="AfterBuild" Outputs="@(TimeStampFile)">
+    <!--<PropertyGroup>
+      <BuildTime>$([System.DateTime]::UtcNow.ToString("o"))</BuildTime>
+    </PropertyGroup>-->
+    <ItemGroup>
+      <EmbeddedResource Remove="Resources\BuildTimeStamp.txt" />
+      <TimeStampFile Remove="Resources\BuildTimeStamp.txt" />
+    </ItemGroup>
+    <Message Text="Removing timestamp..." Importance="high" />
+  </Target>
 </Project>

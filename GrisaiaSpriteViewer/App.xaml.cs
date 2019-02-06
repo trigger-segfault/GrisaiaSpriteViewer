@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight.Messaging;
 using Grisaia.Mvvm.ViewModel.Messages;
 using Grisaia.SpriteViewer.ViewModel;
@@ -47,6 +49,7 @@ namespace Grisaia.SpriteViewer {
 			ErrorMessageBox.ProgramName = "Grisaia Extract Sprite Viewer";
 			ErrorMessageBox.HyperlinkName = "GitHub Page";
 			ErrorMessageBox.HyperlinkUri = new Uri(@"https://github.com/trigger-death/GrisaiaSpriteViewer");
+			ErrorMessageBox.ErrorIcon = new BitmapImage(new Uri("pack://application:,,,/Resources/AppError.ico"));
 			ErrorMessageBox.GlobalHook(this);
 		}
 

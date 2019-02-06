@@ -12,7 +12,7 @@
         DataContext="{Binding Settings, Source={StaticResource Locator}}"
         cmd:RelayInfo.Collection="{StaticResource SettingsCommands}"
         UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFFCFCFC"
-        Title="{Binding Title}" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Icon="Resources/App.ico" Closed="OnClosed" WindowStartupLocation="CenterOwner">
+        Title="{Binding Title}" ResizeMode="NoResize" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Icon="Resources/Icons/Gear.png" Closed="OnClosed" WindowStartupLocation="CenterOwner">
   <i:Interaction.Triggers>
     <i:EventTrigger EventName="Loaded">
       <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>

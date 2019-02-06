@@ -9,4 +9,7 @@
       </Trigger>
     </Style.Triggers>
   </Style>
+  <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource {x:Type GroupBox}}">
+    <Setter Property="BorderBrush" Value="#FFA9B1B6"/>
+  </Style>
 </ResourceDictionary>

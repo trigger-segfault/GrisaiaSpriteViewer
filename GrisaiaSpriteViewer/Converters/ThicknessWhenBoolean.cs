@@ -15,6 +15,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 		
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			if (!(bool) value)
 				return new Thickness();
 			return converter.ConvertFrom(parameter);
@@ -32,6 +34,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			if ((bool) value)
 				return new Thickness();
 			return converter.ConvertFrom(parameter);

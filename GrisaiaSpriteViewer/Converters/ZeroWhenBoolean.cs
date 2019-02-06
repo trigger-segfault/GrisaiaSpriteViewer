@@ -17,6 +17,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			if (targetType == typeof(GridLength))
 				return (bool) value ? converter.ConvertFrom(parameter) : new GridLength(0);
 			else
@@ -35,6 +37,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			if (targetType == typeof(GridLength))
 				return (bool) value ? new GridLength(0) : converter.ConvertFrom(parameter);
 			else

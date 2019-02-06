@@ -1123,7 +1123,7 @@ namespace Grisaia.Categories {
 
 			str.Append("_");
 			
-			var partNames = parts.Select((p, i) => (p != null ? $"{i}p{p.Id:D2}+{frames[i]}" : null));
+			var partNames = parts.Select((p, i) => (p != null ? $"{i}p{p.Id:D2},{frames[i]}" : null));
 			str.Append(string.Join("-", partNames.Where(p => p != null)));
 
 			return str.ToString();

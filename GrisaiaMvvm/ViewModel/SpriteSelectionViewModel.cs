@@ -41,6 +41,7 @@ namespace Grisaia.Mvvm.ViewModel {
 		private bool suppressCollectionEvents = false;
 
 		private bool showGuideLines = false;
+		private bool showSpritePartList = true;
 
 		private bool centered = true;
 		private double scale = 1.0;
@@ -125,7 +126,12 @@ namespace Grisaia.Mvvm.ViewModel {
 						return character.CharacterInfo;
 				}
 				return null;
+				
 			}
+		}
+		public bool ShowSpritePartList {
+			get => showSpritePartList;
+			set => Set(ref showSpritePartList, value);
 		}
 		public bool ShowGuideLines {
 			get => showGuideLines;

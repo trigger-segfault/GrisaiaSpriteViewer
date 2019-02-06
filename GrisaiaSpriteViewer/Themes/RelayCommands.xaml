@@ -4,13 +4,17 @@
                     xmlns:c="clr-namespace:Grisaia.SpriteViewer.Commands"
                     xmlns:vm="clr-namespace:Grisaia.Mvvm.ViewModel;assembly=GrisaiaExtractMvvm">
   <c:RelayInfoCollection x:Key="SpriteSelectionCommands" ViewModelType="{x:Type vm:SpriteSelectionViewModel}">
-    <c:RelayInfo Name="ToggleCenterSprite" Text="Toggle Sprite Center" Key="B" Modifiers="Ctrl"/>
+    <c:RelayInfo Name="ToggleCenterSprite" Text="Toggle Centered" Key="B" Modifiers="Ctrl"/>
     <c:RelayInfo Name="ToggleGuideLines" Text="Show Guidelines" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/GuideLines.png"/>
     <c:RelayInfo Name="ToggleExpand" Text="Expand Sprite" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/LayerResize.png"/>
+    <c:RelayInfo Name="ToggleSpritePartList" Text="Show Sprite Parts" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DocumentList.png"/>
     <c:RelayInfo Name="SaveSprite" Text="Save Sprite" Key="S" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DiskBlack.png"/>
     <c:RelayInfo Name="CopySprite" Text="Copy Sprite" Key="C" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DocumentCopy.png"/>
     <c:RelayInfo Name="OpenSettings" Text="Settings..." Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Gear.png"/>
     <c:RelayInfo Name="OpenInstallDirs" Text="Game Locations..." Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/BlueAppleFolder.png"/>
+    <c:RelayInfo Name="OpenAbout" Text="About" Key="F1" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Information.png"/>
+    <c:RelayInfo Name="OpenCredits" Text="Credits" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/CardAddress.png"/>
+    <c:RelayInfo Name="OpenHotkeys" Text="Hotkeys" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/Keyboards.png"/>
     <c:RelayInfo Name="Exit" Text="Exit" Key="W" Modifiers="Ctrl" Icon="/GrisaiaExtractSpriteViewer;component/Resources/Icons/DoorOpenIn.png"/>
   </c:RelayInfoCollection>
   <c:RelayInfoCollection x:Key="SettingsCommands" ViewModelType="{x:Type vm:SettingsViewModel}">

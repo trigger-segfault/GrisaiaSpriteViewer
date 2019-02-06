@@ -42,12 +42,13 @@ namespace Grisaia.Mvvm.ViewModel {
 			get => customInstall.Directory;
 			set {
 				if (string.IsNullOrWhiteSpace(value))
-					value = string.Empty;
+					value = null;
 				if (customInstall.Directory != value) {
 					customInstall.Directory = value;
 					RaisePropertyChanged();
 					RemoveCustomLocation.RaiseCanExecuteChanged();
 					OpenCustomExecutable.RaiseCanExecuteChanged();
+					Validate();
 				}
 			}
 		}
@@ -58,11 +59,12 @@ namespace Grisaia.Mvvm.ViewModel {
 			get => customInstall.Executable;
 			set {
 				if (string.IsNullOrWhiteSpace(value))
-					value = string.Empty;
+					value = null;
 				if (customInstall.Executable != value) {
 					customInstall.Executable = value;
 					RaisePropertyChanged();
 					RemoveCustomExecutable.RaiseCanExecuteChanged();
+					Validate();
 				}
 			}
 		}
@@ -105,7 +107,18 @@ namespace Grisaia.Mvvm.ViewModel {
 			GameInfo = game;
 			ViewModel = viewModel;
 			customInstall = game.CustomInstall;
-			customInstallValidated = game.ValidateCustomInstall(customInstall);
+			Validate();
+		}
+
+		#endregion
+
+		#region Validate
+
+		public void Validate() {
+			if (customInstall.Directory == null)
+				IsCustomInstallValidated = null;
+			else
+				IsCustomInstallValidated = GameInfo.ValidateCustomInstall(customInstall);
 		}
 
 		#endregion

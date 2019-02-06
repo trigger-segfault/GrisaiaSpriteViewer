@@ -9,11 +9,11 @@
         mc:Ignorable="d"
         DataContext="{Binding Loading, Source={StaticResource Locator}}"
         Title="{Binding Title}" ResizeMode="NoResize" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" Icon="Resources/App.ico" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" Closed="OnClosed">
-  <!--<i:Interaction.Triggers>
+  <i:Interaction.Triggers>
     <i:EventTrigger EventName="Loaded">
-      <i:InvokeCommandAction Command="{Binding LoadEverything}"/>
+      <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
     </i:EventTrigger>
-  </i:Interaction.Triggers>-->
+  </i:Interaction.Triggers>
   <Grid Width="380" Height="130" Margin="10,10,10,10">
     <TextBlock x:Name="labelTime" Text="{Binding Ellapsed, StringFormat='mm\\:ss'}" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top"/>
     <TextBlock x:Name="labelStatus" Text="{Binding MainStatus}" Margin="5"/>

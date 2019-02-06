@@ -16,7 +16,7 @@ namespace Grisaia.Mvvm {
 		/// <summary>
 		///  The title to display for the window.
 		/// </summary>
-		private string title = "Grisaia Sprite Viewer";
+		private string title = "Grisaia Extract Sprite Viewer";
 
 		#endregion
 		

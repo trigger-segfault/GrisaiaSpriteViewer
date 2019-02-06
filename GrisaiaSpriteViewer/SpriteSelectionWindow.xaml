@@ -4,14 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Grisaia.SpriteViewer.Controls"
+        xmlns:conv="clr-namespace:Grisaia.SpriteViewer.Converters"
         xmlns:cmd="clr-namespace:Grisaia.SpriteViewer.Commands"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         mc:Ignorable="d"
         DataContext="{Binding SpriteSelection, Source={StaticResource Locator}}"
         cmd:RelayInfo.Collection="{StaticResource SpriteSelectionCommands}"
-        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed"
+        Title="{Binding Title}" Height="450" Width="800" UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFF0F0F0" PreviewMouseDown="OnPreviewMouseDown" Closed="OnClosed" ResizeMode="CanResizeWithGrip"
         >
+  <i:Interaction.Triggers>
+    <i:EventTrigger EventName="Loaded">
+      <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
+    </i:EventTrigger>
+  </i:Interaction.Triggers>
   <DockPanel>
     <Border DockPanel.Dock="Top" BorderBrush="#FFACACAC" BorderThickness="0,0,0,1">
       <Menu>
@@ -24,42 +30,62 @@
         <MenuItem Header="View">
           <local:CommandMenuItem Command="{Binding ToggleExpand}" IsChecked="{Binding Expand, Mode=OneWay}" IsCheckable="True"/>
           <local:CommandMenuItem Command="{Binding ToggleGuideLines}" IsChecked="{Binding ShowGuideLines, Mode=OneWay}" IsCheckable="True"/>
+          <Separator Margin="0,4"/>
+          <local:CommandMenuItem Command="{Binding ToggleSpritePartList}" IsChecked="{Binding ShowSpritePartList, Mode=OneWay}" IsCheckable="True"/>
         </MenuItem>
         <MenuItem Header="Options">
-          <local:CommandMenuItem Command="{Binding OpenSettings}"/>
           <local:CommandMenuItem Command="{Binding OpenInstallDirs}"/>
+          <Separator Margin="0,4"/>
+          <local:CommandMenuItem Command="{Binding OpenSettings}"/>
+        </MenuItem>
+        <MenuItem Header="Help">
+          <local:CommandMenuItem Command="{Binding OpenAbout}"/>
+          <local:CommandMenuItem Command="{Binding OpenCredits}"/>
+          <local:CommandMenuItem Command="{Binding OpenHotkeys}" Visibility="Collapsed"/>
         </MenuItem>
       </Menu>
     </Border>
     <Border DockPanel.Dock="Bottom" BorderBrush="#FFACACAC" BorderThickness="0,1,0,0">
-      <StatusBar HorizontalAlignment="Left">
-        <StatusBarItem>Dimensions:</StatusBarItem>
-        <StatusBarItem>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding SpriteSize.Width}"/>
-            <TextBlock Text="x"/>
-            <TextBlock Text="{Binding SpriteSize.Height}"/>
-          </StackPanel>
-        </StatusBarItem>
-
-        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
-
-        <StatusBarItem>Scale:</StatusBarItem>
-        <StatusBarItem>
-          <TextBlock Text="{Binding Scale, StringFormat=P0}"/>
-        </StatusBarItem>
-
-        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
-
-        <StatusBarItem>Unique Id:</StatusBarItem>
-        <StatusBarItem>
-          <TextBlock Text="{Binding SpriteUniqueId}"/>
-        </StatusBarItem>
-      </StatusBar>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="16"/>
+        </Grid.ColumnDefinitions>
+        <StatusBar HorizontalAlignment="Left" Grid.Column="0">
+          <StatusBarItem>Unique Id:</StatusBarItem>
+          <StatusBarItem>
+            <TextBlock Text="{Binding SpriteUniqueId}"/>
+          </StatusBarItem>
+        </StatusBar>
+        <StatusBar HorizontalAlignment="Right" Grid.Column="1">
+          <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+          <Image Width="16" Height="16" Source="Resources/Icons/PaintDotNetImageSize.png" Margin="1"/>
+          <StatusBarItem>
+            <TextBlock>
+              <Run Text="{Binding SpriteSize.Width}"/>
+              x
+              <Run Text="{Binding SpriteSize.Height}"/>
+            </TextBlock>
+          </StatusBarItem>
+          <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+          <StatusBarItem>
+            <TextBlock Text="{Binding Scale, StringFormat=P0}"/>
+          </StatusBarItem>
+          <local:CommandButton Command="{Binding ToggleCenterSprite}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Focusable="False" IsTabStop="False" Padding="1">
+            <Grid>
+              <Image Source="Resources/Icons/ApplicationResizeActual.png" Height="16" Width="16"
+                     Visibility="{Binding Centered, Converter={conv:CollapsedWhenTrue}}"/>
+              <Image Source="Resources/Icons/ApplicationResizeFull.png" Height="16" Width="16"
+                     Visibility="{Binding Centered, Converter={conv:CollapsedWhenFalse}}"/>
+            </Grid>
+          </local:CommandButton>
+        </StatusBar>
+      </Grid>
     </Border>
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="140"/>
+        <ColumnDefinition Width="{Binding ShowSpritePartList, Converter={conv:ZeroWhenFalse}, ConverterParameter=140}"/>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="200"/>
       </Grid.ColumnDefinitions>

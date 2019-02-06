@@ -23,10 +23,10 @@ namespace Grisaia.Categories.Sprites {
 		Face,
 
 		// micfly,kazfly (Michiru, Kazuki Flying)
-		[Name("Small"), Code("S")]
-		Small,
 		[Name("Large"), Code("L")]
 		Large,
+		[Name("Small"), Code("S")]
+		Small,
 		
 		// Rakuen full-body sprites.
 		// No clue what they could possibly stand for.
@@ -117,7 +117,7 @@ namespace Grisaia.Categories.Sprites {
 		[JsonProperty("part_type")]
 		public int PartType { get; internal set; }
 		[JsonProperty("part_index")]
-		public int PartId { get; internal set; }
+		public int PartId { get; internal set; } = 1;
 		//[JsonIgnore]
 		//private int poseInternal;// = 1;
 		/*[JsonIgnore]

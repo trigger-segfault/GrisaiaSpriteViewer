@@ -59,10 +59,22 @@
         <ControlTemplate TargetType="{x:Type local:GameInstallControl}">
           <StackPanel>
             <Grid>
-              <StackPanel Orientation="Horizontal">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Image Margin="0,0,6,0" Source="{Binding GameInfo.Id, RelativeSource={RelativeSource TemplatedParent}, Converter={conv:GameIdToIcon}}" Width="16" Height="16" Opacity="0.9"/>
                 <TextBlock x:Name="PART_TextBlock" Text="{Binding Path=GameInfo.FormattedFullName, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,4" FontSize="14" FontWeight="Medium"/>
               </StackPanel>
+              <Grid Grid.Column="1" Visibility="{Binding Path=IsCustomInstallValidated, Converter={conv:CollapsedWhenNull}, RelativeSource={RelativeSource TemplatedParent}}">
+                <Image Visibility="{Binding Path=IsCustomInstallValidated, Converter={conv:CollapsedWhenTrue}, RelativeSource={RelativeSource TemplatedParent}}"
+                       Source="/GrisaiaExtractSpriteViewer;component/Resources/Icons/BlueAppleCross.png" HorizontalAlignment="Center" VerticalAlignment="Center" Height="16" Width="16"
+                       ToolTip="Could not locate the required resources for this game location"/>
+                <Image Visibility="{Binding Path=IsCustomInstallValidated, Converter={conv:CollapsedWhenFalse}, RelativeSource={RelativeSource TemplatedParent}}"
+                       Source="/GrisaiaExtractSpriteViewer;component/Resources/Icons/BlueAppleCheck.png" HorizontalAlignment="Center" VerticalAlignment="Center" Width="16" Height="16"
+                       ToolTip="This game location has all the required resources"/>
+              </Grid>
                 <!--<Grid>
                 <Grid.Col
               </Grid>
@@ -89,13 +101,13 @@
               <TextBlock Text="Custom Exe" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center"/>
               <TextBlock Text="Known Location" HorizontalAlignment="Right" Grid.Row="4" VerticalAlignment="Center"/>
 
-              <TextBox x:Name="PART_CustomLocation" Grid.Row="0" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomInstallDir}"/>
-              <TextBox x:Name="PART_CustomExecutable" Grid.Row="2" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomExecutable}"/>
+              <TextBox x:Name="PART_CustomLocation" Grid.Row="0" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomInstallDir, Mode=OneWay}"/>
+              <TextBox x:Name="PART_CustomExecutable" Grid.Row="2" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomExecutable, Mode=OneWay}"/>
               <TextBox x:Name="PART_Located" Grid.Row="4" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LocatedInstallDir, Mode=OneWay}"/>
 
               <local:CommandButton Grid.Row="0" Grid.Column="4" Command="{Binding OpenCustomLocation}"/>
               <local:CommandButton Grid.Row="2" Grid.Column="4" Command="{Binding OpenCustomExecutable}"/>
-              <local:CommandButton Grid.Row="4" Grid.Column="4" Command="{Binding RelocateGame}"/>
+              <!--<local:CommandButton Grid.Row="4" Grid.Column="4" Command="{Binding RelocateGame}"/>-->
 
               <local:CommandButton Grid.Row="0" Grid.Column="6" Command="{Binding RemoveCustomLocation}"/>
               <local:CommandButton Grid.Row="2" Grid.Column="6" Command="{Binding RemoveCustomExecutable}"/>

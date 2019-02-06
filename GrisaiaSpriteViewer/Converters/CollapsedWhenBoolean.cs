@@ -15,6 +15,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			return (bool) value ? Visibility.Visible : Visibility.Collapsed;
 		}
 
@@ -29,6 +31,8 @@ namespace Grisaia.SpriteViewer.Converters {
 		public override object ProvideValue(IServiceProvider serviceProvider) => Instance;
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!((bool?) value).HasValue)
+				return Binding.DoNothing;
 			return (bool) value ? Visibility.Collapsed : Visibility.Visible;
 		}
 

@@ -30,6 +30,7 @@ namespace Grisaia.Mvvm.ViewModel {
 		private string gameStatus;
 		private double minorProgress;
 		private double majorProgress;
+		private OpenLoadingWindowAction loadedAction;
 
 		#endregion
 
@@ -117,9 +118,9 @@ namespace Grisaia.Mvvm.ViewModel {
 
 		#endregion
 
-		#region Event Handlers
+		#region Loaded Override
 
-		private void OnOpenLoadingWindow(OpenLoadingWindowMessage msg) {
+		public override void Loaded() {
 			watch = Stopwatch.StartNew();
 			Ellapsed = TimeSpan.Zero;
 			MainStatus = "Preparing Grisaia Sprite Viewer...";
@@ -129,15 +130,8 @@ namespace Grisaia.Mvvm.ViewModel {
 			MajorProgress = 0d;
 			timeLabelTimer = UI.StartTimer(TimeSpan.FromSeconds(1), true, OnUpdateTimer);
 
-			Window loadingWindow = Dialogs.CreateLoadingWindow();
-
-			if (msg.Action == OpenLoadingWindowAction.Startup)
-				loadingWindow.Show();
-
-			var task = Task.Run(async () => {
-				if (msg.Action != OpenLoadingWindowAction.Startup)
-					await Task.Delay(50);
-				switch (msg.Action) {
+			var task = Task.Run(() => {
+				switch (loadedAction) {
 				case OpenLoadingWindowAction.Startup:
 					GameDatabase.LocateGames(Settings.CustomGameInstalls);
 					GameDatabase.LoadCache(Settings.LoadUpdateArchives, OnLoadCacheProgress);
@@ -155,16 +149,23 @@ namespace Grisaia.Mvvm.ViewModel {
 				UI.Invoke(() => {
 					timeLabelTimer.Stop();
 					watch = null;
-					if (msg.Action == OpenLoadingWindowAction.Startup)
+					if (loadedAction == OpenLoadingWindowAction.Startup)
 						Dialogs.ShowSpriteSelectionWindow();
 					WindowOwner.Close();
 					timeLabelTimer?.Stop();
 					timeLabelTimer = null;
 				});
 			}).ConfigureAwait(false);
+		}
 
-			if (msg.Action != OpenLoadingWindowAction.Startup)
-				loadingWindow.ShowDialog();
+		#endregion
+
+		#region Event Handlers
+
+		private void OnOpenLoadingWindow(OpenLoadingWindowMessage msg) {
+			loadedAction = msg.Action;
+			bool dialog = msg.Action != OpenLoadingWindowAction.Startup;
+			Dialogs.ShowLoadingWindow(dialog);
 		}
 
 		private void OnUpdateTimer() {

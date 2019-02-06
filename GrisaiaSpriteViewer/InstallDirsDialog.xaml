@@ -13,7 +13,7 @@
         DataContext="{Binding InstallDirs, Source={StaticResource Locator}}"
                                       cmd:RelayInfo.Collection="{StaticResource InstallDirsCommands}"
         UseLayoutRounding="True" SnapsToDevicePixels="True" Background="#FFFCFCFC"
-        Title="{Binding Title}" Icon="Resources/App.ico" Closed="OnClosed" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+        Title="{Binding Title}" Icon="Resources/Icons/BlueAppleFolder.png" Closed="OnClosed" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
   <i:Interaction.Triggers>
     <i:EventTrigger EventName="Loaded">
       <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>

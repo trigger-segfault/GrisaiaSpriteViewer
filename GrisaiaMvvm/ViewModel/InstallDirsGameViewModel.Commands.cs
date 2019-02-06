@@ -23,17 +23,23 @@ namespace Grisaia.Mvvm.ViewModel {
 			return CustomExecutable != null;
 		}
 		private void OnOpenCustomLocation() {
-			string newPath = Dialogs.ShowFolderBrowser(WindowOwner, "Select an install directory for this game",
-														false, CustomInstallDir ?? string.Empty);
-			if (newPath != null) {
-				CustomInstallDir = newPath;
+			string description = "Select an install directory for this game";
+			string initialDirectory = CustomInstallDir ?? string.Empty;
+			string filePath = Dialogs.ShowFolderBrowser(WindowOwner, description, false, initialDirectory);
+			if (filePath != null) {
+				CustomInstallDir = filePath;
 			}
 		}
 		private void OnRemoveCustomLocation() {
 			CustomInstallDir = null;
 		}
 		private void OnOpenCustomExecutable() {
-
+			string initialDirectory = CustomInstallDir;
+			string fileName = CustomExecutable ?? string.Empty;
+			string filePath = Dialogs.ShowOpenExeDialog(WindowOwner, fileName, initialDirectory);
+			if (filePath != null) {
+				CustomExecutable = filePath;
+			}
 		}
 		private void OnRemoveCustomExecutable() {
 			CustomExecutable = null;
