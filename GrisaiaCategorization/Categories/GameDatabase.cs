@@ -10,33 +10,6 @@ using Grisaia.Locators;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories {
-	/*/// <summary>
-	///  The event args used with <see cref="LocateGamesProgressHandler"/>.
-	/// </summary>
-	public struct LocateGamesProgressArgs {
-		/// <summary>
-		///  The current game whose installation directory is being located.
-		/// </summary>
-		public GameInfo CurrentGame { get; internal set; }
-		/// <summary>
-		///  The index of the current located game being parsed.
-		/// </summary>
-		public int GameIndex { get; internal set; }
-		/// <summary>
-		///  The total number of located games to parse.
-		/// </summary>
-		public int GameCount { get; internal set; }
-		/// <summary>
-		///  The total number of games that have been located.
-		/// </summary>
-		public int LocatedGames { get; internal set; }
-	}
-	/// <summary>
-	///  An event handler for use during the locating of a Grisia games.
-	/// </summary>
-	/// <param name="sender">The game database sending this callback.</param>
-	/// <param name="e">The progress event args.</param>
-	public delegate void LocateGamesProgressHandler(object sender, LocateGamesProgressArgs e);*/
 	/// <summary>
 	///  The event args used with <see cref="LoadCacheProgressCallback"/>.
 	/// </summary>
@@ -381,8 +354,8 @@ namespace Grisaia.Categories {
 				progress.CurrentGame = game;
 				if (game.Lookups.Count == 0) {
 					if (loadUpdateArchives)
-						game.LoadLookup(KifintType.Update, progress, callback);
-					game.LoadLookup(KifintType.Image, progress, callback);
+						game.LoadLookup(KifintType.Update, progress, callback, true);
+					game.LoadLookup(KifintType.Image, progress, callback, true);
 				}
 				progress.GameIndex++;
 			}
@@ -404,8 +377,8 @@ namespace Grisaia.Categories {
 				progress.CurrentGame = game;
 				game.ClearLookups();
 				if (loadUpdateArchives)
-					game.LoadLookup(KifintType.Update, progress, callback);
-				game.LoadLookup(KifintType.Image, progress, callback);
+					game.LoadLookup(KifintType.Update, progress, callback, false);
+				game.LoadLookup(KifintType.Image, progress, callback, false);
 				progress.GameIndex++;
 			}
 			progress.CurrentGame = null;

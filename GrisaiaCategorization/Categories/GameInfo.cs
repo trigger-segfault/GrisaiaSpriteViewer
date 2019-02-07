@@ -251,7 +251,7 @@ namespace Grisaia.Categories {
 
 			if (oldInstall != CurrentInstall || oldInstall.VCode2 != CurrentInstall.VCode2) {
 				// We'll want to reload these since something has changed.
-				lookups.Clear();
+				DeleteCachedLookups();
 				cacheNeedsReload = true;
 			}
 			else {
@@ -338,6 +338,15 @@ namespace Grisaia.Categories {
 
 		#region Lookup
 
+		/// <summary>
+		///  Deletes all cached KIFINT archive lookup files.
+		/// </summary>
+		internal void DeleteCachedLookups() {
+			var files = Directory.EnumerateFiles(Database.GrisaiaDatabase.CachePath, $"{Id}-*.intlookup");
+			foreach (string file in files) {
+				File.Delete(file);
+			}
+		}
 		/// <summary>
 		///  Clears the loading KIFINT archive lookup collection.
 		/// </summary>

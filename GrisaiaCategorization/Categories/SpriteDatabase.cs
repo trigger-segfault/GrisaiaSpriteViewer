@@ -807,62 +807,9 @@ namespace Grisaia.Categories {
 		public SpriteDrawInfo BuildSprite(IReadOnlySpriteSelection selection, bool expand) {
 			ISpritePart[] parts = GetSpriteParts(selection, out var game, out var character, out int[] frames);
 			SpritePartDrawInfo[] drawParts = new SpritePartDrawInfo[SpriteSelection.PartCount];
-
-			/*if (selection == null)
-				throw new ArgumentNullException(nameof(selection));
-
-			GameInfo game = null;
-			CharacterInfo character = null;
-
-			ISpriteCategory category = this;
-			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
-				if (category is ISpriteGame sprGame)
-					game = sprGame.GameInfo;
-				else if (category is ISpriteCharacter sprCharacter)
-					character = sprCharacter.CharacterInfo;
-
-				object id = Categories[i].GetId(selection);
-				if (!category.TryGetValue(id, out category))
-					break;
-			}
-
-			ISpritePart[] parts = new ISpritePart[SpriteSelection.PartCount];
-			int[] frames = new int[SpriteSelection.PartCount];
-			//Hg3[] hg3s = new Hg3[SpriteSelection.PartCount];
-			//Hg3Image[] hg3Images = new Hg3Image[SpriteSelection.PartCount];
-
-			if (category?.IsLastCategory ?? false) {
-				ISpritePartGroup[] groups = category.CreateGroups(game, character);
-				for (int groupIndex = 0; groupIndex < groups.Length; groupIndex++) {
-					ISpritePartGroup group = groups[groupIndex];
-					int partId = selection.GroupPartIds[groupIndex];
-					int frame = selection.GroupPartFrames[groupIndex];
-					foreach (int typeId in group.TypeIds) {
-						if (category.TryGetValue(typeId, out ISpritePartList partList)) {
-							partList.TryGetValue(partId, out parts[typeId]);
-							frames[typeId] = frame;
-						}
-						else {
-							parts[typeId] = null;
-							frames[typeId] = 0;
-						}
-					}
-				}
-			}
-
-			// Load HG-3's
-			for (int typeId = 0; typeId < SpriteSelection.PartCount; typeId++) {
-				ISpritePart part = parts[typeId];
-				if (part == null)
-					continue;
-				Hg3 hg3 = LoadHg3(part, game);
-				//hg3s[typeId] = hg3;
-				//hg3Images[typeId] = hg3.Images[partFrames[typeId]];
-			}*/
 			
 			Thickness2I expandCenter = new Thickness2I();
 			var usedHg3s = parts.Select((p, i) => p?.Hg3.Images[frames[i]]).Where(h => h != null);
-			//var usedHg3s = hg3Images.Where(h => h != null);
 			if (usedHg3s.Any()) {
 				if (expand) {
 					expandCenter = new Thickness2I(
@@ -880,8 +827,7 @@ namespace Grisaia.Categories {
 				}
 			}
 			Point2I origin = new Point2I(expandCenter.Left, expandCenter.Top);
-			Point2I totalSize = new Point2I(expandCenter.Left + expandCenter.Right,
-											expandCenter.Top + expandCenter.Bottom);
+			Point2I totalSize = new Point2I(expandCenter.Horizontal, expandCenter.Vertical);
 
 			for (int typeId = 0; typeId < SpriteSelection.PartCount; typeId++) {
 				ISpritePart part = parts[typeId];

@@ -308,10 +308,9 @@
     <Resource Include="Resources\Icons\PaintDotNetImageSize.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  
+  <!-- Used to get the build time of the program -->
   <Target Name="BuildTimestamp" BeforeTargets="BeforeBuild" Outputs="@(TimeStampFile)">
-    <!--<PropertyGroup>
-      <BuildTime>$([System.DateTime]::UtcNow.ToString("o"))</BuildTime>
-    </PropertyGroup>-->
     <ItemGroup>
       <EmbeddedResource Include="Resources\BuildTimeStamp.txt" />
       <TimeStampFile Include="Resources\BuildTimeStamp.txt" />
@@ -321,13 +320,11 @@
     <WriteLinesToFile File="@(TimeStampFile)" Lines="$([System.DateTime]::UtcNow.ToString(&quot;o&quot;))" Overwrite="true" />
   </Target>
   <Target Name="RemoveTimeStamp" BeforeTargets="AfterBuild" Outputs="@(TimeStampFile)">
-    <!--<PropertyGroup>
-      <BuildTime>$([System.DateTime]::UtcNow.ToString("o"))</BuildTime>
-    </PropertyGroup>-->
+    <Message Text="Removing timestamp..." Importance="high" />
+    <Delete Files="@(TimeStampFile)"/>
     <ItemGroup>
       <EmbeddedResource Remove="Resources\BuildTimeStamp.txt" />
       <TimeStampFile Remove="Resources\BuildTimeStamp.txt" />
     </ItemGroup>
-    <Message Text="Removing timestamp..." Importance="high" />
   </Target>
 </Project>
