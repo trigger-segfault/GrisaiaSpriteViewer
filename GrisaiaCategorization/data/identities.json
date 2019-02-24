@@ -1,0 +1,64 @@
+{
+  "images": [
+    {
+      "id": "background",
+      "Name": "Background",
+      "path": "bg"
+    },
+    {
+      "id": "character_sprite",
+      "Name": "Character Sprite",
+      "path": "cg/%CHARACTER%"
+    },
+    {
+      "id": "character_chibi",
+      "Name": "Character Chibi",
+      "path": "chibi/%CHARACTER%"
+    },
+    {
+      "id": "character_cg",
+      "Name": "Character CG",
+      "path": "cg/%CHARACTER%"
+    },
+    {
+      "id": "story_chibi",
+      "Name": "Story Chibi",
+      "path": "chibi/story"
+    },
+    {
+      "id": "story_cg",
+      "Name": "Story CG",
+      "path": "cg/story"
+    },
+    {
+      "id": "user_interface",
+      "Name": "User Interface",
+      "path": "ui"
+    },
+    {
+      "id": "effect",
+      "Name": "Effect",
+      "path": "effect"
+    },
+    {
+      "id": "logo",
+      "Name": "Logo",
+      "path": "logo"
+    },
+    {
+      "id": "icon",
+      "Name": "Icon",
+      "path": "icon"
+    },
+    {
+      "id": "item",
+      "Name": "Item",
+      "path": "item"
+    },
+    {
+      "id": "transition",
+      "Name": "Transition",
+      "path": "wipe"
+    }
+  ]
+}

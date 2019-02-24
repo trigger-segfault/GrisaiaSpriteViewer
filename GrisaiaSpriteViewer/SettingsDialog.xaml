@@ -33,7 +33,7 @@
     </GroupBox>
     <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0" Width="250" Height="165">
       <GroupBox.Header>
-        <TextBlock Text="Character Category Order" Padding="0,0,0,2"/>
+        <TextBlock Text="Character Naming Scheme" Padding="0,0,0,2"/>
       </GroupBox.Header>
       <Grid>
         <CheckBox Content="Id Only" IsChecked="{Binding CharacterNamingScheme.IdOnly}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>

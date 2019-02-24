@@ -19,7 +19,7 @@
       <ei:CallMethodAction TargetObject="{Binding}" MethodName="Loaded"/>
     </i:EventTrigger>
   </i:Interaction.Triggers>
-  <Grid Height="510" Width="420">
+  <Grid Height="482" Width="420">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>

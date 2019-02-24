@@ -1,0 +1,201 @@
+﻿{
+  "groups": [
+    {
+      "id": "cg",
+      "Name": "CG",
+      "path": "CG",
+      "subgroups": [
+        {
+          "id": "cg_story",
+          "Name": "Story",
+          "path": "story",
+          "patterns": [
+
+          ]
+        },
+        {
+          "id": "cg_char",
+          "Name": "Character",
+          "path": "%CHARACTER%"
+        }
+      ]
+    },
+    {
+      "id": "chibi",
+      "Name": "Chibi",
+      "path": "Chibi"
+    },
+    {
+      "id": "fx",
+      "Name": "Effect",
+      "path": "Effects",
+      "subgroups": [
+        {
+          "id": "fx_anm",
+          "name": "Animations",
+          "path": "anm",
+          "patterns": [ "^anm_" ]
+        },
+        {
+          "id": "fx_manpu",
+          "name": "Manpu",
+          "path": "manpu",
+          "patterns": [ "^manpu_" ]
+        },
+        {
+          "id": "fx_mask",
+          "name": "Masks",
+          "path": "mask",
+          "patterns": [ "^mask_" ]
+        },
+        {
+          "id": "fx_parts",
+          "name": "Parts",
+          "path": "parts",
+          "patterns": [ "^parts_" ]
+        },
+        {
+          "id": "fx_other",
+          "name": "Other",
+          "path": "other",
+          "patterns": [
+            "^bom_",
+            "^glass_anim",
+            "^slash",
+            "^yuge"
+          ]
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "id": "bg",
+      "Name": "Background",
+      "path": "bg",
+      "patterns": [
+        "^bg[e|r|t]",
+        "^(?:bgi_|bgmitei)",
+        "^bg_etc",
+        "^bgdave",
+        "bｇ", // See: Grisaia no Meikyuu 'bｇ62t.png'
+        "b‚‡" // See: Legacy before Japanese encoding 'b‚‡62t.png'
+      ]
+    },
+    {
+      "id": "char_sprite",
+      "Name": "Character Sprite",
+      "path_1": "sprites/%CHARACTER%",
+      "path_2": "Sprites/%CHARACTER%"
+    },
+    {
+      "id": "char_chibi",
+      "Name": "Character Chibi",
+      "path_1": "chibi/%CHARACTER%",
+      "path_2": "Chibi/%CHARACTER%"
+    },
+    {
+      "group_id": "cg",
+      "id": "char_cg",
+      "Name": "Character CG",
+      "path_1": "cg/%CHARACTER%",
+      "path_2": "CG/%CHARACTER%"
+    },
+    {
+      "id": "story_chibi",
+      "Name": "Story Chibi",
+      "path_1": "chibi/story",
+      "path_2": "Chibi/Story",
+      "patterns": [
+        "^_?_?[Ss][Dd]"
+      ]
+    },
+    {
+      "id": "story_cg",
+      "Name": "Story CG",
+      "path_1": "cg/story",
+      "path_2": "CG/Story"
+    },
+    {
+      "id": "ui",
+      "Name": "User Interface",
+      "path_1": "ui",
+      "path_upper": "User Interface"
+    },
+    {
+      "id": "effect",
+      "Name": "Effect",
+      "path_lower": "fx",
+      "path_upper": "Effects"
+    },
+    {
+      "id": "logo",
+      "Name": "Logo",
+      "path": "Logos"
+    },
+    {
+      "id": "tmbicon",
+      "Name": "Icon",
+      "path_lower": "tmbicon",
+      "path_upper": "Icons"
+    },
+    {
+      "id": "item",
+      "Name": "Item",
+      "path_lower": "item",
+      "path_upper": "Items",
+      "patterns": [
+        "^item"
+      ]
+    },
+    {
+      "id": "wipe",
+      "Name": "Transition",
+      "path_lower": "wipe",
+      "path_upper": "Transitions",
+      "patterns": [
+        "^wipe(?'index'\\d{2})(?'subtype'[a-z])?"
+      ]
+    },
+    {
+      "group_id": "fx",
+      "id": "fx_anm",
+      "name": "Animations",
+      "path": "anm",
+      "patterns": [ "^anm_" ]
+    },
+    {
+      "group_id": "fx",
+      "id": "fx_manpu",
+      "name": "Manpu",
+      "path": "manpu",
+      "patterns": [ "^manpu_" ]
+    },
+    {
+      "group_id": "fx",
+      "id": "fx_mask",
+      "name": "Masks",
+      "path": "mask",
+      "patterns": [ "^mask_" ]
+    },
+    {
+      "group_id": "fx",
+      "id": "fx_parts",
+      "name": "Parts",
+      "path": "parts",
+      "patterns": [ "^parts_" ]
+    },
+    {
+      "group_id": "fx",
+      "id": "fx_other",
+      "name": "Other",
+      "path": "other",
+      "patterns": [
+        "^bom_",
+        "^glass_anim",
+        "^slash",
+        "^yuge"
+      ]
+    }
+  ]
+}

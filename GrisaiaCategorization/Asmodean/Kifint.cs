@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Grisaia.Asmodean {
 	/// <summary>
@@ -18,7 +21,11 @@ namespace Grisaia.Asmodean {
 		/// <summary>
 		///  Gets the file key used for decryption. Null if there is no encryption.
 		/// </summary>
-		public uint? FileKey { get; private set; }
+		public uint FileKey { get; private set; }
+		/// <summary>
+		///  Gets if the KIFINT archive requires decryption when accessing a file.
+		/// </summary>
+		public bool IsEncrypted { get; private set; }
 		/// <summary>
 		///  Gets the list of entries in the KIFINT archive.
 		/// </summary>
@@ -36,6 +43,10 @@ namespace Grisaia.Asmodean {
 		///  Gets the file name of the KIFINT archive.
 		/// </summary>
 		public string FileName => Path.GetFileName(FilePath);
+		/// <summary>
+		///  Gets the file name of the KIFINT archive without the extension.
+		/// </summary>
+		public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(FilePath);
 		/// <summary>
 		///  Gets the number of cached entries in the KIFINT archive.
 		/// </summary>
@@ -58,7 +69,9 @@ namespace Grisaia.Asmodean {
 		/// <param name="fileKey">The file key when <paramref name="decrypt"/> is true.</param>
 		private Kifint(string kifintPath, Kifint.KIFENTRY[] kifEntries, bool decrypt, uint fileKey, KifintType type) {
 			FilePath = kifintPath;
-			FileKey = (decrypt ? fileKey : (uint?) null);
+			IsEncrypted = decrypt;
+			if (IsEncrypted)
+				FileKey = fileKey;
 			ArchiveType = type;
 			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>(kifEntries.Length);
 			foreach (var kifEntry in kifEntries) {
@@ -73,12 +86,12 @@ namespace Grisaia.Asmodean {
 		#endregion
 
 		#region Accessors
-
+		
 		/// <summary>
-		///  Gets the KIFINT entry with the specified key.
+		///  Gets the KIFINT entry with the specified file name key.
 		/// </summary>
-		/// <param name="key">The key of the entry to get.</param>
-		/// <returns>The located entry.</returns>
+		/// <param name="key">The file name of the entry to get.</param>
+		/// <returns>The KIFINT entry with the specified file name key.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="key"/> is null.
@@ -86,7 +99,7 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="KeyNotFoundException">
 		///  The entry with the <paramref name="key"/> was not found.
 		/// </exception>
-		public KifintEntry Get(string key) => Entries[key];
+		public KifintEntry this[string key] => Entries[key];
 		/// <summary>
 		///  Tries to get the KIFINT entry with the specified key and returns true on success.
 		/// </summary>
@@ -111,6 +124,48 @@ namespace Grisaia.Asmodean {
 
 		#endregion
 
+		#region SaveList
+
+		/// <summary>
+		///  Writes the list of entry names to the specified file in the specified format.
+		/// </summary>
+		/// <param name="path">The file path to the entries to write to.</param>
+		/// <param name="format">The format to write the entries in.</param>
+		public void SaveList(string path, KifintListFormat format) {
+			using (StreamWriter writer = new StreamWriter(path))
+				SaveList(writer, format);
+		}
+		/// <summary>
+		///  Writes the list of entry names to the specified writer in the specified format.
+		/// </summary>
+		/// <param name="writer">The stream writer to the entries to write to.</param>
+		/// <param name="format">The format to write the entries in.</param>
+		public void SaveList(StreamWriter writer, KifintListFormat format) {
+			var list = new KifintList(this);
+			var ordered = Entries.Values.OrderBy(e => e.FileName);
+			switch (format) {
+			case KifintListFormat.Text:
+				writer.Write(list.FilePath);
+				for (int i = 0; i < list.Entries.Count; i++)
+					writer.WriteLine(list.Entries[i]);
+				break;
+			case KifintListFormat.Csv:
+				writer.Write(list.FilePath);
+				for (int i = 0; i < list.Entries.Count; i++) {
+					writer.Write(',');
+					writer.Write(list.Entries[i]);
+				}
+				break;
+			case KifintListFormat.Json:
+				writer.Write(JsonConvert.SerializeObject(list));
+				break;
+			default:
+				throw new ArgumentException($"{nameof(format)} is undefined!");
+			}
+		}
+
+		#endregion
+
 		#region I/O
 
 		/// <summary>
@@ -120,8 +175,8 @@ namespace Grisaia.Asmodean {
 		internal void Write(BinaryWriter writer) {
 			writer.Write(Path.GetFileName(FilePath));
 
-			writer.Write(FileKey.HasValue);
-			writer.Write(FileKey ?? 0);
+			writer.Write(IsEncrypted);
+			writer.Write(FileKey);
 
 			writer.Write(Entries.Count);
 			foreach (KifintEntry entry in Entries.Values) {
@@ -140,9 +195,10 @@ namespace Grisaia.Asmodean {
 				FilePath = Path.Combine(installDir, reader.ReadString()),
 				ArchiveType = type,
 			};
-			bool decrypt = reader.ReadBoolean();
+			kifint.IsEncrypted = reader.ReadBoolean();
 			kifint.FileKey = reader.ReadUInt32();
-			if (!decrypt) kifint.FileKey = null;
+			if (!kifint.IsEncrypted)
+				kifint.FileKey = 0;
 
 			int count = reader.ReadInt32();
 			Dictionary<string, KifintEntry> entries = new Dictionary<string, KifintEntry>(count);

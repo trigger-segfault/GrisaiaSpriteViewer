@@ -148,7 +148,7 @@ namespace Grisaia.Extensions {
 				byte[] buffer = new byte[bufferSize];
 				int totalRead = 0;
 				while (totalRead < count) {
-					int read = stream.Read(buffer, 0, Math.Min(count, bufferSize));
+					int read = stream.Read(buffer, 0, Math.Min(count - totalRead, bufferSize));
 					if (read == 0)
 						return totalRead;
 					totalRead += read;

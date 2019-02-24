@@ -354,8 +354,8 @@ namespace Grisaia.Categories {
 				progress.CurrentGame = game;
 				if (game.Lookups.Count == 0) {
 					if (loadUpdateArchives)
-						game.LoadLookup(KifintType.Update, progress, callback, true);
-					game.LoadLookup(KifintType.Image, progress, callback, true);
+						game.LoadLookup(KifintType.Update, progress, callback);
+					game.LoadLookup(KifintType.Image, progress, callback);
 				}
 				progress.GameIndex++;
 			}
@@ -364,7 +364,7 @@ namespace Grisaia.Categories {
 			callback?.Invoke(progress);
 		}
 		public void LoadCache(bool loadUpdateArchives = true, LoadCacheProgressCallback callback = null) {
-			string cachePath = GrisaiaDatabase.CachePath;
+			/*string cachePath = GrisaiaDatabase.CachePath;
 			if (!Directory.Exists(cachePath))
 				Directory.CreateDirectory(cachePath);
 
@@ -377,8 +377,36 @@ namespace Grisaia.Categories {
 				progress.CurrentGame = game;
 				game.ClearLookups();
 				if (loadUpdateArchives)
-					game.LoadLookup(KifintType.Update, progress, callback, false);
-				game.LoadLookup(KifintType.Image, progress, callback, false);
+					game.LoadLookup(KifintType.Update, progress, callback);
+				game.LoadLookup(KifintType.Image, progress, callback);
+				progress.GameIndex++;
+			}
+			progress.CurrentGame = null;
+			progress.Kifint = default;
+			callback?.Invoke(progress);*/
+			List<KifintType> types = new List<KifintType> {
+				KifintType.Image,
+			};
+			if (loadUpdateArchives)
+				types.Add(KifintType.Update);
+			LoadCache(callback, types.ToArray());
+		}
+		public void LoadCache(LoadCacheProgressCallback callback, params KifintType[] types) {
+			string cachePath = GrisaiaDatabase.CachePath;
+			if (!Directory.Exists(cachePath))
+				Directory.CreateDirectory(cachePath);
+
+			LoadCacheProgressArgs progress = new LoadCacheProgressArgs {
+				GameIndex = 0,
+				GameCount = LocatedCount,
+			};
+
+			foreach (GameInfo game in locatedGameList) {
+				progress.CurrentGame = game;
+				game.ClearLookups();
+				foreach (KifintType type in types) {
+					game.LoadLookup(type, progress, callback);
+				}
 				progress.GameIndex++;
 			}
 			progress.CurrentGame = null;

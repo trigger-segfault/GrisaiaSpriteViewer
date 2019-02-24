@@ -1,26 +1,48 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DB0027DF-01B3-487D-8308-EDEEE3022D18}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net462</TargetFramework>
-    <RootNamespace>Grisaia.Testing</RootNamespace>
+    <RootNamespace>GrisaiaTesting</RootNamespace>
+    <AssemblyName>GrisaiaTesting</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
     <PlatformTarget>x86</PlatformTarget>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Anm2Animation.cs" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Games.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
@@ -31,10 +53,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj" />
-    <ContentWithTargetPath Include="..\Asmodean\bin\Release\zlib1.dll">
+    <ContentWithTargetPath Include="..\zlib\bin\zlib1.dll">
       <TargetPath>zlib1.dll</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ContentWithTargetPath>
+    <ProjectReference Include="..\GrisaiaCategorization\GrisaiaCategorization.csproj">
+      <Project>{1b907c39-eb5d-4f07-b70e-142e2c88e8b5}</Project>
+      <Name>GrisaiaCategorization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GrisaiaMvvm\GrisaiaMvvm.csproj">
+      <Project>{3649d829-ee95-4c9f-b56a-7ca6654d22dd}</Project>
+      <Name>GrisaiaMvvm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GrisaiaSpriteViewer\GrisaiaSpriteViewer.csproj">
+      <Project>{b468146a-f5a7-4999-8414-19a194b8a678}</Project>
+      <Name>GrisaiaSpriteViewer</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClrPlus.Windows.PeBinary">
+      <Version>1.8.0.81</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

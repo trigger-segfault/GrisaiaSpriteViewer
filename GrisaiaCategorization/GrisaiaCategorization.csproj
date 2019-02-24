@@ -56,8 +56,11 @@
     <Compile Include="Asmodean\Kifint.PInvoke.cs" />
     <Compile Include="Asmodean\Kifint.Structs.cs" />
     <Compile Include="Asmodean\KifintEntry.cs" />
+    <Compile Include="Asmodean\KifintList.cs" />
+    <Compile Include="Asmodean\KifintListFormat.cs" />
     <Compile Include="Asmodean\KifintLookup.cs" />
     <Compile Include="Asmodean\KifintLookupCollection.cs" />
+    <Compile Include="Asmodean\KifintStream.cs" />
     <Compile Include="Asmodean\KifintType.Attributes.cs" />
     <Compile Include="Asmodean\KifintType.cs" />
     <Compile Include="Asmodean\MersenneTwister.cs" />
@@ -65,10 +68,13 @@
     <Compile Include="Asmodean\VCode2.PInvoke.cs" />
     <Compile Include="Attributes.cs" />
     <Compile Include="Categories\GameInstallInfo.cs" />
-    <Compile Include="Categories\Images\CategorizationInfo.cs" />
+    <Compile Include="Categories\Images\ImageIdentityInfo.cs" />
     <Compile Include="Categories\Sprites\SpriteDrawInfo.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Extensions\BinaryReaderExtensions.Arrays.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
+    <Compile Include="Extensions\BinaryReaderExtensions.Strings.cs" />
+    <Compile Include="Extensions\BinaryWriterExtensions.Arrays.cs" />
     <Compile Include="Extensions\BinaryWriterExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\IDisposableExtensions.cs" />
@@ -78,7 +84,7 @@
     <Compile Include="Extensions\StringExtensions.Surround.cs" />
     <Compile Include="Geometry\Point2I.cs" />
     <Compile Include="Geometry\Thickness2I.cs" />
-    <Compile Include="Rules\Images\IImageCategorizationRule.cs" />
+    <Compile Include="Rules\Images\IImageParsingRule.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.MinMax.object.cs" />
     <Compile Include="Utils\ArgumentOutOfRangeUtils.Range.object.cs" />
@@ -110,8 +116,6 @@
     <Compile Include="Categories\Sprites\SpriteInfo.cs" />
     <Compile Include="Categories\Sprites\SpritePartGroup.cs" />
     <Compile Include="Categories\Sprites\SpriteParts.cs" />
-    <None Include="ConfigSettings.cs" />
-    <Compile Include="DummyCategorizationContext.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <EmbeddedResource Include="data\characters.json">
@@ -122,6 +126,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="data\dummy\Tama01_001+hg3.json" />
     <EmbeddedResource Include="data\dummy\Tama01_1+hg3.json" />
+    <None Include="data\identities.json" />
+    <None Include="data\images.json" />
     <None Include="Unused\Json\JsonSpriteCategoryInfoConverter.cs" />
     <Compile Include="Json\JsonStringEnumConverter.cs" />
     <Compile Include="Locators\FrontwingLocator.cs" />
@@ -150,7 +156,6 @@
     <None Include="Unused\Identifying\Old\UserInterface.cs" />
     <None Include="Unused\Identifying\Sprite.cs" />
     <None Include="Unused\Json\JsonCodeEnumConverter.cs" />
-    <None Include="UserSettings.cs" />
     <Compile Include="Utils\ArrayCollection.cs" />
     <Compile Include="Utils\BitUtils.cs" />
     <Compile Include="Utils\Embedded.cs" />

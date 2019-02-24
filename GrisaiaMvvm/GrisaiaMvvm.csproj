@@ -59,10 +59,15 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\BitmapFactory.cs" />
     <Compile Include="Services\IClipboardService.cs" />
+    <Compile Include="Services\IconCacheService.Classes.cs" />
+    <Compile Include="Services\IconCacheService.cs" />
+    <Compile Include="Services\IconCacheService.PInvoke.cs" />
     <Compile Include="Services\IGrisaiaDialogService.cs" />
     <Compile Include="Services\IRelayCommandFactory.cs" />
     <Compile Include="Services\UIService.cs" />
+    <Compile Include="Utils\WpfUtils.cs" />
     <Compile Include="ViewModelRelayCommand.cs" />
     <Compile Include="ViewModelWindow.cs" />
     <Compile Include="ViewModel\InstallDirsGameViewModel.Commands.cs" />

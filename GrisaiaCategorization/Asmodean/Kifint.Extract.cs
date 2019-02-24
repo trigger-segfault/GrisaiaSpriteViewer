@@ -163,8 +163,8 @@ namespace Grisaia.Asmodean {
 		public static Hg3 ExtractHg3AndImages(KifintEntry entry, string directory, bool expand) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				return ExtractHg3AndImages(stream, entry, directory, expand);
+			using (KifintStream kifintStream = new KifintStream())
+				return ExtractHg3AndImages(kifintStream, entry, directory, expand);
 		}
 		/// <summary>
 		///  Extracts the HG-3 image information from the KIFINT entry's open KIFINT archive stream and saves all
@@ -179,10 +179,9 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/>, <paramref name="entry"/>, or <paramref name="directory"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static Hg3 ExtractHg3AndImages(Stream kifintStream, KifintEntry entry, string directory, bool expand) {
+		public static Hg3 ExtractHg3AndImages(KifintStream kifintStream, KifintEntry entry, string directory,
+			bool expand)
+		{
 			if (directory == null)
 				throw new ArgumentNullException(nameof(directory));
 			byte[] buffer = Extract(kifintStream, entry);
@@ -201,11 +200,12 @@ namespace Grisaia.Asmodean {
 		public static Hg3 ExtractHg3(KifintEntry entry) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				return ExtractHg3(stream, entry);
+			using (KifintStream kifintStream = new KifintStream())
+				return ExtractHg3(kifintStream, entry);
 		}
 		/// <summary>
-		///  Extracts the HG-3 image information ONLY from open KIFINT archive stream and does not extract the actual images.
+		///  Extracts the HG-3 image information ONLY from open KIFINT archive stream and does not extract the actual
+		///  images.
 		/// </summary>
 		/// <param name="kifintStream">The stream to the open KIFINT archive.</param>
 		/// <param name="entry">The KIFINT entry used to locate the file.</param>
@@ -214,10 +214,7 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/> or <paramref name="entry"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static Hg3 ExtractHg3(Stream kifintStream, KifintEntry entry) {
+		public static Hg3 ExtractHg3(KifintStream kifintStream, KifintEntry entry) {
 			byte[] buffer = Extract(kifintStream, entry);
 			using (MemoryStream ms = new MemoryStream(buffer))
 				return Hg3.Extract(ms, entry.FileName);
@@ -239,8 +236,8 @@ namespace Grisaia.Asmodean {
 		public static Anm ExtractAnm(KifintEntry entry) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				return ExtractAnm(stream, entry);
+			using (KifintStream kifintStream = new KifintStream())
+				return ExtractAnm(kifintStream, entry);
 		}
 		/// <summary>
 		///  Extracts the ANM animation information from the open KIFINT archive stream.
@@ -252,10 +249,7 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/> or <paramref name="entry"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static Anm ExtractAnm(Stream kifintStream, KifintEntry entry) {
+		public static Anm ExtractAnm(KifintStream kifintStream, KifintEntry entry) {
 			byte[] buffer = Extract(kifintStream, entry);
 			using (MemoryStream ms = new MemoryStream(buffer))
 				return Anm.Extract(ms, entry.FileName);
@@ -275,14 +269,11 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="entry"/> or <paramref name="filePath"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
 		public static void ExtractToFile(KifintEntry entry, string filePath) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				ExtractToFile(stream, entry, filePath);
+			using (KifintStream kifintStream = new KifintStream())
+				ExtractToFile(kifintStream, entry, filePath);
 		}
 		/// <summary>
 		///  Extracts the KIFINT entry file from the the entry's open KIFINT archive stream and saves it to the output
@@ -295,10 +286,7 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/>, <paramref name="entry"/>, or <paramref name="filePath"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static void ExtractToFile(Stream kifintStream, KifintEntry entry, string filePath) {
+		public static void ExtractToFile(KifintStream kifintStream, KifintEntry entry, string filePath) {
 			if (kifintStream == null)
 				throw new ArgumentNullException(nameof(kifintStream));
 			if (entry == null)
@@ -306,12 +294,13 @@ namespace Grisaia.Asmodean {
 			if (filePath == null)
 				throw new ArgumentNullException(nameof(filePath));
 			var kifint = entry.Kifint;
+			kifintStream.Open(kifint);
 			BinaryReader reader = new BinaryReader(kifintStream);
 			kifintStream.Position = entry.Offset;
 			byte[] buffer = reader.ReadBytes(entry.Length);
 
-			if (kifint.FileKey.HasValue) {
-				DecryptData(buffer, entry.Length, kifint.FileKey.Value);
+			if (kifint.IsEncrypted) {
+				DecryptData(buffer, entry.Length, kifint.FileKey);
 			}
 			File.WriteAllBytes(filePath, buffer);
 		}
@@ -332,14 +321,11 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="entry"/> or <paramref name="directory"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
 		public static void ExtractToDirectory(KifintEntry entry, string directory) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				ExtractToDirectory(stream, entry, directory);
+			using (KifintStream kifintStream = new KifintStream())
+				ExtractToDirectory(kifintStream, entry, directory);
 		}
 		/// <summary>
 		///  Extracts the KIFINT entry file from the the entry's open KIFINT archive stream and saves it to the output
@@ -354,10 +340,7 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/>, <paramref name="entry"/>, or <paramref name="directory"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static void ExtractToDirectory(Stream kifintStream, KifintEntry entry, string directory) {
+		public static void ExtractToDirectory(KifintStream kifintStream, KifintEntry entry, string directory) {
 			if (kifintStream == null)
 				throw new ArgumentNullException(nameof(kifintStream));
 			if (entry == null)
@@ -365,14 +348,61 @@ namespace Grisaia.Asmodean {
 			if (directory == null)
 				throw new ArgumentNullException(nameof(directory));
 			var kifint = entry.Kifint;
+			kifintStream.Open(kifint);
 			BinaryReader reader = new BinaryReader(kifintStream);
 			kifintStream.Position = entry.Offset;
 			byte[] buffer = reader.ReadBytes(entry.Length);
 
-			if (kifint.FileKey.HasValue) {
-				DecryptData(buffer, entry.Length, kifint.FileKey.Value);
+			if (kifint.IsEncrypted) {
+				DecryptData(buffer, entry.Length, kifint.FileKey);
 			}
 			File.WriteAllBytes(Path.Combine(directory, entry.FileName), buffer);
+		}
+
+		#endregion
+
+		#region ExtractToStream
+
+		/// <summary>
+		///  Extracts the KIFINT entry file from the the entry's KIFINT archive and returns a stream.
+		/// </summary>
+		/// <param name="entry">The KIFINT entry to open the KIFINT archive from and locate the file.</param>
+		/// <returns>A stream of the extracted KIFINT entry's file data.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="entry"/> is null.
+		/// </exception>
+		public static MemoryStream ExtractToStream(KifintEntry entry) {
+			if (entry == null)
+				throw new ArgumentNullException(nameof(entry));
+			using (KifintStream kifintStream = new KifintStream())
+				return ExtractToStream(kifintStream, entry);
+		}
+		/// <summary>
+		///  Extracts the KIFINT entry file from the the entry's KIFINT archive and returns a stream.
+		/// </summary>
+		/// <param name="kifintStream">The stream to the open KIFINT archive.</param>
+		/// <param name="entry">The KIFINT entry used to locate the file.</param>
+		/// <returns>A stream of the extracted KIFINT entry's file data.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		///  <paramref name="kifintStream"/> or <paramref name="entry"/> is null.
+		/// </exception>
+		public static MemoryStream ExtractToStream(KifintStream kifintStream, KifintEntry entry) {
+			if (kifintStream == null)
+				throw new ArgumentNullException(nameof(kifintStream));
+			if (entry == null)
+				throw new ArgumentNullException(nameof(entry));
+			var kifint = entry.Kifint;
+			kifintStream.Open(kifint);
+			BinaryReader reader = new BinaryReader(kifintStream);
+			kifintStream.Position = entry.Offset;
+			byte[] buffer = reader.ReadBytes(entry.Length);
+
+			if (kifint.IsEncrypted) {
+				DecryptData(buffer, entry.Length, kifint.FileKey);
+			}
+			return new MemoryStream(buffer);
 		}
 
 		#endregion
@@ -391,8 +421,8 @@ namespace Grisaia.Asmodean {
 		public static byte[] Extract(KifintEntry entry) {
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
-			using (Stream stream = File.OpenRead(entry.Kifint.FilePath))
-				return Extract(stream, entry);
+			using (KifintStream kifintStream = new KifintStream())
+				return Extract(kifintStream, entry);
 		}
 		/// <summary>
 		///  Extracts the KIFINT entry file from the the entry's KIFINT archive.
@@ -404,21 +434,19 @@ namespace Grisaia.Asmodean {
 		/// <exception cref="ArgumentNullException">
 		///  <paramref name="kifintStream"/> or <paramref name="entry"/> is null.
 		/// </exception>
-		/// <exception cref="ObjectDisposedException">
-		///  The <paramref name="kifintStream"/> is closed.
-		/// </exception>
-		public static byte[] Extract(Stream kifintStream, KifintEntry entry) {
+		public static byte[] Extract(KifintStream kifintStream, KifintEntry entry) {
 			if (kifintStream == null)
 				throw new ArgumentNullException(nameof(kifintStream));
 			if (entry == null)
 				throw new ArgumentNullException(nameof(entry));
 			var kifint = entry.Kifint;
+			kifintStream.Open(kifint);
 			BinaryReader reader = new BinaryReader(kifintStream);
 			kifintStream.Position = entry.Offset;
 			byte[] buffer = reader.ReadBytes(entry.Length);
 
-			if (kifint.FileKey.HasValue) {
-				DecryptData(buffer, entry.Length, kifint.FileKey.Value);
+			if (kifint.IsEncrypted) {
+				DecryptData(buffer, entry.Length, kifint.FileKey);
 			}
 			return buffer;
 		}

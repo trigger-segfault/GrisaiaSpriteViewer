@@ -106,7 +106,7 @@ namespace Grisaia.Asmodean {
 		/// </summary>
 		/// <returns>A memory stream containing the data of the decrypted entry.</returns>
 		public MemoryStream ExtractToStream() {
-			return new MemoryStream(Extract());
+			return Kifint.ExtractToStream(this);
 		}
 		/// <summary>
 		///  Extracts the KIFINT entry and saves it to <paramref name="filePath"/>.

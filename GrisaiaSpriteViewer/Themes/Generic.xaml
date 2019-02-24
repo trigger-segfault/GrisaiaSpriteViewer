@@ -92,25 +92,25 @@
               </Grid.ColumnDefinitions>
               <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
-                <RowDefinition Height="4"/>
-                <RowDefinition Height="20"/>
+                <!--<RowDefinition Height="4"/>
+                <RowDefinition Height="20"/>-->
                 <RowDefinition Height="6"/>
                 <RowDefinition Height="20"/>
               </Grid.RowDefinitions>
-              <TextBlock Text="Custom Location" HorizontalAlignment="Right" Grid.Row="0" VerticalAlignment="Center"/>
-              <TextBlock Text="Custom Exe" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Center"/>
-              <TextBlock Text="Known Location" HorizontalAlignment="Right" Grid.Row="4" VerticalAlignment="Center"/>
-
-              <TextBox x:Name="PART_CustomLocation" Grid.Row="0" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomInstallDir, Mode=OneWay}"/>
-              <TextBox x:Name="PART_CustomExecutable" Grid.Row="2" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomExecutable, Mode=OneWay}"/>
-              <TextBox x:Name="PART_Located" Grid.Row="4" Grid.Column="2" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LocatedInstallDir, Mode=OneWay}"/>
-
+              <TextBlock           Grid.Row="0" Grid.Column="0" Text="Custom Location" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              <TextBox             Grid.Row="0" Grid.Column="2" x:Name="PART_CustomLocation" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomInstallDir, Mode=OneWay}"/>
               <local:CommandButton Grid.Row="0" Grid.Column="4" Command="{Binding OpenCustomLocation}"/>
+              <local:CommandButton Grid.Row="0" Grid.Column="6" Command="{Binding RemoveCustomLocation}"/>
+
+              <!--<TextBlock           Grid.Row="2" Grid.Column="0" Text="Custom Exe" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              <TextBox             Grid.Row="2" Grid.Column="2" x:Name="PART_CustomExecutable" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding CustomExecutable, Mode=OneWay}"/>
               <local:CommandButton Grid.Row="2" Grid.Column="4" Command="{Binding OpenCustomExecutable}"/>
+              <local:CommandButton Grid.Row="2" Grid.Column="6" Command="{Binding RemoveCustomExecutable}"/> -->
+
+              <TextBlock           Grid.Row="2" Grid.Column="0" Text="Known Location" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              <TextBox             Grid.Row="2" Grid.Column="2" x:Name="PART_Located" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding LocatedInstallDir, Mode=OneWay}"/>
               <!--<local:CommandButton Grid.Row="4" Grid.Column="4" Command="{Binding RelocateGame}"/>-->
 
-              <local:CommandButton Grid.Row="0" Grid.Column="6" Command="{Binding RemoveCustomLocation}"/>
-              <local:CommandButton Grid.Row="2" Grid.Column="6" Command="{Binding RemoveCustomExecutable}"/>
             </Grid>
           </StackPanel>
         </ControlTemplate>

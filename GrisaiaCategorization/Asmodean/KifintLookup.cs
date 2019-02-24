@@ -106,6 +106,8 @@ namespace Grisaia.Asmodean {
 
 		#endregion
 
+		#region Accessors
+
 		/// <summary>
 		///  Gets the KIFINT entry with the specified file name key.
 		/// </summary>
@@ -176,6 +178,31 @@ namespace Grisaia.Asmodean {
 			}
 			return false;
 		}
+
+		#endregion
+
+		#region SaveList
+
+		/// <summary>
+		///  Writes the list of KIFINT archive entry names to the specified file in the specified format.
+		/// </summary>
+		/// <param name="path">The file path to the archive entries to write to.</param>
+		/// <param name="format">The format to write the entries in.</param>
+		public void SaveList(string path, KifintListFormat format) {
+			using (StreamWriter writer = new StreamWriter(path))
+				SaveList(writer, format);
+		}
+		/// <summary>
+		///  Writes the list of KIFINT archive  entry names to the specified writer in the specified format.
+		/// </summary>
+		/// <param name="writer">The stream writer to the archive entries to write to.</param>
+		/// <param name="format">The format to write the entries in.</param>
+		public void SaveList(StreamWriter writer, KifintListFormat format) {
+			foreach (Kifint kifint in kifints)
+				kifint.SaveList(writer, format);
+		}
+
+		#endregion
 
 		#region I/O
 

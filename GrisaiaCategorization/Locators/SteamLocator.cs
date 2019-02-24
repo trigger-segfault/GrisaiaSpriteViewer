@@ -85,7 +85,7 @@ namespace Grisaia.Locators {
 			string steamApps = Path.Combine(steamPath, SteamApps);
 			if (!PathUtils.IsValidDirectory(steamPath) || !Directory.Exists(steamApps))
 				throw new SteamException($"Steam installation path does not have a \"{SteamApps}\" folder!");
-			folders.Add(steamApps);
+			folders.Add(steamPath);
 
 			string libraryFolders = Path.Combine(steamApps, LibraryFolders);
 			string libraryFoldersRelative = Path.Combine(SteamApps, LibraryFolders); // Relative for exceptions
@@ -130,7 +130,7 @@ namespace Grisaia.Locators {
 			if (steamId == 0)
 				return null;
 			foreach (string folder in folders) {
-				string appManifest = Path.Combine(folder, GetAppManifestFileName(steamId));
+				string appManifest = Path.Combine(folder, SteamApps, GetAppManifestFileName(steamId));
 				// Is not present in this library folder
 				if (!File.Exists(appManifest))
 					continue;
@@ -140,7 +140,7 @@ namespace Grisaia.Locators {
 				if (!vapp.TryGetValue(InstallDirVdfKey, out VToken vappToken))
 					continue;
 				string installDir = vappToken.Value<string>();
-				installDir = Path.Combine(folder, Common, installDir);
+				installDir = Path.Combine(folder, SteamApps, Common, installDir);
 				if (!PathUtils.IsValidDirectory(installDir) || !Directory.Exists(installDir))
 					continue;
 

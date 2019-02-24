@@ -15,7 +15,7 @@ namespace Grisaia.Asmodean {
 		/// <returns>The extracted <see cref="Hg3"/> information.</returns>
 		/// 
 		/// <exception cref="ArgumentNullException">
-		///  <paramref name="hg3File"/> or <paramref name="fileName"/> is null.
+		///  <paramref name="hg3File"/> or <paramref name="directory"/> is null.
 		/// </exception>
 		public static Hg3 ExtractImages(string hg3File, string directory, bool expand) {
 			using (var stream = File.OpenRead(hg3File))

@@ -64,7 +64,7 @@ namespace Grisaia.Asmodean {
 		[JsonProperty("images")]
 		public IReadOnlyList<Hg3Image> Images {
 			get => images;
-			set {
+			private set {
 				images = value;
 				for (int i = 0; i < images.Count; i++) {
 					images[i].Hg3 = this;
@@ -117,10 +117,9 @@ namespace Grisaia.Asmodean {
 			//EntryCount = hdr.EntryCount;
 			Expanded = expand;
 			Hg3Image[] images = new Hg3Image[stdInfos.Length];
-			for (int i = 0; i < images.Length; i++) {
+			for (int i = 0; i < images.Length; i++)
 				images[i] = new Hg3Image(i, stdInfos[i], frameOffsets[i], this);
-			}
-			Images = Array.AsReadOnly(images);
+			this.images = Array.AsReadOnly(images);
 		}
 
 		#endregion

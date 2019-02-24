@@ -217,7 +217,7 @@ namespace Grisaia.Asmodean {
 		///  Gets the string representation of the HG-3.
 		/// </summary>
 		/// <returns>The string representation of the HG-3.</returns>
-		public override string ToString() => $"Hg3Image: {Width}x{Height} Count={FrameCount}";
+		public override string ToString() => $"{Width}x{Height} Center={Center},{Baseline}";
 
 		#endregion
 	}

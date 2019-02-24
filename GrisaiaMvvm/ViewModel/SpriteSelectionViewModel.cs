@@ -220,11 +220,13 @@ namespace Grisaia.Mvvm.ViewModel {
 			SpriteDatabase.BuildComplete += OnSpriteDatabaseBuildComplete;
 			ISpriteSelection newSelection = SpriteSelection.ToMutable();
 			ISpriteCategory category = SpriteDatabase;
-			for (int i = 0; i < SpriteCategoryPool.Count; i++) {
-				category = Categories[i] = (ISpriteCategory) category.List[0];
-				category.Category.SetId(newSelection, category.Id);
-				if (category.IsLastCategory) {
-					UpdateGroups(category, newSelection);
+			if (category.Count != 0) {
+				for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+					category = Categories[i] = (ISpriteCategory) category.List[0];
+					category.Category.SetId(newSelection, category.Id);
+					if (category.IsLastCategory) {
+						UpdateGroups(category, newSelection);
+					}
 				}
 			}
 			Console.WriteLine($"SpriteViewModel.CurrentParts+SpriteSelection");
@@ -237,11 +239,18 @@ namespace Grisaia.Mvvm.ViewModel {
 				ISpriteSelection newSelection = SpriteSelection.ToMutable();
 				suppressCollectionEvents = true;
 				ISpriteCategory category = SpriteDatabase;
-				for (int i = 0; i < SpriteCategoryPool.Count; i++) {
-					category = Categories[i] = (ISpriteCategory) category.List[0];
-					category.Category.SetId(newSelection, category.Id);
-					if (category.IsLastCategory) {
-						UpdateGroups(category, newSelection);
+				if (category.Count != 0) {
+					for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+						category = Categories[i] = (ISpriteCategory) category.List[0];
+						category.Category.SetId(newSelection, category.Id);
+						if (category.IsLastCategory) {
+							UpdateGroups(category, newSelection);
+						}
+					}
+				}
+				else {
+					for (int i = 0; i < SpriteCategoryPool.Count; i++) {
+						Categories[i] = null;
 					}
 				}
 				RaisePropertyChanged(nameof(SpriteDatabase));

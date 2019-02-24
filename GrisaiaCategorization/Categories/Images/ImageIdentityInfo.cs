@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Grisaia.Categorization.Categories.Images {
-	public class CategorizationInfo {
+namespace Grisaia.Categories.Images {
+	public sealed class ImageIdentityInfo {
 
 	}
 }
