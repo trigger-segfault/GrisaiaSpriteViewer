@@ -6,6 +6,7 @@ using System.Linq;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Locators {
 	/// <summary>

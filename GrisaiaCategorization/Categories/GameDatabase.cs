@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GalaSoft.MvvmLight;
-using Grisaia.Asmodean;
 using Grisaia.Locators;
 using Newtonsoft.Json;
+using TriggersTools.CatSystem2;
 
 namespace Grisaia.Categories {
 	/// <summary>

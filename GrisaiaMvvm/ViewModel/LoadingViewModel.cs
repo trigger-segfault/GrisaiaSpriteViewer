@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Mvvm.Commands;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
 using Grisaia.Mvvm.ViewModel.Messages;
+using TriggersTools.CatSystem2;
 
 namespace Grisaia.Mvvm.ViewModel {
 	public sealed class LoadingViewModel : ViewModelWindow {

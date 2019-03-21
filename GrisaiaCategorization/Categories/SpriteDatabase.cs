@@ -11,12 +11,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
-using Grisaia.Asmodean;
 using Grisaia.Categories.Sprites;
 using Grisaia.Geometry;
 using Grisaia.Rules.Sprites;
-using Grisaia.Utils;
 using Newtonsoft.Json;
+using TriggersTools.CatSystem2;
+using TriggersTools.SharpUtils.Collections;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Categories {
 	/// <summary>
@@ -540,7 +541,7 @@ namespace Grisaia.Categories {
 						}
 						else if (!parsed) {
 							Trace.WriteLine($"Failed to parse {kif.FileName}!");
-							Kifint.ExtractHg3AndImages(kif, Path.Combine(AppContext.BaseDirectory, "cache"), false);
+							kif.ExtractHgxAndImages(Path.Combine(AppContext.BaseDirectory, "cache"), HgxOptions.None);
 						}
 						else if (progress.SpriteCount % ProgressThreshold == 0) {
 							SpriteCount = progress.SpriteCount;
@@ -809,21 +810,21 @@ namespace Grisaia.Categories {
 			SpritePartDrawInfo[] drawParts = new SpritePartDrawInfo[SpriteSelection.PartCount];
 			
 			Thickness2I expandCenter = new Thickness2I();
-			var usedHg3s = parts.Select((p, i) => p?.Hg3.Images[frames[i]]).Where(h => h != null);
+			var usedHg3s = parts.Select((p, i) => p?.Hg3.Frames[frames[i]]).Where(h => h != null);
 			if (usedHg3s.Any()) {
 				if (expand) {
 					expandCenter = new Thickness2I(
-						usedHg3s.Max(h => h.CenterLeft),
-						usedHg3s.Max(h => h.BaselineTop),
-						usedHg3s.Max(h => h.CenterRight),
-						usedHg3s.Max(h => h.BaselineBottom));
+						usedHg3s.Max(h => h.BaseLeft),
+						usedHg3s.Max(h => h.BaseTop),
+						usedHg3s.Max(h => h.BaseRight),
+						usedHg3s.Max(h => h.BaseBottom));
 				}
 				else {
 					expandCenter = new Thickness2I(
-						usedHg3s.Max(h => h.CenterLeft - h.MarginLeft),
-						usedHg3s.Max(h => h.BaselineTop - h.MarginTop),
-						usedHg3s.Max(h => h.CenterRight - h.MarginRight),
-						usedHg3s.Max(h => h.BaselineBottom - h.MarginBottom));
+						usedHg3s.Max(h => h.BaseLeft   - h.MarginLeft),
+						usedHg3s.Max(h => h.BaseTop    - h.MarginTop),
+						usedHg3s.Max(h => h.BaseRight  - h.MarginRight),
+						usedHg3s.Max(h => h.BaseBottom - h.MarginBottom));
 				}
 			}
 			Point2I origin = new Point2I(expandCenter.Left, expandCenter.Top);
@@ -833,13 +834,13 @@ namespace Grisaia.Categories {
 				ISpritePart part = parts[typeId];
 				if (part != null) {
 					int frame = frames[typeId];
-					Hg3Image h = part.Hg3.Images[frame];
-					string imagePath = h.GetFrameFilePath(game.CachePath, 0);
+					HgxFrame h = part.Hg3.Frames[frame];
+					string imagePath = h.GetFrameFilePath(game.CachePath, false);
 					Thickness2I margin = new Thickness2I(
-						expandCenter.Left   - h.CenterLeft     + h.MarginLeft,
-						expandCenter.Top    - h.BaselineTop    + h.MarginTop,
-						expandCenter.Right  - h.CenterRight    + h.MarginRight,
-						expandCenter.Bottom - h.BaselineBottom + h.MarginBottom);
+						expandCenter.Left   - h.BaseLeft   + h.MarginLeft,
+						expandCenter.Top    - h.BaseTop    + h.MarginTop,
+						expandCenter.Right  - h.BaseRight  + h.MarginRight,
+						expandCenter.Bottom - h.BaseBottom + h.MarginBottom);
 					Point2I size = new Point2I(h.Width, h.Height);
 					drawParts[typeId] = new SpritePartDrawInfo(part, typeId, frame, imagePath, margin, size);
 				}
@@ -851,24 +852,24 @@ namespace Grisaia.Categories {
 			return new SpriteDrawInfo(selection, game, character, drawParts, parts, totalSize, origin, expand);
 		}
 
-		private Hg3 LoadHg3(ISpritePart part, GameInfo game) {
+		private HgxImage LoadHg3(ISpritePart part, GameInfo game) {
 			if (part.Hg3 == null) {
 				if (ViewModelBase.IsInDesignModeStatic) {
-					string json = Embedded.ReadAllText(Embedded.Combine("Grisaia.data.dummy", Hg3.GetJsonFileName(part.FileName)));
-					part.Hg3 = JsonConvert.DeserializeObject<Hg3>(json);
+					string json = Embedded.ReadAllText(Embedded.Combine("Grisaia.data.dummy", HgxImage.GetJsonFileName(part.FileName)));
+					part.Hg3 = JsonConvert.DeserializeObject<HgxImage>(json);
 				}
 				else {
 					if (!Directory.Exists(game.CachePath))
 						Directory.CreateDirectory(game.CachePath);
 					// Extract and save the HG-3 if it's not physically cached
-					if (File.Exists(Hg3.GetJsonFilePath(game.CachePath, part.FileName))) {
-						part.Hg3 = Hg3.FromJsonDirectory(game.CachePath, part.FileName);
-						if (part.Hg3.Version != Hg3.CurrentVersion)
+					if (File.Exists(HgxImage.GetJsonFilePath(game.CachePath, part.FileName))) {
+						part.Hg3 = HgxImage.FromJsonDirectory(game.CachePath, part.FileName);
+						if (part.Hg3.Version != HgxImage.CurrentVersion)
 							part.Hg3 = null; // Reload this
 					}
 					if (part.Hg3 == null) {
 						var kifintEntry = game.Lookups.Image[part.FileName];
-						part.Hg3 = kifintEntry.ExtractHg3AndImages(game.CachePath, false);
+						part.Hg3 = kifintEntry.ExtractHgxAndImages(game.CachePath, HgxOptions.None);
 						part.Hg3.SaveJsonToDirectory(game.CachePath);
 					}
 				}

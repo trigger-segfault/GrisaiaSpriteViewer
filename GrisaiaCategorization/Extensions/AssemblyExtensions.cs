@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Grisaia.Utils;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Extensions {
 	public static class AssemblyExtensions {

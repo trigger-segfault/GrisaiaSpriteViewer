@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Move referenced assemblies to the bin folder -->
+<Project TreatAsLocalProperty="BinAssemblies">
+  <!--<Target
+      Name="ComputeCopyLocalAssemblies"
+      DependsOnTargets="ResolveProjectReferences;ResolveAssemblyReferences" AfterTargets="AfterBuild"
+      Returns="@(ReferenceCopyLocalPaths)" /> -->
+  
+  <Target Name="MoveAssembliesToBin" AfterTargets="AfterBuild">
+    <Exec Command="PowerShell -ExecutionPolicy Bypass -Command ..\MoveToBin.ps1 '$(OutputPath)'" />
+  </Target>
+</Project>

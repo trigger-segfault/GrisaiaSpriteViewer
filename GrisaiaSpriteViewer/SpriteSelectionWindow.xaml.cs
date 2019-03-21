@@ -12,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 using Grisaia.Mvvm.ViewModel;

@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-using Grisaia.Extensions;
+using TriggersTools.SharpUtils.Exceptions;
 using WinFormsApplication = System.Windows.Forms.Application;
 
 namespace Grisaia.SpriteViewer.Windows {

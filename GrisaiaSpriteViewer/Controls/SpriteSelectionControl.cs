@@ -11,7 +11,7 @@ using System.Windows.Data;
 using System.Windows.Shapes;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.Utils;
+using TriggersTools.SharpUtils.Collections;
 
 namespace Grisaia.SpriteViewer.Controls {
 	/// <summary>

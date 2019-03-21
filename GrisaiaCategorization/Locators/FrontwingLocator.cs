@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Win32;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Locators {
 	/// <summary>

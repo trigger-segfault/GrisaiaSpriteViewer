@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
-using Grisaia.Extensions;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.SpriteViewer.Utils {
 	/// <summary>

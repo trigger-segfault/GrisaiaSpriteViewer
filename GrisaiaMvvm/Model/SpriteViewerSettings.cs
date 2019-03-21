@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.Utils;
 using Newtonsoft.Json;
 
 namespace Grisaia.Mvvm.Model {

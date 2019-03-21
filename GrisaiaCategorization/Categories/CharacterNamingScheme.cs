@@ -5,9 +5,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GalaSoft.MvvmLight;
 using Grisaia.Json;
-using Grisaia.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TriggersTools.SharpUtils.Collections;
 
 namespace Grisaia.Categories {
 	/// <summary>

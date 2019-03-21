@@ -17,8 +17,9 @@ using ClrPlus.Windows.Api.Enumerations;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Threading;
-using Grisaia.Extensions;
-using Grisaia.Asmodean;
+using TriggersTools.SharpUtils.IO;
+using TriggersTools.SharpUtils.Text;
+using TriggersTools.CatSystem2;
 
 namespace Grisaia.Testing {
 	public static class ListExtensions {
@@ -324,7 +325,7 @@ namespace Grisaia.Testing {
 			//doc.Load(@"C:\Programs\Games\Frontwing\Labyrinth of Grisaia - Copy (2)\config\startup.xml");
 			string installDir = @"C:\Programs\Games\Frontwing\Labyrinth of Grisaia - Copy (2)";
 			string binFile = Path.Combine(installDir, "Grisaia2.bin.bak");
-			string vcode2 = VCode2.Find(binFile);
+			string vcode2 = VCodes.FindVCode2(binFile);
 			/*KifintLookup look = Kifint.DecryptLookup(KifintType.Config, installDir, vcode2);
 			look["startup_master.xml"].ExtractToDirectory(Path.Combine(installDir, "config"));
 			Kifint.DecryptArchives(KifintType.Image, installDir, vcode2);
@@ -1142,7 +1143,7 @@ namespace Grisaia.Testing {
 			//Console.WriteLine($"         Bytes: {data.Length}");
 			//Console.WriteLine($"Non-zero Bytes: {nonZeroBytes.Count}");
 
-			var anm = Anm.Extract(anmFile);
+			var anm = AnmAnimation.Extract(anmFile);
 
 			Console.WriteLine(anm);
 			Console.WriteLine();
@@ -1150,7 +1151,7 @@ namespace Grisaia.Testing {
 			Console.WriteLine($"  Has Original: {hasOriginal}");
 			Console.WriteLine($"   Has 0-Index: {hasZeroIndex}");
 			Console.WriteLine();
-			foreach (AnmFrame frame in anm) {
+			foreach (AnmLine frame in anm) {
 				Console.WriteLine($"- {frame}");
 			}
 

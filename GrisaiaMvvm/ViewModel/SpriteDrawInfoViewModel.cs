@@ -5,7 +5,8 @@ using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
-using Grisaia.Utils;
+using TriggersTools.SharpUtils.Collections;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Mvvm.ViewModel {
 	public sealed class SpriteDrawInfoViewModel : ObservableObject {

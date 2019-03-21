@@ -8,7 +8,7 @@ using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
-using Grisaia.Utils;
+using TriggersTools.SharpUtils.Collections;
 
 namespace Grisaia.Mvvm.ViewModel {
 	public sealed partial class SettingsViewModel : ViewModelWindow {

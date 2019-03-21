@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using GalaSoft.MvvmLight;
-using Grisaia.Asmodean;
 using Grisaia.Locators;
 using Newtonsoft.Json;
+using TriggersTools.CatSystem2;
 
 namespace Grisaia.Categories {
 	/// <summary>
@@ -164,7 +164,7 @@ namespace Grisaia.Categories {
 		///  Gets the collection of loaded and cached KIFINT lookups.
 		/// </summary>
 		[JsonIgnore]
-		public IKifintLookupCollection Lookups => lookups;
+		public IReadOnlyKifintLookupCollection Lookups => lookups;
 		/// <summary>
 		///  Formats the name of the this game info using the naming scheme settings.
 		/// </summary>
@@ -324,11 +324,11 @@ namespace Grisaia.Categories {
 			// Make sure the install has an executable location by defaulting to located install
 			install = new GameInstallInfo(install, locatedInstall);
 			try {
-				return Asmodean.VCode2.Find(install.ExecutablePath);
+				return VCodes.FindVCode2(install.ExecutablePath);
 			} catch { }
 			if (File.Exists(install.ExecutableBinPath)) {
 				try {
-					return Asmodean.VCode2.Find(install.ExecutableBinPath);
+					return VCodes.FindVCode2(install.ExecutableBinPath);
 				} catch { }
 			}
 			return null;
@@ -380,7 +380,7 @@ namespace Grisaia.Categories {
 			if (lookup == null) {
 				Debug.WriteLine($"Building {type} Cache: {Id}");
 				progress.IsBuilding = true;
-				lookup = Kifint.Decrypt(type, InstallDir, VCode2, kifintCallback);
+				lookup = KifintArchive.LoadLookup(type, InstallDir, VCode2, kifintCallback);
 				lookup.Save(lookupFile);
 				progress.IsBuilding = false;
 			}
@@ -417,7 +417,7 @@ namespace Grisaia.Categories {
 			if (lookup == null) {
 				Debug.WriteLine($"Building \"{unknownName}\" Cache: {Id}");
 				progress.IsBuilding = true;
-				lookup = Kifint.Decrypt(wildcard, InstallDir, VCode2, kifintCallback);
+				lookup = KifintArchive.LoadLookup(wildcard, InstallDir, VCode2, kifintCallback);
 				lookup.Save(lookupFile);
 				progress.IsBuilding = false;
 			}

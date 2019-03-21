@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Grisaia.Asmodean;
+using TriggersTools.CatSystem2;
 
 namespace Grisaia.Categories.Sprites {
 	/// <summary>
@@ -80,7 +80,7 @@ namespace Grisaia.Categories.Sprites {
 		/// <summary>
 		///  Gets the cached Hg3 data for this sprite. This is null if not cached.
 		/// </summary>
-		public Hg3 Hg3 { get; set; }
+		public HgxImage Hg3 { get; set; }
 
 		#endregion
 

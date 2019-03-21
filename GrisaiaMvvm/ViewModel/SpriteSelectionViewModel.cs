@@ -11,7 +11,7 @@ using Grisaia.Categories.Sprites;
 using Grisaia.Mvvm.Model;
 using Grisaia.Mvvm.Services;
 using Grisaia.Mvvm.ViewModel.Messages;
-using Grisaia.Utils;
+using TriggersTools.SharpUtils.Collections;
 
 namespace Grisaia.Mvvm.ViewModel {
 	public sealed partial class SpriteSelectionViewModel : ViewModelWindow {

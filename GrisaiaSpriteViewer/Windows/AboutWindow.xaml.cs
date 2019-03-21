@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
-using Grisaia.Extensions;
+using TriggersTools.Build;
 
 namespace Grisaia.SpriteViewer.Windows {
 	/// <summary>
@@ -21,8 +21,7 @@ namespace Grisaia.SpriteViewer.Windows {
 
 			Assembly assembly = Assembly.GetEntryAssembly();
 			AssemblyName assemblyName = assembly.GetName();
-			const string timestampPath = "Grisaia.SpriteViewer.Resources.BuildTimeStamp.txt";
-			DateTime buildDate = assembly.GetEmbeddedBuildTime(timestampPath);
+			DateTime buildDate = assembly.GetBuildTime();
 
 			this.labelVersion.Content = assemblyName.Version.ToString() + " Prerelease";
 			this.labelBuildDate.Content = buildDate.ToShortDateString() + " (" + buildDate.ToShortTimeString() + ")";

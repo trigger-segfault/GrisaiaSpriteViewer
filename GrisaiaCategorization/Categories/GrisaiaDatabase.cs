@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using GalaSoft.MvvmLight;
-using Grisaia.Utils;
 using Newtonsoft.Json;
+using TriggersTools.SharpUtils.IO;
 
 namespace Grisaia.Categories {
 	public class GrisaiaDatabase : ObservableObject {

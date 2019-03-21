@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Grisaia.Utils;
 using Newtonsoft.Json;
 
 namespace Grisaia.Categories.Sprites {

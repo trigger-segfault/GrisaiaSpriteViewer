@@ -11,11 +11,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
-using Grisaia.Asmodean;
 using Grisaia.Categories;
 using Grisaia.Categories.Sprites;
 using Grisaia.Mvvm.ViewModel;
-using Grisaia.Utils;
 
 namespace Grisaia.SpriteViewer.Controls {
 	/// <summary>

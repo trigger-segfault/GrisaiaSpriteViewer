@@ -39,58 +39,58 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asmodean\Anm.cs" />
-    <Compile Include="Asmodean\Anm.Extract.cs" />
-    <Compile Include="Asmodean\Anm.Structs.cs" />
-    <Compile Include="Asmodean\AnmFrame.cs" />
-    <Compile Include="Asmodean\Hg3.cs" />
-    <Compile Include="Asmodean\Hg3.Extract.cs" />
-    <Compile Include="Asmodean\Hg3.Extract.Private.cs" />
-    <Compile Include="Asmodean\Hg3.PInvoke.cs" />
-    <Compile Include="Asmodean\Hg3.Structs.cs" />
-    <Compile Include="Asmodean\Hg3Image.cs" />
-    <Compile Include="Asmodean\Kifint.Callbacks.cs" />
-    <Compile Include="Asmodean\Kifint.cs" />
-    <Compile Include="Asmodean\Kifint.Extract.cs" />
-    <Compile Include="Asmodean\Kifint.Extract.Private.cs" />
-    <Compile Include="Asmodean\Kifint.PInvoke.cs" />
-    <Compile Include="Asmodean\Kifint.Structs.cs" />
-    <Compile Include="Asmodean\KifintEntry.cs" />
-    <Compile Include="Asmodean\KifintList.cs" />
-    <Compile Include="Asmodean\KifintListFormat.cs" />
-    <Compile Include="Asmodean\KifintLookup.cs" />
-    <Compile Include="Asmodean\KifintLookupCollection.cs" />
-    <Compile Include="Asmodean\KifintStream.cs" />
-    <Compile Include="Asmodean\KifintType.Attributes.cs" />
-    <Compile Include="Asmodean\KifintType.cs" />
-    <Compile Include="Asmodean\MersenneTwister.cs" />
-    <Compile Include="Asmodean\VCode2.cs" />
-    <Compile Include="Asmodean\VCode2.PInvoke.cs" />
+    <None Include="Asmodean\Anm.cs" />
+    <None Include="Asmodean\Anm.Extract.cs" />
+    <None Include="Asmodean\Anm.Structs.cs" />
+    <None Include="Asmodean\AnmFrame.cs" />
+    <None Include="Asmodean\Hg3.cs" />
+    <None Include="Asmodean\Hg3.Extract.cs" />
+    <None Include="Asmodean\Hg3.Extract.Private.cs" />
+    <None Include="Asmodean\Hg3.PInvoke.cs" />
+    <None Include="Asmodean\Hg3.Structs.cs" />
+    <None Include="Asmodean\Hg3Image.cs" />
+    <None Include="Asmodean\Kifint.Callbacks.cs" />
+    <None Include="Asmodean\Kifint.cs" />
+    <None Include="Asmodean\Kifint.Extract.cs" />
+    <None Include="Asmodean\Kifint.Extract.Private.cs" />
+    <None Include="Asmodean\Kifint.PInvoke.cs" />
+    <None Include="Asmodean\Kifint.Structs.cs" />
+    <None Include="Asmodean\KifintEntry.cs" />
+    <None Include="Asmodean\KifintList.cs" />
+    <None Include="Asmodean\KifintListFormat.cs" />
+    <None Include="Asmodean\KifintLookup.cs" />
+    <None Include="Asmodean\KifintLookupCollection.cs" />
+    <None Include="Asmodean\KifintStream.cs" />
+    <None Include="Asmodean\KifintType.Attributes.cs" />
+    <None Include="Asmodean\KifintType.cs" />
+    <None Include="Asmodean\MersenneTwister.cs" />
+    <None Include="Asmodean\VCode2.cs" />
+    <None Include="Asmodean\VCode2.PInvoke.cs" />
     <Compile Include="Attributes.cs" />
     <Compile Include="Categories\GameInstallInfo.cs" />
     <Compile Include="Categories\Images\ImageIdentityInfo.cs" />
     <Compile Include="Categories\Sprites\SpriteDrawInfo.cs" />
-    <Compile Include="Extensions\AssemblyExtensions.cs" />
-    <Compile Include="Extensions\BinaryReaderExtensions.Arrays.cs" />
-    <Compile Include="Extensions\BinaryReaderExtensions.cs" />
-    <Compile Include="Extensions\BinaryReaderExtensions.Strings.cs" />
-    <Compile Include="Extensions\BinaryWriterExtensions.Arrays.cs" />
-    <Compile Include="Extensions\BinaryWriterExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\IDisposableExtensions.cs" />
-    <Compile Include="Extensions\StreamExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.NullTerminate.cs" />
-    <Compile Include="Extensions\StringExtensions.Quote.cs" />
-    <Compile Include="Extensions\StringExtensions.Surround.cs" />
+    <None Include="Extensions\AssemblyExtensions.cs" />
+    <None Include="Extensions\BinaryReaderExtensions.Arrays.cs" />
+    <None Include="Extensions\BinaryReaderExtensions.cs" />
+    <None Include="Extensions\BinaryReaderExtensions.Strings.cs" />
+    <None Include="Extensions\BinaryWriterExtensions.Arrays.cs" />
+    <None Include="Extensions\BinaryWriterExtensions.cs" />
+    <None Include="Extensions\EnumerableExtensions.cs" />
+    <None Include="Extensions\IDisposableExtensions.cs" />
+    <None Include="Extensions\StreamExtensions.cs" />
+    <None Include="Extensions\StringExtensions.NullTerminate.cs" />
+    <None Include="Extensions\StringExtensions.Quote.cs" />
+    <None Include="Extensions\StringExtensions.Surround.cs" />
     <Compile Include="Geometry\Point2I.cs" />
     <Compile Include="Geometry\Thickness2I.cs" />
     <Compile Include="Rules\Images\IImageParsingRule.cs" />
-    <Compile Include="Utils\ArgumentOutOfRangeUtils.cs" />
-    <Compile Include="Utils\ArgumentOutOfRangeUtils.MinMax.object.cs" />
-    <Compile Include="Utils\ArgumentOutOfRangeUtils.Range.object.cs" />
-    <Compile Include="Utils\DisposableArray.cs" />
-    <Compile Include="Utils\DisposableCollection.cs" />
-    <Compile Include="Utils\ResourceNotFoundException.cs" />
+    <None Include="Utils\ArgumentOutOfRangeUtils.cs" />
+    <None Include="Utils\ArgumentOutOfRangeUtils.MinMax.object.cs" />
+    <None Include="Utils\ArgumentOutOfRangeUtils.Range.object.cs" />
+    <None Include="Utils\DisposableArray.cs" />
+    <None Include="Utils\DisposableCollection.cs" />
+    <None Include="Utils\ResourceNotFoundException.cs" />
     <None Include="Categories\Backgrounds\BackgroundInfo.cs" />
     <Compile Include="Categories\CharacterDatabase.cs" />
     <Compile Include="Categories\CharacterInfo.cs" />
@@ -117,7 +117,7 @@
     <Compile Include="Categories\Sprites\SpritePartGroup.cs" />
     <Compile Include="Categories\Sprites\SpriteParts.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <None Include="Extensions\ExceptionExtensions.cs" />
     <EmbeddedResource Include="data\characters.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -156,12 +156,12 @@
     <None Include="Unused\Identifying\Old\UserInterface.cs" />
     <None Include="Unused\Identifying\Sprite.cs" />
     <None Include="Unused\Json\JsonCodeEnumConverter.cs" />
-    <Compile Include="Utils\ArrayCollection.cs" />
-    <Compile Include="Utils\BitUtils.cs" />
-    <Compile Include="Utils\Embedded.cs" />
-    <Compile Include="Utils\EnumInfo.cs" />
-    <Compile Include="Utils\ObservableArray.cs" />
-    <Compile Include="Utils\PathUtils.cs" />
+    <None Include="Utils\ArrayCollection.cs" />
+    <None Include="Utils\BitUtils.cs" />
+    <None Include="Utils\Embedded.cs" />
+    <None Include="Utils\EnumInfo.cs" />
+    <None Include="Utils\ObservableArray.cs" />
+    <None Include="Utils\PathUtils.cs" />
   </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\Asmodean\asmodean.vcxproj">
@@ -189,6 +189,12 @@
     </PackageReference>
     <PackageReference Include="TriggersTools.Build.CopyrightYear">
       <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="TriggersTools.CatSystem2">
+      <Version>1.0.0-build-8</Version>
+    </PackageReference>
+    <PackageReference Include="TriggersTools.SharpUtils">
+      <Version>1.0.1-build-44</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
